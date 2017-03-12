@@ -7,6 +7,7 @@ function queryPrice() {
         if(res) {
             $("b.breakfastPrice").html(res.breakfastPrice);
             $("b.dinnerPrice").html(res.dinnerPrice);
+            $("b.bondMoney").html(res.bondMoney);
         }
     }, "json");
 }

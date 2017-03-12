@@ -14,8 +14,10 @@
     <link type="text/css" rel="stylesheet" href="/basic/bootstrap3/css/bootstrap.min.css"/>
 
     <!-- Font Awesome-->
-    <link rel="stylesheet" href="/basic/font-awesome/css/font-awesome.css" />
-    <link rel="stylesheet" href="/basic/font-awesome/css/font-awesome.min.css" />
+    <!--<link rel="stylesheet" href="/basic/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="/basic/font-awesome/css/font-awesome.min.css" />-->
+    <!-- Font Awesome-->
+    <link rel="stylesheet" href="/basic/font-awesome-4.7.0/css/font-awesome.min.css" />
     <!--[if IE 7]>
     <link rel="stylesheet" href="/basic/font-awesome/css/font-awesome-ie7.min.css" />
     <![endif]-->
@@ -34,17 +36,17 @@
 </head>
 <body>
 <div class="container-fluild head-part">
-    <div class="container" title="用户登陆" style="position:relative;">
-        <i class="fa fa-cutlery login-icon"></i>
+    <div class="container" style="position:relative;">
+        <a href="/"><i class="fa fa-cutlery login-icon"></i></a>
         <span th:text="${session.company ne null ? session.company.name : '初始配置'}" class="login-title">登陆</span>
 
         <div class="head-part-div">
             <div class="top-show">
-                午餐：<b class="breakfastPrice">-</b>元/位，晚餐：<b class="dinnerPrice">-</b>元/位。
+                午餐：<b class="breakfastPrice">-</b>元/位，晚餐：<b class="dinnerPrice">-</b>元/位，压金：<b class="bondMoney">-</b>元/位。
             </div>
             <div class="bottom-show">
                 <ul class="opt-ul" th:if="${session.login_worker ne null}">
-                    <li><button class="btn" type="button"><img th:src="${session.login_worker.headimgurl}" style="width:18px;border-radius:10px;"/> 收银员：<span class="cashier" th:text="${session.login_worker.name}"></span></button></li>
+                    <li><a href="/" class="btn" type="button"><img th:src="${session.login_worker.headimgurl}" style="width:24px;border-radius:20px;"/> 收银员：<span class="cashier" th:text="${session.login_worker.name}"></span></a></li>
                     <li><a href="javascript:;" class="btn btn-info"><i class="fa fa-random"></i> 换班</a></li>
                     <li><a href="/web/updatePwd" class="btn btn-warning"><i class="fa fa-unlock-alt"></i> 改密</a></li>
                     <li><a href="/public/logout" class="btn btn-danger logout-href"><i class="fa fa-close"></i> 退出</a></li>
