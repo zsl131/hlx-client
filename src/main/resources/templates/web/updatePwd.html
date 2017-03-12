@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webModel">
+
+    <head>
+        <title>修改个人信息</title>
+        <style>
+        .login-box .text-left label {
+            margin-top:5px;
+        }
+    </style>
+    </head>
+    <body>
+        <div th:fragment="content">
+            <div class="title">
+                <b><i class="fa unlock-alt"></i> 修改密码<span th:if="${flag eq 2}" class="red icon-exclamation-sign">修改信息失败</span><span th:if="${flag eq 1}" class="green icon-ok">修改信息成功</span></b>
+                <a href="/"><i class="fa fa-home"></i>前台首页</a>
+            </div>
+            <div class="row login-box">
+                <div class="col-md-6">
+                    <form method="post" id="addForm">
+                        <div class="form-group form-group-lg text-left">
+                            <div class="form-group form-group-lg">
+                                <label for="username">手机号码</label>
+                                <input name="phone" class="form-control" readonly="true" id="username" placeholder="请输入登陆用户名" th:value="${session.login_worker.phone}"/>
+                            </div>
+                            <div class="form-group form-group-lg">
+                                <label for="password">原始密码<small>（不修改密码可以不输入）</small></label>
+                                <input type="password" name="oldPwd" class="form-control" id="password" placeholder="请输入原始密码"/>
+                            </div>
+                            <div class="form-group form-group-lg">
+                                <label for="repwd">登陆密码<small>（不修改密码可以不输入）</small></label>
+                                <input type="password" name="password" class="form-control" id="repwd" placeholder="请输入登陆密码"/>
+                            </div>
+                            <input type="hidden" name="token" th:value="${token}"/>
+                            <p class="text-left" style="margin-top:30px;">
+                                <button type="submit" class="btn btn-lg btn-danger"><i class="fa fa-unlock"></i> 确定提交</button>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-6 hidden-sm hidden-xs">
+                    <p class="remind"><i class="fa fa-shield"></i>  严防死守，严把数据安全关</p>
+                    <p class="remind"><i class="fa fa-support"></i>  高效稳定，运行稳健极速响应</p>
+                    <p class="remind"><i class="fa fa-tv"></i>  轻松便捷，工作从此不再繁琐</p>
+                </div>
+            </div>
+            <div class="alert alert-danger fa fa-times" id="showErrors" style="margin-top:15px; margin-bottom:30px;" th:if="${errorMsg ne null}" role="alert" th:text="${errorMsg}"></div>
+        </div>
+    </body>
+</html>

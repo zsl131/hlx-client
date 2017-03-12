@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'初始化配置'}">收银台</title>
+    <style>
+        .login-box .text-left label {
+            margin-top:15px;
+        }
+    </style>
+</head>
+<body>
+<div th:fragment="content" th:remove="tag">
+    <div class="title">
+        <b><i class="fa fa-user"></i> 初始配置</b>
+        <a href="/"><i class="fa fa-home"></i>前台首页</a>
+    </div>
+    <div class="row login-box">
+        <div class="col-md-6">
+            <form method="post" th:object="${company}" id="addForm">
+                <div class="form-group text-left">
+                    <label for="token">Token</label>
+                    <input type="text" id="token" name="token" class="form-control" th:value="${company.token}" placeholder="请输入Token，来自服务端，唯一标识"/>
+                    <label for="baseUrl">服务端</label>
+                    <input type="text" id="baseUrl" name="baseUrl" class="form-control" th:value="${company.baseUrl}" placeholder="服务端URL,以http://开头"/>
+
+                    <label for="basePort">端口号</label>
+                    <input type="text" id="basePort" name="basePort" class="form-control" th:value="${company.basePort}" placeholder="端口号，默认为80"/>
+                    <p class="text-left" style="margin-top:15px;">
+                        <button type="submit" class="btn btn-lg btn-danger"><i class="fa fa-info-circle"></i> 确认提交</button>
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-6 hidden-sm hidden-xs">
+            <p class="remind"><i class="fa fa-shield"></i>  严防死守，严把数据安全关</p>
+            <p class="remind"><i class="fa fa-support"></i>  高效稳定，运行稳健极速响应</p>
+            <p class="remind"><i class="fa fa-tv"></i>  轻松便捷，工作从此不再繁琐</p>
+        </div>
+    </div>
+    <div class="alert alert-danger fa fa-times" id="showErrors" style="margin-top:15px;" th:if="${errMsg ne null}" role="alert" th:text="${errMsg}"></div>
+</div>
+</body>
+</html>

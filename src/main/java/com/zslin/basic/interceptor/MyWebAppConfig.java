@@ -14,6 +14,7 @@ public class MyWebAppConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new SystemInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(new TokenInterceptor()).addPathPatterns("/**");
         registry.addInterceptor(new AuthInterceptor()).addPathPatterns("/admin/**");
+        registry.addInterceptor(new WebInterceptor()).addPathPatterns("/web/**");
         super.addInterceptors(registry);
     }
 }

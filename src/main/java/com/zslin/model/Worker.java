@@ -24,6 +24,18 @@ public class Worker {
 
     private String headimgurl;
 
+    //服务端Id
+    @Column(name = "obj_id")
+    private Integer objId;
+
+    public Integer getObjId() {
+        return objId;
+    }
+
+    public void setObjId(Integer objId) {
+        this.objId = objId;
+    }
+
     public Integer getId() {
         return id;
     }

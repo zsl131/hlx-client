@@ -1,0 +1,23 @@
+.head-part-div {
+    position:absolute; width:70%; height:60px;
+    right:0px; top:0px;
+}
+
+.head-part-div .top-show {
+    width:100%; height:30px; text-align:right; color:#888;
+}
+
+.head-part-div .top-show b {
+    color:#F60; font-size:20px; padding:0px 4px;
+}
+
+.head-part-div .bottom-show {
+    width:100%; height:30px; text-align:right;
+}
+
+ul.opt-ul {
+
+}
+ul.opt-ul li {
+    list-style:none; display:inline;
+}
