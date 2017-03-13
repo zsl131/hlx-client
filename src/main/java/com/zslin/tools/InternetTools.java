@@ -73,7 +73,6 @@ public class InternetTools {
 	}
 
 	public static Integer post(String url, String postParameter) {
-		System.out.println("=====url=="+url);
 		Integer res = 500; //默认是出错
 		HttpClient client = HttpClients.createDefault();
 		HttpPost post = new HttpPost(url);
