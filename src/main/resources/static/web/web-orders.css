@@ -1,0 +1,66 @@
+.orders-box {
+    width:100%; background:#f0f4fa; margin-left:0px; border-radius:10px; border:1px #bbc2cd solid;
+}
+.login-main {
+    width:100%; text-align:center; margin-left:0px; margin-top:20px; padding-bottom:60px;
+}
+.col-md-4 {
+    border-right:1px #ddd solid;
+    border-left:1px #FFF solid;
+}
+.col-md-4:first-child {
+    border-left:none;
+}
+
+.col-md-4:last-child {
+    border-right:none;
+}
+
+.mealName {
+    color:#F60;
+}
+.mealTime {
+    font-size:14px;
+}
+
+.show-content {
+    font-size:20px;
+}
+.show-content b {
+
+}
+.show-content b.total {
+    color:#F60; font-size:24px;
+}
+.show-content .remind {
+    color:#999; font-size:14px;
+}
+
+.alert .head {
+    width:100%;
+}
+.alert .head .show-help {
+    float:right;
+}
+.alert .head .show-help i {
+    font-size:20px;
+}
+
+.input-friend-info {
+    margin-top:15px;
+}
+
+.pay-type {
+    padding-bottom:8px;
+}
+
+.remind-div {
+    padding:10px 0px; margin-top:10px;
+}
+
+.remind-div ul {
+    width:100%; padding:0px;
+}
+.remind-div ul li {
+    margin:10px;
+}

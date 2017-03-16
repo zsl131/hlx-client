@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'订单详情'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/basic/js-lib/themes/base/jquery-ui.css"/>
+    <script src="/basic/js-lib/ui/jquery-ui.js"></script>
+    <link type="text/css" rel="stylesheet" href="/web/web-orders.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/web-orders-show.css"/>
+    <script src="/web/web-orders-show.js"></script>
+    <script src="/web/web-show-time.js"></script>
+    <script src="/web/web-orders-show-btn.js"></script>
+
+    <script>
+  $( function() {
+    $( "#tabs" ).tabs({
+    });
+  } );
+  </script>
+</head>
+<body>
+<div th:fragment="content" th:remove="tag">
+
+    <div class="title">
+        <b><i class="fa fa-desktop"></i> 订单详情</b>
+        <a href="/"><i class="fa fa-mail-reply-all"></i> 返回收银台</a>
+    </div>
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1"><i class="fa fa-gavel"></i> 订单详情（<span th:text="${orders.no}" th:remove="tag"></span>）</a></li>
+        </ul>
+        <div id="tabs-1" class="text-left">
+            <div th:if="${ordersType eq '1'}" th:remove="tag">
+                <div th:replace="web/orders/show-in-store :: content" ></div>
+            </div>
+            <div th:if="${ordersType eq '4'}" th:remove="tag">
+                <div th:replace="web/orders/show-friend-order :: content" ></div>
+            </div>
+
+            <div class="opts-btns">
+                <button onclick="javascript:history.back(-1)" class="btn btn-lg"><i class="fa fa-level-up"></i> 返回上级</button>
+                <button th:onclick="'window.location.href=\'/web/orders/returnBond?no='+${orders.no}+'\''" class="btn btn-lg btn-info"><i class="fa fa-flask"></i> 退压金</button>
+                <button onclick="onRetreatBtnClick()" class="btn btn-lg btn-danger retreat-btn"><i class="fa fa-times-circle"></i> 全额退票</button>
+                <button onclick="onCancelBtnClick()" class="btn btn-lg btn-danger"><i class="fa fa-window-close"></i> 取消订单</button>
+                <input id="ordersId" th:value="${orders.id}" type="hidden"/>
+                <input id="ordersNo" th:value="${orders.no}" type="hidden"/>
+                <input id="ordersStatus" th:value="${orders.status}" type="hidden"/>
+                <input id="refundMin" th:value="${rules.refundMin}" type="hidden"/>
+                <input id="entryLong" th:value="${orders.entryLong}" type="hidden"/>
+                <input id="ordersType" th:value="${orders.type}" type="hidden"/>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <div th:fragment="content">
+            <script type="text/javascript" src="/web/web-friend-discount-order.js"></script>
+            <div class="col-md-6 col-xs-6 col-sm-6 content-box">
+                <div class="page-header">
+                    <h1>友情价下单<small><b class="mealName">-</b><span class="mealTime" th:text="${rules.spe}"></span></small></h1>
+                </div>
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">老板电话：</div>
+                        <input name="bossPhone" type="text" maxlength="11" tabindex="1" onKeyUp="value=value.replace(/[^\d]/g,'') " class="form-control" placeholder="由顾客提供" />
+                        <span class="input-group-addon show-boss-name">请输入</span>
+                    </div>
+                </div>
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">全票人数：</div>
+                        <input name="peopleCount" type="text" onKeyUp="value=value.replace(/[^\d]/g,'')" tabindex="2" class="form-control" placeholder="输入全票人数" />
+                        <span class="input-group-addon">位</span>
+                    </div>
+                </div>
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">半票儿童：</div>
+                        <input name="halfCount" type="text" onKeyUp="value=value.replace(/[^\d]/g,'')" tabindex="3" class="form-control" placeholder="输入半票人数" />
+                        <span class="input-group-addon">位</span>
+                    </div>
+                </div>
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">免票儿童：</div>
+                        <input name="childCount" type="text" tabindex="4" onKeyUp="value=value.replace(/[^\d]/g,'')" class="form-control" placeholder="输入免票儿童人数" />
+                        <span class="input-group-addon">位</span>
+                    </div>
+                </div>
+                <input id="bossPhoneHidden" type="hidden"/>
+                <button type="button" class="btn btn-lg btn-primary" onclick="submitFriendOrder(this)"><i class="fa fa-gavel"></i> 提交订单</button>
+            </div>
+
+            <div class="col-md-6 col-xs-6 col-sm-6">
+                <div class="alert alert-warning">
+                    <p class="head"><span><i class="fa fa-info-circle"></i> 友情价下单说明</span></p>
+                    <div class="remind-div">
+                        <ul>
+                            <li>当顾客自称是老板的朋友或亲戚时可在此下单；</li>
+                            <li>请顾客提供所说的老板的手机号码，并输入到“老板电话”输入框中；</li>
+                            <li>当显示出姓名时表示号码正确，请及时与该号码联系并告诉老板顾客的姓名；</li>
+                            <li>输入全票人数（即需要收费的成人人数）；</li>
+                            <li>输入半票人数（即身高在一定范围内的儿童的人数，半票是全票的一半）；</li>
+                            <li>输入免票人数（即低于1米的儿童，且有监护人陪同）；</li>
+                            <li>点击“提交订单”后系统将发送信息到老板手机确认，只有确认后才能显示具体折扣和应收金额；</li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -10,7 +10,42 @@
 </head>
 <body>
 <div th:fragment="content" th:remove="tag">
-    首页
+    <div class="title">
+        <b><i class="fa fa-desktop"></i> 收银台</b>
+        <a href="/"><i class="fa fa-home"></i>前台首页</a>
+    </div>
+    <div class="row login-box">
+        <div class="col-md-6">
+            <form method="post" id="addForm">
+                <div class="form-group form-group-lg text-left">
+                    <div class="form-group form-group-lg">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-male"></i> 成人：</div>
+                            <input name="peopleCount" type="text" class="form-control" placeholder="输入收费人数" />
+                            <span class="input-group-addon">位</span>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-lg">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-child"></i> 儿童：</div>
+                            <input name="childCount" type="text" class="form-control" placeholder="输入免费儿童人数" />
+                            <span class="input-group-addon">位</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="token" th:value="${token}"/>
+                    <p class="text-left" style="margin-top:30px;">
+                        <button type="submit" class="btn btn-lg btn-danger"><i class="fa fa-unlock"></i> 确定提交</button>
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-6 hidden-sm hidden-xs">
+            <p class="remind"><i class="fa fa-shield"></i>  严防死守，严把数据安全关</p>
+            <p class="remind"><i class="fa fa-support"></i>  高效稳定，运行稳健极速响应</p>
+            <p class="remind"><i class="fa fa-tv"></i>  轻松便捷，工作从此不再繁琐</p>
+        </div>
+    </div>
 </div>
 </body>
 </html>

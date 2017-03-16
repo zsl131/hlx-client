@@ -40,7 +40,7 @@ public class InternetTools {
 			conn.setReadTimeout(5000);
 			conn.connect();
 			BufferedReader reader =new BufferedReader(new InputStreamReader(conn.getInputStream(),"utf-8"));
-			String str = null;
+			String str;
 			while((str=reader.readLine())!=null) {
 				sb.append(str).append("\n");
 			}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webModel">
+<body>
+<div th:fragment="content">
+    <table class="show-detail">
+        <tr>
+            <td class="field">订单类型：</td>
+            <td>
+                    <span th:switch="${orders.type}" th:remove="tag">
+                            <span th:case="1">店内订单</span>
+                            <span th:case="2">美团订单</span>
+                            <span th:case="3">微信订单</span>
+                            <span th:case="4">友情价订单</span>
+                        </span>
+                （<span th:text="${orders.level eq '1'?'晚餐':'午餐'}"></span>）
+            </td>
+            <td class="field">订单编号：</td>
+            <td th:text="${orders.no}"></td>
+        </tr>
+
+        <tr>
+            <td class="field">收银员姓名：</td>
+            <td th:text="${orders.cashierName}"></td>
+            <td class="field">收银员电话：</td>
+            <td th:text="${orders.cashierPhone}"></td>
+        </tr>
+
+        <tr>
+            <td class="field">收费人数：</td>
+            <td>
+                <b th:text="${orders.peopleCount}"></b>(全票)+
+                <b th:text="${orders.halfCount}"></b>(半票)
+            </td>
+            <td class="field">免票人数：</td>
+            <td th:text="${orders.childCount}"></td>
+        </tr>
+        <tr>
+            <td class="field">就餐费用：</td>
+            <td>
+                <b th:text="${orders.peopleCount}"></b>*<span th:text="${orders.price}"></span>(全票)+
+                <b th:text="${orders.halfCount}"></b>*<span th:text="${#numbers.formatDecimal(orders.price*0.5, 0, 'COMMA', 1, 'POINT')}"></span>(半票)+
+                <span th:text="${orders.childCount}"></span>*0(免票)=<b style="color:#F00" th:text="${#numbers.formatDecimal(orders.totalMoney, 0, 'COMMA', 1, 'POINT')}"></b> 元
+
+            </td>
+            <td class="field">压金金额：</td>
+            <td th:text="${orders.bondMoney}+' 元（只收全票人员）'"></td>
+        </tr>
+
+        <tr>
+            <td class="field">付款方式：</td>
+            <td>
+                <span th:switch="${orders.payType}" th:remove="tag">
+                    <span th:case="1">现金支付</span>
+                    <span th:case="2">刷卡支付</span>
+                    <span th:case="3">微信支付</span>
+                    <span th:case="4">支付宝支付</span>
+                </span>
+            </td>
+            <td class="field">订单状态：</td>
+            <td>
+                <span th:switch="${orders.status}" th:remove="tag">
+                    <span th:case="0">已下单</span>
+                    <span th:case="1">已付款</span>
+                    <span th:case="2" style="color:#00F;">就餐中…</span>
+                    <span th:case="3">美团已确认</span>
+                    <span th:case="4">压金已全退</span>
+                    <span th:case="5" style="color:#F60">已退部份压金（扣<b th:text="${orders.surplusBond}+' 元'"></b>）</span>
+                    <span th:case="-1" style="color:#F00;">已退票（<b th:remove="tag" th:text="${orders.retreatReason}"></b>）</span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="field">订单时间：</td>
+            <td th:text="${orders.createTime}"></td>
+            <td class="field">入场时间：</td>
+            <td>
+                <span th:text="${orders.entryTime}"></span>
+                <span th:if="${orders.status eq '2'}">（用时：<span th:text="${orders.entryLong}" class="show-seconds-now"></span>）</span>
+            </td>
+        </tr>
+        <tr th:if="${orders.endTime ne null}">
+            <td class="field">离场时间：</td>
+            <td th:text="${orders.endTime}"></td>
+            <td class="field">就餐用时：</td>
+            <td th:text="${orders.endLong-orders.entryLong}" class="show-seconds"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

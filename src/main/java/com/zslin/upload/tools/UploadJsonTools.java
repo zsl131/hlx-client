@@ -1,6 +1,7 @@
 package com.zslin.upload.tools;
 
 import com.alibaba.fastjson.JSON;
+import com.zslin.model.Orders;
 import com.zslin.model.Worker;
 import com.zslin.upload.dto.JsonDto;
 
@@ -24,6 +25,11 @@ public class UploadJsonTools {
 
     public static String buildWorkerJson(Worker w) {
         JsonDto jd = new JsonDto("worker", "update", w.getObjId(), w);
+        return JSON.toJSONString(jd);
+    }
+
+    public static String buildOrderJson(Orders orders) {
+        JsonDto jd = new JsonDto("orders", "update", orders.getId(), orders);
         return JSON.toJSONString(jd);
     }
 }

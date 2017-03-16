@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <div th:fragment="content">
+            <div class="title">
+                <b><i class="fa fa-desktop"></i> 收银台（<i th:text="${session.login_worker.name}" style="color:#F60;"></i>）</b>
+                <a href="/"><i class="fa fa-mail-reply-all"></i> 顾客离场，退压金</a>
+            </div>
+        </div>
+    </body>
+</html>

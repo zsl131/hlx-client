@@ -52,7 +52,7 @@ public class WorkerCookieTools {
 
     public void setWorker(HttpServletResponse response, HttpServletRequest request, Worker worker) {
         Cookie c = new Cookie(WORKER_NAME, worker.getPhone());
-        c.setMaxAge(5*60*60); //5个小时
+        c.setMaxAge(10*60*60); //10个小时
         c.setPath("/");
         response.addCookie(c);
         request.getSession().setAttribute(WORKER_NAME, worker);

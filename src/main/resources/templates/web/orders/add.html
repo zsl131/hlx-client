@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/basic/js-lib/themes/base/jquery-ui.css"/>
+    <script src="/basic/js-lib/ui/jquery-ui.js"></script>
+    <link type="text/css" rel="stylesheet" href="/web/web-orders.css"/>
+    <script type="text/javascript" src="/web/date-tools.js"></script>
+    <script type="text/javascript" src="/web/web-orders.js"></script>
+    <script type="text/javascript" src="/web/web-in-store-order.js"></script>
+
+    <script>
+  $( function() {
+    $( "#tabs" ).tabs({
+      //collapsible: true
+    });
+  } );
+  </script>
+</head>
+<body>
+<div th:fragment="content" th:remove="tag">
+
+    <div th:replace="web/orders/orders-title-opts :: content" th:remove="tag"></div>
+
+    <div id="tabs">
+        <ul>
+
+            <li><a href="#tabs-4"><i class="fa fa-group"></i> 友情价下单</a></li>
+            <li><a href="#tabs-1"><i class="fa fa-gavel"></i> 店内下单</a></li>
+            <li><a href="#tabs-2"><i class="fa fa-tumblr"></i> 美团订单</a></li>
+            <li><a href="#tabs-3"><i class="fa fa-weixin"></i> 微信订单</a></li>
+            <li><a href="#tabs-5"><i class="fa fa-ticket"></i> 卡券下单</a></li>
+            <li><a href="#tabs-6"><i class="fa fa-user-secret"></i> 会员下单</a></li>
+        </ul>
+        <div id="tabs-1" class="text-left" style="min-height:550px;">
+            <div th:replace="web/orders/in-store :: content" th:remove="tag"></div>
+        </div>
+        <div id="tabs-2" class="text-left" style="min-height:500px;">
+            <p><strong>Click this tab again to close the content pane.</strong></p>
+            <p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
+        </div>
+        <div id="tabs-3" class="text-left" style="min-height:500px;">
+            <p><strong>Click this tab again to close the content pane.</strong></p>
+            <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+        </div>
+        <div id="tabs-4" class="text-left" style="min-height:500px;">
+            <div th:replace="web/orders/friend-discount :: content" th:remove="tag"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

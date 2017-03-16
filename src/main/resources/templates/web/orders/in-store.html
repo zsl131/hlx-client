@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <div th:fragment="content" class="main-form-box">
+            <div class="col-md-6 col-xs-8 col-sm-8">
+                <div class="page-header">
+                    <h1>店内下单<small><b class="mealName">-</b><span class="mealTime" th:text="${rules.spe}"></span></small></h1>
+                </div>
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">全票人数：</div>
+                        <input name="peopleCount" type="text" onKeyUp="calMoney(this)" tabindex="1" class="form-control" placeholder="输入全票人数" />
+                        <span class="input-group-addon">位</span>
+                    </div>
+                </div>
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">半票儿童：</div>
+                        <input name="halfCount" type="text" onKeyUp="calMoney(this)" tabindex="2" class="form-control" placeholder="输入半票人数" />
+                        <span class="input-group-addon">位</span>
+                    </div>
+                </div>
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">免票儿童：</div>
+                        <input name="childCount" type="text" tabindex="3" onKeyUp="value=value.replace(/[^\d]/g,'')" class="form-control" placeholder="输入免票儿童人数" />
+                        <span class="input-group-addon">位</span>
+                    </div>
+                </div>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <i class="fa fa-money"></i> 对账单：
+                    </div>
+                    <div class="panel-body">
+                        <input id="isDinner" value="1" type="hidden"/>
+                        <div class="show-content">
+                            <b class="meal">0</b><span class="remind">(全票)</span>+<b class="halfMeal">0</b><span class="remind">(半票)</span>+<b class="bond">0</b><span class="remind">(压金)</span>=<b class="total">0</b><span class="remind">(应付)</span>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="pay-type">
+                            付款方式：
+                            <button class="btn" value="1">现金</button>
+                            <button class="btn" value="2">刷卡</button>
+                            <button class="btn" value="3">微信</button>
+                            <button class="btn" value="4">支付宝</button>
+                        </div>
+                        <input name="payType" type="hidden"/>
+                        <button type="button" class="btn btn-lg btn-primary normal-order-btn"><i class="fa fa-gavel"></i> 确定提交</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xs-4 col-sm-4">
+                <div class="alert alert-warning">
+                    <p class="head"><span><i class="fa fa-info-circle"></i> 店内下单说明</span></p>
+                    <div class="remind-div">
+                        <ul>
+                            <li>输入全票人数（即需要收费的成人人数）；</li>
+                            <li>输入半票人数（即身高在一定范围内的儿童的人数，半票是全票的一半）；</li>
+                            <li>输入免票人数（即低于1米的儿童，且有监护人陪同）；</li>
+                            <li>告知顾客各金额，且压金部份在离场时会退还给顾客；</li>
+                            <li>压金只收全票人员的，且每人按<span class="bondMoney"></span>元收取；</li>
+                            <li>选择顾客的付款方式；</li>
+                            <li>在确认收到对款项后点击“确认提交”，此时小票机将自动出票；</li>
+                            <li>在顾客离场时需要退还其压金，服务人员将告知收银人员是否扣除压金。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

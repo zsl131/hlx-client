@@ -1,7 +1,6 @@
 package com.zslin.tools;
 
 import com.zslin.model.Company;
-import com.zslin.timer.ScheduledDtoTools;
 import com.zslin.upload.tools.UploadFileTools;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,7 +29,7 @@ public class TimerTaskTools {
     private WorkerDataTools workerDataTools;
 
     @Autowired
-    private PriceDataTools priceDataTools;
+    private SimpleDataTools simpleDataTools;
 
     @Autowired
     private UploadFileTools uploadFileTools;
@@ -76,12 +75,16 @@ public class TimerTaskTools {
         String type = jsonObj.getString("type"); //类型
         Integer dataId = jsonObj.getInt("dataId"); //对象Id
         JSONObject dataObj = jsonObj.getJSONObject("data"); //具体对象的Json数据
-        if("config".equals(type)) { //修改配置信息
+        if("config".equalsIgnoreCase(type)) { //修改配置信息
             companyDataTools.handler(dataObj);
-        } else if("worker".equals(type)) { //处理员工信息
+        } else if("worker".equalsIgnoreCase(type)) { //处理员工信息
             workerDataTools.handler(dataId, dataObj, action);
-        } else if("price".equals(type)) { //价格
-            priceDataTools.handler(dataObj);
+        } else if("price".equalsIgnoreCase(type)) { //价格
+            simpleDataTools.handlerPrice(dataObj);
+        } else if("rules".equalsIgnoreCase(type)) { //规则
+            simpleDataTools.handlerRules(dataObj);
+        } else if("adminPhone".equalsIgnoreCase(type)) { //管理员电话号码
+            simpleDataTools.handlerAdminPhone(action, dataId, dataObj);
         }
     }
 

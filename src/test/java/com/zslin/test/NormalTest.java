@@ -1,8 +1,10 @@
 package com.zslin.test;
 
+import com.zslin.tools.OrderNoTools;
 import com.zslin.tools.WordTools;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -57,6 +59,12 @@ public class NormalTest {
     @Test
     public void test03() {
 
+        for(int i=0; i<=2; i++) {
+            print();
+        }
+    }
+
+    private void print() {
         Prient prient = new Prient();
 
         prient.setAddress("地址：金融中心·金池购物中心三楼F3-15~F3-16");
@@ -119,6 +127,34 @@ public class NormalTest {
         String [] array = WordTools.rebuildStr(str, 5);
         for(String s : array) {
             System.out.println(s);
+        }
+    }
+
+    @Autowired
+    private OrderNoTools orderNoTools;
+
+    @Test
+    public void test05() {
+        // 测试多线程调用订单号生成工具
+        try {
+            for (int i = 0; i < 200; i++) {
+                Thread t1 = new Thread(new Runnable() {
+                    public void run() {
+                        System.out.println("====="+orderNoTools.getOrderNo("2"));
+                    }
+                });
+                t1.start();
+
+               Thread t2 = new Thread(new Runnable() {
+                    public void run() {
+                        System.out.println("====="+orderNoTools.getOrderNo("1"));
+                    }
+                });
+                t2.start();
+                System.out.println("====="+orderNoTools.getOrderNo("3"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
