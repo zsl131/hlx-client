@@ -2,12 +2,8 @@ package com.zslin.web.controller;
 
 import com.zslin.basic.tools.NormalTools;
 import com.zslin.dto.ResDto;
-import com.zslin.model.Orders;
-import com.zslin.model.Rules;
-import com.zslin.model.Worker;
-import com.zslin.service.IOrderNoService;
-import com.zslin.service.IOrdersService;
-import com.zslin.service.IRulesService;
+import com.zslin.model.*;
+import com.zslin.service.*;
 import com.zslin.tools.OrderNoTools;
 import com.zslin.tools.OrdersOperateTools;
 import com.zslin.tools.WorkerCookieTools;
@@ -47,6 +43,12 @@ public class OrdersController {
 
     @Autowired
     private UploadFileTools uploadFileTools;
+
+    @Autowired
+    private IMemberService memberService;
+
+    @Autowired
+    private IMemberChargeService memberChargeService;
 
     @GetMapping(value = "add")
     public String add(Model model, HttpServletRequest request) {
@@ -103,12 +105,84 @@ public class OrdersController {
         }
     }
 
+    //添加会员订单
+    @PostMapping(value = "addMemberOrder")
+    public @ResponseBody ResDto addMemberOrder(Integer peopleCount, Integer halfCount, Integer childCount, String payType,
+                                                String level, Float price, String phone, Float bondMoney, HttpServletRequest request) {
+        Worker w = workerCookieTools.getWorker(request);
+        if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
+
+        try {
+            Member m = memberService.findByPhone(phone);
+            if(m==null) {return new ResDto("-2", "会员不存在");}
+            Orders orders = new Orders();
+            Float totalMoney = peopleCount*price+(halfCount*price*0.5f);
+            orders.setCashierName(w.getName());
+            orders.setCashierPhone(w.getPhone());
+            orders.setChildCount(childCount);
+            orders.setHalfCount(halfCount);
+            orders.setNo(orderNoTools.getOrderNo("5")); //会员订单以1开头
+            orders.setCreateLong(System.currentTimeMillis());
+            orders.setCreateTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+            orders.setCreateDay(NormalTools.curDate("yyyy-MM-dd"));
+            orders.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+            orders.setEntryLong(System.currentTimeMillis());
+            orders.setBondMoney(bondMoney);
+            orders.setLevel(level);
+            orders.setStatus("2"); //店内订单一下单就表示已收款可以进场就餐
+            orders.setPayType(payType);
+            orders.setType("5"); //5为会员下单
+            orders.setTotalMoney(totalMoney); //总金额为全票+半票
+            orders.setPeopleCount(peopleCount);
+            orders.setSurplusBond(0f);
+            orders.setPhone(phone);
+            orders.setPrice(price);
+            if(m.getSurplus()>=totalMoney*100) { //余额足
+                orders.setDiscountMoney(totalMoney);
+                memberService.plusMoneyByPhone(0-(int)(totalMoney*100), phone);
+            } else { //余额不足
+                orders.setDiscountMoney((m.getSurplus()*1.0f)/100);
+                memberService.plusMoneyByPhone(0-m.getSurplus(), phone);
+            }
+            orders.setDiscountType("0"); //0表示无优惠
+            ordersService.save(orders);
+
+            //TODO 此时应该打印小票
+            //TODO 提交到服务端
+            sendOrders2Server(orders);
+            buildMemberCharge(w, orders);
+            return new ResDto(orders.getNo(), "下单成功"); //表示下单成功
+        } catch (Exception e) {
+            e.printStackTrace();
+//            return "-2"; //有异常
+            return new ResDto("-2", "出现异常，下单失败");
+        }
+    }
+
+    private void buildMemberCharge(Worker w, Orders orders) {
+        MemberCharge mc = new MemberCharge();
+        mc.setPhone(orders.getPhone());
+        mc.setStatus("1");
+        mc.setName(orders.getName());
+        mc.setLevel(0);
+        mc.setChargeMoney(0f-orders.getDiscountMoney());
+        mc.setCreateDay(NormalTools.curDate("yyyy-MM-dd"));
+        mc.setCreateLong(System.currentTimeMillis());
+        mc.setCreateTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+        mc.setVerifyAccountName(w.getName());
+        mc.setVerifyAccountPhone(w.getPhone());
+        mc.setVerifyAccountOpenid(w.getOpenid());
+        memberChargeService.save(mc);
+        sendMemberCharge2Server(mc); //推送到服务器
+    }
+
     @PostMapping(value = "addFriendDiscountOrder")
     public @ResponseBody ResDto addFriendDiscountOrder(String phone, Integer peopleCount, Integer halfCount,
-           Integer childCount, String level, HttpServletRequest request) {
+           Integer childCount, Float price, String level, Float bondMoney, HttpServletRequest request) {
         try {
             Worker w = workerCookieTools.getWorker(request);
             if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
+            Rules rules = rulesService.loadOne();
             Orders orders = new Orders();
             String no = orderNoTools.getOrderNo("4");
             orders.setCashierName(w.getName());
@@ -117,6 +191,7 @@ public class OrdersController {
             orders.setHalfCount(halfCount);
             orders.setNo(no); //友情价订单以4开头
             orders.setCreateLong(System.currentTimeMillis());
+            orders.setBondMoney(bondMoney);
             orders.setCreateTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
             orders.setCreateDay(NormalTools.curDate("yyyy-MM-dd"));
 //        orders.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
@@ -126,12 +201,14 @@ public class OrdersController {
             orders.setStatus("0"); //友情价下单，先下单待确认后再进场就餐
 //        orders.setPayType(payType);
             orders.setType("4"); //4为友情价下单
-//        orders.setTotalMoney(peopleCount*price+(halfCount*price*0.5f)); //总金额为全票+半票
+            //目前只对全票打折
+            orders.setTotalMoney(peopleCount*price*(rules.getFriendPercent()*1.0f/100)+(halfCount*price*0.5f)); //总金额为全票+半票
+            orders.setDiscountMoney(peopleCount*price*(1-rules.getFriendPercent()*1.0f/100)); //优惠金额
             orders.setPeopleCount(peopleCount);
             orders.setSurplusBond(0f);
             orders.setDiscountReason(phone);
-//        orders.setPrice(price);
-//        orders.setDiscountType("0"); //0表示无优惠
+            orders.setPrice(price);
+//        orders.setDiscountType("4"); //0表示无优惠
             ordersService.save(orders);
 
             //TODO 推送到服务器
@@ -150,8 +227,7 @@ public class OrdersController {
     }
 
     @PostMapping(value = "confirmOrder")
-    public @ResponseBody ResDto confirmOrder(String no, String payType, Float price,
-                                             String level, Float bondMoney, HttpServletRequest request) {
+    public @ResponseBody ResDto confirmOrder(String no, String payType, HttpServletRequest request) {
         Worker w = workerCookieTools.getWorker(request);
         if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
         Orders orders = ordersService.findByNo(no);
@@ -159,38 +235,22 @@ public class OrdersController {
             return new ResDto("-2", "订单不存在");
         }
         try {
-            Rules rules = rulesService.loadOne();
             orders.setCashierName(w.getName());
             orders.setCashierPhone(w.getPhone());
             orders.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
             orders.setEntryLong(System.currentTimeMillis());
-            orders.setBondMoney(bondMoney);
-            orders.setLevel(level);
             orders.setStatus("2"); //确认后即可收费入场就餐
             orders.setPayType(payType);
-            //目前只对全票打折
-            orders.setTotalMoney(orders.getPeopleCount()*price*buildDiscount(rules.getFriendPercent())+(orders.getHalfCount()*price*0.5f)); //总金额为全票+半票
-            orders.setDiscountMoney(orders.getPeopleCount()*price*(1-buildDiscount(rules.getFriendPercent()))); //优惠金额
-            orders.setDiscountType("2"); //2表示友情价
             orders.setSurplusBond(0f);
-            orders.setPrice(price);
             ordersService.save(orders);
 
             //TODO 推送到服务器
             sendOrders2Server(orders);
+            //TODO 打印小票
             return new ResDto("0", "确认完成，请顾客带票入场");
         } catch (Exception e) {
             e.printStackTrace();
             return new ResDto("-3", "操作失败");
-        }
-    }
-
-    private Float buildDiscount(String discount) {
-        try {
-            Float f = Float.parseFloat(discount);
-            return f/100;
-        } catch (NumberFormatException e) {
-            return 1f;
         }
     }
 
@@ -235,8 +295,8 @@ public class OrdersController {
         Orders orders = ordersService.findByNo(no);
         if(orders==null) {
             return new ResDto("-1", "订单不存在"); //订单不存在
-        } else {
-            if(!"0".equalsIgnoreCase(orders.getStatus())) {
+        } else { //在就餐前都可取消
+            if(!"0".equalsIgnoreCase(orders.getStatus()) && !"6".equalsIgnoreCase(orders.getStatus())) {
                 return new ResDto("-2", "当前状态不允许取消");
             } else if(!"4".equalsIgnoreCase(orders.getType())) {
                 return new ResDto("-3", "此类型的订单不允许取消");
@@ -300,6 +360,11 @@ public class OrdersController {
 
     private void sendOrders2Server(Orders orders) {
         String content = UploadJsonTools.buildDataJson(UploadJsonTools.buildOrderJson(orders));
+        uploadFileTools.setChangeContext(content, true);
+    }
+
+    private void sendMemberCharge2Server(MemberCharge mc) {
+        String content = UploadJsonTools.buildDataJson(UploadJsonTools.buildMemberChargeJson(mc));
         uploadFileTools.setChangeContext(content, true);
     }
 }

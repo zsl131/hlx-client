@@ -41,11 +41,11 @@ function calOrder(obj) {
     peopleCount=(!peopleCount||peopleCount<=0)?0:peopleCount;
     halfCount=(!halfCount||halfCount<=0)?0:halfCount;
     var price = getPrice();
-    var bondMoney = parseFloat($(".bondMoney").html());
-    $(".meal").html(price*peopleCount);
-    $(".halfMeal").html(price*halfCount*0.5);
-    $(".bond").html(bondMoney*count);
-    $(".total").html(price*peopleCount+price*halfCount*0.5+bondMoney*peopleCount);
+    var bondMoney = parseFloat($("b.bondMoney").html());
+    $(pObj).find(".meal").html(price*peopleCount);
+    $(pObj).find(".halfMeal").html(price*halfCount*0.5);
+    $(pObj).find(".bond").html(bondMoney*peopleCount);
+    $(pObj).find(".total").html(price*peopleCount+price*halfCount*0.5+bondMoney*peopleCount);
 }
 
 function getPrice() {

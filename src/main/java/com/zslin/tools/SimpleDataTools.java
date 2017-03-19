@@ -2,12 +2,8 @@ package com.zslin.tools;
 
 import com.alibaba.fastjson.JSON;
 import com.zslin.basic.tools.MyBeanUtils;
-import com.zslin.model.AdminPhone;
-import com.zslin.model.Price;
-import com.zslin.model.Rules;
-import com.zslin.service.IAdminPhoneService;
-import com.zslin.service.IPriceService;
-import com.zslin.service.IRulesService;
+import com.zslin.model.*;
+import com.zslin.service.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +22,12 @@ public class SimpleDataTools {
 
     @Autowired
     private IAdminPhoneService adminPhoneService;
+
+    @Autowired
+    private IMemberLevelService memberLevelService;
+
+    @Autowired
+    private IOrdersService ordersService;
 
     public void handlerPrice(JSONObject jsonObj) {
         Price price = priceService.findOne();
@@ -56,6 +58,30 @@ public class SimpleDataTools {
             AdminPhone ap = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), AdminPhone.class);
             MyBeanUtils.copyProperties(ap, adminPhone);
             adminPhoneService.save(adminPhone);
+        }
+    }
+
+    public void handlerMemberLevel(String action, Integer dataId, JSONObject jsonObj){
+        if("delete".equalsIgnoreCase(action)) {
+            memberLevelService.delete(dataId);
+        } else if("update".equalsIgnoreCase(action)) {
+            MemberLevel memberLevel = memberLevelService.findOne(dataId);
+            if(memberLevel==null) {memberLevel = new MemberLevel();}
+            MemberLevel ml = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), MemberLevel.class);
+            MyBeanUtils.copyProperties(ml, memberLevel);
+            memberLevelService.save(memberLevel);
+        }
+    }
+
+    public void handlerOrder(JSONObject jsonObj) {
+        Orders o = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), Orders.class);
+        String no = o.getNo();
+        Orders orders = ordersService.findByNo(no);
+        if(orders==null) {
+            ordersService.save(o);
+        } else {
+            MyBeanUtils.copyProperties(o, orders, new String[]{"no"});
+            ordersService.save(orders);
         }
     }
 }

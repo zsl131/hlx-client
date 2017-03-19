@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <div th:fragment="content">
+            <div class="title">
+                <b><i class="fa fa-desktop"></i> 会员列表（<i th:if="${datas ne null}" th:text="${datas.getTotalElements()}" style="color:#F60;"></i>）</b>
+                <a href="/web/member/list"><i class="fa fa-list-ul"></i> 会员列表</a>
+                <a href="/web/member/add"><i class="fa fa-plus"></i> 添加会员</a>
+            </div>
+        </div>
+    </body>
+</html>

@@ -56,14 +56,14 @@ function cannotRetreat() {
 function onCancelBtnClick() {
     var ordersType = $("#ordersType").val(); //订单类型
     var ordersStatus = $("#ordersStatus").val(); //订单状态
-    if(ordersType!='4' || ordersStatus!='0') {
+    if(ordersType!='4' || (ordersStatus!='0' && ordersStatus!='6')) {
         cannotCancel();
     } else {
         submitCancel();
     }
 }
 
-//点击退票
+//点击取消订单
 function submitCancel() {
     var ordersNo = $("#ordersNo").val(); //订单编号
     var html = '<input name="reason" type="text" class="form-control" placeholder="请输入取消订单的原因" />';

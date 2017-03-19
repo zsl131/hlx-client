@@ -1,9 +1,11 @@
 package com.zslin.web.controller;
 
 import com.zslin.model.AdminPhone;
+import com.zslin.model.Member;
 import com.zslin.model.Price;
 import com.zslin.model.Rules;
 import com.zslin.service.IAdminPhoneService;
+import com.zslin.service.IMemberService;
 import com.zslin.service.IPriceService;
 import com.zslin.service.IRulesService;
 import com.zslin.tools.SingleCaseTools;
@@ -28,6 +30,9 @@ public class PublicJsonController {
 
     @Autowired
     private IAdminPhoneService adminPhoneService;
+
+    @Autowired
+    public IMemberService memberService;
 
     @GetMapping(value = "getPrice")
     public Price getPirce() {
@@ -54,5 +59,12 @@ public class PublicJsonController {
         AdminPhone ap = adminPhoneService.findByPhone(phone);
         if(ap==null) {ap = new AdminPhone();}
         return ap;
+    }
+
+    @PostMapping(value = "getMember")
+    public Member getMember(String phone) {
+        Member m = memberService.findByPhone(phone);
+        if(m==null) {m = new Member();}
+        return m;
     }
 }

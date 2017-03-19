@@ -41,12 +41,16 @@
             <div th:if="${ordersType eq '4'}" th:remove="tag">
                 <div th:replace="web/orders/show-friend-order :: content" ></div>
             </div>
+            <div th:if="${ordersType eq '5'}" th:remove="tag">
+                <div th:replace="web/orders/show-member-order :: content" ></div>
+            </div>
 
             <div class="opts-btns">
                 <button onclick="javascript:history.back(-1)" class="btn btn-lg"><i class="fa fa-level-up"></i> 返回上级</button>
-                <button th:onclick="'window.location.href=\'/web/orders/returnBond?no='+${orders.no}+'\''" class="btn btn-lg btn-info"><i class="fa fa-flask"></i> 退压金</button>
+                <button th:if="${orders.status eq '2'}" th:onclick="'window.location.href=\'/web/orders/returnBond?no='+${orders.no}+'\''" class="btn btn-lg btn-info"><i class="fa fa-flask"></i> 退压金</button>
                 <button onclick="onRetreatBtnClick()" class="btn btn-lg btn-danger retreat-btn"><i class="fa fa-times-circle"></i> 全额退票</button>
                 <button onclick="onCancelBtnClick()" class="btn btn-lg btn-danger"><i class="fa fa-window-close"></i> 取消订单</button>
+                <button onclick="onGotMoney()" th:if="${orders.type eq '4' and orders.status eq '6'}" class="btn btn-lg btn-primary"><i class="fa fa-money"></i> 确认收款</button>
                 <input id="ordersId" th:value="${orders.id}" type="hidden"/>
                 <input id="ordersNo" th:value="${orders.no}" type="hidden"/>
                 <input id="ordersStatus" th:value="${orders.status}" type="hidden"/>

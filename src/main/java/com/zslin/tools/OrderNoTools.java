@@ -18,7 +18,7 @@ public class OrderNoTools {
 
     /**
      * 生成订单编号
-     * @param type 1-店内订单；2-友情价订单；3-美团订单；4-微信订单
+     * @param type 1-店内订单；2-友情价订单；3-美团订单；4-微信订单；5-会员订单；6-卡券订单
      * @return
      */
     public synchronized String getOrderNo(String type) {

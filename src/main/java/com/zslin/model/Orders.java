@@ -64,6 +64,7 @@ public class Orders {
      * 6-老板确认，可以付款
      * -1-已退票（收银员操作）
      * -2-已取消
+     * -3-被老板驳回
      */
     private String status;
 
@@ -79,7 +80,7 @@ public class Orders {
     @Column(name = "surplus_bond")
     private Float surplusBond;
 
-    /** 类型，1-收银员下单；2-微信下单；3-美团下单；4-友情价下单 */
+    /** 类型，1-收银员下单；2-微信下单；3-美团下单；4-友情价下单；5-会员订单；6-卡券订单 */
     private String type;
 
     /** 只针对微信下单订单 */
@@ -89,10 +90,10 @@ public class Orders {
     @Column(name = "meituan_num")
     private String meituanNum;
 
-    /** 消费者的手机号码，主要用于当有折扣时推送给管理员 */
+    /** 消费者的手机号码，主要用于会员订单 */
     private String phone;
 
-    /** 消费者的姓名，主要用于当有折扣时推送给管理员 */
+    /** 消费者的姓名，主要用于会员订单 */
     private String name;
 
     /** 只针对微信下单订单 */

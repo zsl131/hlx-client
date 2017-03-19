@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <div th:fragment="content" class="content-box">
+            <script type="text/javascript" src="/web/web-member-order.js"></script>
+            <div class="col-md-6 col-xs-6 col-sm-6">
+                <div class="page-header">
+                    <h1>会员下单<small><b class="mealName">-</b><span class="mealTime" th:text="${rules.spe}"></span></small></h1>
+                </div>
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">会员电话：</div>
+                        <input name="memberPhone" type="text" maxlength="11" tabindex="1" onKeyUp="value=value.replace(/[^\d]/g,'') " class="form-control" placeholder="由顾客提供所留手机号码" />
+                        <span class="input-group-addon show-member-name">请输入</span>
+                    </div>
+                </div>
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">全票人数：</div>
+                        <input name="peopleCount" onkeyup="calMemberMoney(this)" type="text" tabindex="2" class="form-control" placeholder="输入全票人数" />
+                        <span class="input-group-addon">位</span>
+                    </div>
+                </div>
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">半票儿童：</div>
+                        <input name="halfCount" onkeyup="calMemberMoney(this)" type="text" tabindex="3" class="form-control" placeholder="输入半票人数" />
+                        <span class="input-group-addon">位</span>
+                    </div>
+                </div>
+                <div class="form-group form-group-lg">
+                    <div class="input-group">
+                        <div class="input-group-addon">免票儿童：</div>
+                        <input name="childCount" type="text" tabindex="4" onKeyUp="value=value.replace(/[^\d]/g,'')" class="form-control" placeholder="输入免票儿童人数" />
+                        <span class="input-group-addon">位</span>
+                    </div>
+                </div>
+                <input id="memberPhoneHidden" type="hidden"/>
+            </div>
+
+            <div class="col-md-6 col-xs-6 col-sm-6">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <i class="fa fa-money"></i> 对账单：
+                    </div>
+                    <div class="panel-body">
+                        <p class="member-info" style="background:#fbfbfb; padding:5px;"></p>
+                        <input id="isDinner" value="1" type="hidden"/>
+                        <div class="show-content">
+                            <p>消费：<b class="meal">0</b><span class="remind">(全票)</span>+<b class="halfMeal">0</b><span class="remind">(半票)</span>=<b class="total">0</b><span class="remind">(元)</span></p>
+                            <p>应付：<b class="bond">0</b><span class="remind">(压金)</span>+<b class="diffMoney">0</b><span class="remind">(差额)</span>=<b class="need" style="color:#F00; font-size:24px;">0</b><span class="remind">(应付)</span></p>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="pay-type">
+                            付款方式：
+                            <button class="btn" value="1">现金</button>
+                            <button class="btn" value="2">刷卡</button>
+                            <button class="btn" value="3">微信</button>
+                            <button class="btn" value="4">支付宝</button>
+                        </div>
+                        <input name="payType" type="hidden"/>
+                        <button type="button" class="btn btn-lg btn-primary" onclick="submitMemberOrder(this)"><i class="fa fa-gavel"></i> 提交订单</button>
+                    </div>
+                </div>
+                <div class="alert alert-warning">
+                    <p class="head"><span><i class="fa fa-info-circle"></i> 会员下单说明</span></p>
+                    <div class="remind-div">
+                        <ul>
+                            <li>询问顾客会员号（即办理会员时留下的手机号码）；</li>
+                            <li>点击“提交订单”后系统将自动扣除会员金额，金额不足时请在柜台收取或补办会员后重新下单；</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

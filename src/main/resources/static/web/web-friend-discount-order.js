@@ -10,7 +10,9 @@ function submitFriendOrder(obj) {
     var peopleCount = parseInt($(pObj).find("input[name='peopleCount']").val()); //全票
     var halfCount = parseInt($(pObj).find("input[name='halfCount']").val()); //半票
     var childCount = parseInt($(pObj).find("input[name='childCount']").val()); //免票
+    var bondMoney = parseFloat($("b.bondMoney").html())*peopleCount;
     var level = $("#isDinner").val()=='1'?"1":"2"; //晚餐或午餐
+    var price = getPrice(); //单价
     if(!bossPhone) {
         showDialog("请先输入老板电话进行验证");
     } else if(!peopleCount || peopleCount<=0) {
@@ -21,7 +23,7 @@ function submitFriendOrder(obj) {
         showDialog("请输入儿童人数，没有请输入0");
     } else {
         setSubmitBtnStyle(obj, true);
-        $.post("/web/orders/addFriendDiscountOrder", {level:level, phone:bossPhone, peopleCount:peopleCount, halfCount:halfCount, childCount:childCount}, function(res) {
+        $.post("/web/orders/addFriendDiscountOrder", {level:level, bondMoney:bondMoney, phone:bossPhone, peopleCount:peopleCount, price:price, halfCount:halfCount, childCount:childCount}, function(res) {
             alert(res.msg);
             setSubmitBtnStyle(obj, false);
             window.location.href = '/web/orders/show?no='+res.code;
@@ -33,6 +35,9 @@ function checkAdminPhoneOnKeyup(obj) {
     var phone = $(obj).val();
     if(isPhone(phone)) {
         checkAdminPhone();
+    } else {
+        setPhoneValue("");
+        $(".show-boss-name").html("");
     }
 }
 
@@ -50,12 +55,14 @@ function checkAdminPhone() {
                 showDialog("<i class='fa fa-close'></i> 输入的手机号码【"+phone+"】无友情价！", "<i class='fa fa-info-circle'></i> 系统提示");
                 //$(phoneObj).focus(); //会一直接弹窗
                 setPhoneValue("");
+                $(".show-boss-name").html("");
             }
         }, "json");
     } else {
         showDialog("<i class='fa fa-close'></i> 输入手机号码有误，请核对！", "<i class='fa fa-info-circle'></i> 系统提示");
         //$(phoneObj).focus(); //会一直接弹窗
         setPhoneValue("");
+        $(".show-boss-name").html("");
     }
 }
 

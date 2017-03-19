@@ -85,6 +85,10 @@ public class TimerTaskTools {
             simpleDataTools.handlerRules(dataObj);
         } else if("adminPhone".equalsIgnoreCase(type)) { //管理员电话号码
             simpleDataTools.handlerAdminPhone(action, dataId, dataObj);
+        } else if("memberLevel".equalsIgnoreCase(type)) { //会员等级
+            simpleDataTools.handlerMemberLevel(action, dataId, dataObj);
+        } else if("orders".equalsIgnoreCase(type)) { //订单
+            simpleDataTools.handlerOrder(dataObj);
         }
     }
 

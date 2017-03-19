@@ -16,6 +16,8 @@
                             <span th:case="2">美团订单</span>
                             <span th:case="3">微信订单</span>
                             <span th:case="4">友情价订单</span>
+                            <span th:case="5">会员订单</span>
+                            <span th:case="6">卡券订单</span>
                         </span>
                 （<span th:text="${orders.level eq '1'?'晚餐':'午餐'}"></span>）
             </td>
@@ -45,10 +47,8 @@
                 <b th:text="${orders.peopleCount}"></b>*<span th:text="${orders.price}"></span>(全票)+
                 <b th:text="${orders.halfCount}"></b>*<span th:text="${#numbers.formatDecimal(orders.price*0.5, 0, 'COMMA', 1, 'POINT')}"></span>(半票)+
                 <span th:text="${orders.childCount}"></span>*0(免票)=<b class="total-money" style="color:#F00" th:text="${#numbers.formatDecimal(orders.totalMoney, 0, 'COMMA', 1, 'POINT')}"></b> 元
-                （已折扣：<span style="color:#F00;" class="discount-money" th:text="${#numbers.formatDecimal(orders.discountMoney, 0, 'COMMA', 1, 'POINT')}"></span> 元）
+                （已扣：<span style="color:#F00;" class="discount-money" th:text="${#numbers.formatDecimal(orders.discountMoney, 0, 'COMMA', 1, 'POINT')}"></span> 元）
             </td>
-            <td th:if="${orders.totalMoney eq null and orders.status eq '0'}" style="color:#F00">等待折扣确认</td>
-            <td th:if="${orders.status eq '-3'}" style="color:#F00">被驳回</td>
             <td class="field">压金金额：</td>
             <td th:text="${orders.bondMoney}+' 元（只收全票人员）'"></td>
         </tr>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+	  xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="fragments/webModel">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<script type="text/javascript" src="/basic/validate/bootstrapValidator.js"></script>
+		<script src="/web/web-member-add.js"></script>
+		<link type="text/css" rel="stylesheet" href="/web/web-orders.css"/>
+		<title>添加会员</title>
+		<style>
+			.single-level {
+				float:left; margin-right:5px; border:1px #ddd solid; font-weight:normal; padding:0px 8px; border-radius:5px; background:#FaFAFA;
+			}
+		</style>
+	</head>
+	<body>
+		<div th:fragment="content" th:remove="tag">
+			<div th:replace="web/member/member-title-opts :: content" th:remove="tag"></div>
+
+			<form method="POST" th:object="${member}" id="dataForm" onsubmit="return checkData();" style="background:#FFF; padding:10px;">
+				<div class="form-group form-group-lg">
+					<div class="input-group">
+						<div class="input-group-addon">种类：</div>
+						<div class="form-control" >
+							<span class="single-level" th:each="level : ${levelList}"><input type="radio" name="levelId" th:value="${level.id}" th:id="'level_'+${level.id}"/>
+								<label th:for="'level_'+${level.id}" th:text="'充'+${level.chargeMoney}+'，送'+${level.giveMoney}" style="font-weight:normal; font-size:16px;"></label></span>
+						</div>
+					</div>
+				</div>
+				<div class="form-group form-group-lg">
+					<div class="input-group">
+						<div class="input-group-addon">姓名：</div>
+						<input name="name" type="text" class="form-control" th:value="${member.name}" placeholder="请输入顾客姓名" />
+					</div>
+				</div>
+
+				<div class="form-group form-group-lg">
+					<div class="input-group">
+						<div class="input-group-addon">电话：</div>
+						<input name="phone" type="text" maxlength="11" class="form-control" th:value="${member.phone}" placeholder="请输入顾客手机号码，消费时需要提供" />
+					</div>
+				</div>
+				<input type="hidden" name="token" value="${session.token}"/>
+				<button type="submit" class="btn btn-primary">确定提交</button>
+			</form>
+		</div>
+	</body>
+</html>
