@@ -18,7 +18,7 @@ function queryRules() {
         if(res) {
             var friendPercent = res.friendPercent;
             if(friendPercent>0 && friendPercent<100) {
-                $("b.friendPercent").html(friendPercent*1.0/10);
+                //$("b.friendPercent").html(friendPercent*1.0/10);
                 if($(".mealTime")) {$(".mealTime").html(res.spe);}
             }
         }

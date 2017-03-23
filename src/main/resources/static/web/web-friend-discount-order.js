@@ -36,7 +36,7 @@ function checkAdminPhoneOnKeyup(obj) {
     if(isPhone(phone)) {
         checkAdminPhone();
     } else {
-        setPhoneValue("");
+        setAdminPhoneValue("");
         $(".show-boss-name").html("");
     }
 }
@@ -50,22 +50,22 @@ function checkAdminPhone() {
                 var html = res.name;
                 $(".show-boss-name").html(html);
                 $(".show-boss-name").css({'color':'#F00',"font-weight":'bold'});
-                setPhoneValue(res.phone);
+                setAdminPhoneValue(res.phone);
             } else {
                 showDialog("<i class='fa fa-close'></i> 输入的手机号码【"+phone+"】无友情价！", "<i class='fa fa-info-circle'></i> 系统提示");
                 //$(phoneObj).focus(); //会一直接弹窗
-                setPhoneValue("");
+                setAdminPhoneValue("");
                 $(".show-boss-name").html("");
             }
         }, "json");
     } else {
         showDialog("<i class='fa fa-close'></i> 输入手机号码有误，请核对！", "<i class='fa fa-info-circle'></i> 系统提示");
         //$(phoneObj).focus(); //会一直接弹窗
-        setPhoneValue("");
+        setAdminPhoneValue("");
         $(".show-boss-name").html("");
     }
 }
 
-function setPhoneValue(val) {
+function setAdminPhoneValue(val) {
     $("#bossPhoneHidden").val(val);
 }

@@ -50,9 +50,13 @@ public class OrdersController {
     @Autowired
     private IMemberChargeService memberChargeService;
 
+    @Autowired
+    private IPriceService priceService;
+
     @GetMapping(value = "add")
     public String add(Model model, HttpServletRequest request) {
         model.addAttribute("rules", rulesService.loadOne());
+        model.addAttribute("price", priceService.findOne());
         return "web/orders/add";
     }
 
@@ -62,6 +66,7 @@ public class OrdersController {
         model.addAttribute("orders", orders);
         model.addAttribute("ordersType", orders.getType());
         model.addAttribute("rules", rulesService.loadOne());
+        model.addAttribute("price", priceService.findOne());
         return "web/orders/show";
     }
 
@@ -182,7 +187,9 @@ public class OrdersController {
         try {
             Worker w = workerCookieTools.getWorker(request);
             if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
-            Rules rules = rulesService.loadOne();
+//            Rules rules = rulesService.loadOne();
+            Price p = priceService.findOne();
+            Float friendPrice = "1".equals(level)?p.getFriendDinnerPrice():p.getFriendBreakfastPrice();
             Orders orders = new Orders();
             String no = orderNoTools.getOrderNo("4");
             orders.setCashierName(w.getName());
@@ -202,8 +209,10 @@ public class OrdersController {
 //        orders.setPayType(payType);
             orders.setType("4"); //4为友情价下单
             //目前只对全票打折
-            orders.setTotalMoney(peopleCount*price*(rules.getFriendPercent()*1.0f/100)+(halfCount*price*0.5f)); //总金额为全票+半票
-            orders.setDiscountMoney(peopleCount*price*(1-rules.getFriendPercent()*1.0f/100)); //优惠金额
+//            orders.setTotalMoney(peopleCount*price*(rules.getFriendPercent()*1.0f/100)+(halfCount*price*0.5f)); //总金额为全票+半票
+//            orders.setDiscountMoney(peopleCount*price*(1-rules.getFriendPercent()*1.0f/100)); //优惠金额
+            orders.setTotalMoney(peopleCount*friendPrice+(halfCount*price*0.5f)); //总金额为全票+半票
+            orders.setDiscountMoney(peopleCount*price-peopleCount*friendPrice); //优惠金额
             orders.setPeopleCount(peopleCount);
             orders.setSurplusBond(0f);
             orders.setDiscountReason(phone);

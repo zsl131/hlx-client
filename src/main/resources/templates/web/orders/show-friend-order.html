@@ -48,7 +48,7 @@
                 （已折扣：<span style="color:#F00;" class="discount-money" th:text="${#numbers.formatDecimal(orders.discountMoney, 0, 'COMMA', 1, 'POINT')}"></span> 元）
             </td>
             <td th:if="${orders.totalMoney eq null and orders.status eq '0'}" style="color:#F00">等待折扣确认</td>
-            <td th:if="${orders.status eq '-3'}" style="color:#F00">被驳回</td>
+            <!--<td th:if="${orders.status eq '-3'}" style="color:#F00">被驳回</td>-->
             <td class="field">压金金额：</td>
             <td th:text="${orders.bondMoney}+' 元（只收全票人员）'"></td>
         </tr>
