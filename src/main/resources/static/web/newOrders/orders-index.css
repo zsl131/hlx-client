@@ -1,0 +1,111 @@
+.orders-main-div {
+}
+.index-order-list {
+    background:#FFF; height:100%; padding:0px;
+}
+
+.commodity-type-list {
+    width:100%; border-bottom:1px #d0d0d0 solid; padding:0px; float:left;
+}
+.commodity-type-list ul {
+    margin:0px; padding:0px; float:left;
+}
+.commodity-type-list ul li {
+    list-style:none; display:inline; line-height:40px; padding:11px 15px;
+}
+.commodity-type-list ul li a {
+    text-decoration:none; color:#555;
+}
+.commodity-type-list ul li.current {
+    border-bottom:2px #a74542 solid;
+}
+
+.commodity-type-list ul li.current a{
+    color:#a74542;
+}
+
+.time-spe {
+    float:right; margin-top:15px; color:#888;
+}
+
+.index-commodity-list ul li {
+    background:#c13b38; border-radius:5px; list-style:none; display:inline; float:left; margin:10px; color:#FFF; width:120px; height:90px; padding-top:20px; cursor:pointer;
+}
+.index-commodity-list ul li p {
+    width:100%; text-align:center; font-size:14px;
+}
+.index-commodity-list ul li p b {
+    font-size:16px; color:#FFF;
+}
+
+.index-orders-title {
+    width:100%; border-bottom:2px #ddd solid;padding:7px 0px; float:left;
+}
+.index-orders-title .shopping {
+    width:26px; height:26px; border-radius:50px; background:#c13b38; float:left; text-align:center; line-height:26px; color:#FFF; font-size:18px; margin:0px 5px;
+}
+.index-orders-title .title {
+    line-height:26px;
+}
+.index-orders-title .cleanAll {
+    float:right; width:26px; height:26px; border-radius:50px; background:#c13b38; text-align:center; line-height:26px; color:#FFF; font-size:18px; margin:0px 5px;cursor:pointer;
+}
+
+.shopping-list {
+    float:left; width:100%; padding-bottom:15px;
+}
+
+.single-commodity {
+    background:#f0f1f3; margin-top:10px; float:left; width:100%; height:75px; padding:0px;
+}
+.single-commodity .left {
+    width:72%; float:left; padding:0px 5px;
+}
+.single-commodity .left .minus {
+    background:#4bbac1; color:#FFF; width:30px; height:30px; text-align:center; line-height:30px; margin-top:22px; cursor:pointer;
+}
+.single-commodity .center {
+    width:auto; padding-top:20px;
+}
+.single-commodity .center p {
+    width:100%; text-align:center; font-size:12px; margin:0px;
+}
+.single-commodity .center p.num b {
+    font-size:16px; color:#d1656a;
+}
+.single-commodity .left .plus {
+    background:#4bbac1; color:#FFF; width:30px; height:30px; text-align:center; line-height:30px; margin-top:22px; cursor:pointer;
+}
+.single-commodity .right {
+    width:28%; float:right; color:#cf403c; text-align:center; padding-top:27px; background:#dfdfdf; height:100%;
+}
+.single-commodity .left span{
+    float:left;
+}
+
+.max-height {
+     overflow-y:auto; overflow-x:hidden; position:relative; padding-right:0px; padding:5px;
+}
+
+.submit-orders-div {
+    width:100%; height:70px; float:left; bottom:4px; padding:5px; background:#eee;
+}
+.submit-orders-div .datas {
+    width:100%; color:#777; font-size:14px;
+}
+.submit-orders-div .datas .count {
+    float:left;
+}
+.submit-orders-div .datas .money {
+    float:right;
+}
+.submit-orders-div .datas .money b, .submit-orders-div .datas .money i {
+    color:#d83339; font-size:16px;
+}
+
+.submit-orders-div .btns {
+    width:100%; float:left; padding-top:5px;
+}
+.submit-orders-div .btns button {
+    width:40%; margin:0px 5%;
+}

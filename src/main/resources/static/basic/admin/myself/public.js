@@ -19,7 +19,7 @@ $(function() {
 /** bootstrap modal */
 function showDialog(msg, title) {
 	var idStr = "myModal_"+parseInt(Math.random()*100000000);
-	if($.trim(title)=='') {title = "系统提示";}
+	if($.trim(title)=='') {title = "<i class='fa fa-info-circle'></i> 系统提示";}
 	var html = '';
 	html += '<div class="modal fade" id="'+idStr+'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">' +
 		  	'<div class="modal-dialog" role="document">' +

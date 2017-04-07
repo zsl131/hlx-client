@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webNewModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-index.css"/>
+    <script type="text/javascript" src="/web/date-tools.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-index.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-index-add.js"></script>
+</head>
+<body>
+    <div th:fragment="content" th:remove="tag">
+        <div class="orders-main-div ">
+            <div class="row">
+                <div class="col-md-9 col-sm-9 col-xs-9 col-lg-9">
+                    <div class="commodity-type-list">
+                        <ul>
+                            <li th:class="${type eq '1'?'current':''}"><a href="/web/newOrders/index?type=1">自助餐入场券</a></li>
+                            <li th:class="${type eq '3'?'current':''}"><a href="/web/newOrders/index?type=3">外卖单品</a></li>
+                        </ul>
+                        <span th:if="${type eq '1' and rules ne null}" class="time-spe">早晚餐时间间隔：<b th:text="${rules.spe}"></b></span>
+                    </div>
+                    <div class="index-commodity-list">
+                        <ul>
+                            <li th:each="commodity : ${commodityList}" onclick="addCommodity2Order(this)" th:attr="comType = ${commodity.type}">
+                                <p><span th:text="${commodity.name}" class="name" th:attr="no=${commodity.no}"></span></p>
+                                <p><b th:text="${commodity.price}" class="price"></b> 元/<span th:text="${commodity.type eq '3'?'份':'位'}"></span></p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3 index-order-list">
+                    <div class="max-height">
+                        <div class="index-orders-title">
+                            <span class="shopping"><b class="fa fa-shopping-cart"></b></span>
+                            <span class="title">已选商品</span>
+                            <span class="cleanAll" onclick="cleanAll()"><b class="fa fa-trash-o"></b></span>
+                        </div>
+                        <div class="shopping-list">
+                        </div>
+
+                        <div class="submit-orders-div">
+                            <input name="orderNos" type="hidden"/>
+                            <input name="mealTime" th:if="${type eq '1' and rules ne null}" th:value="${rules.spe}" type="hidden"/>
+                            <p class="datas"><span class="count">单品总数：<b>0</b></span><span class="money">合计：<i class="fa fa-cny"></i> <b>0</b> 元</span></p>
+                            <p class="btns"><button class="btn btn-danger"><i class="fa fa-shopping-basket"></i> 挂单</button><button class="submit-pay-btn btn btn-primary"><i class="fa fa-gavel"></i> 结账</button></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -113,13 +113,11 @@ public class MemberController {
 
     private void sendMember2Server(Member m) {
         String content = UploadJsonTools.buildDataJson(UploadJsonTools.buildMemberJson(m));
-        System.out.println(content);
         uploadFileTools.setChangeContext(content, true);
     }
 
     public void sendMemberCharge2Server(MemberCharge mc) {
         String content = UploadJsonTools.buildDataJson(UploadJsonTools.buildMemberChargeJson(mc));
-        System.out.println(content);
         uploadFileTools.setChangeContext(content, true);
     }
 }

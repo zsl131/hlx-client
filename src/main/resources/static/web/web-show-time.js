@@ -8,6 +8,11 @@ $(function() {
         var seconds = parseInt($(this).html());
         $(this).html(buildTime(parseInt((new Date().getTime()-seconds)/1000)));
     });
+
+    $(".show-money").each(function() {
+        var money = parseInt($(this).html());
+        $(this).html(money/100 + " 元");
+    });
 });
 
 function buildTime(seconds) {

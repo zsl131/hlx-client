@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'订单详情'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/basic/js-lib/themes/base/jquery-ui.css"/>
+    <script src="/basic/js-lib/ui/jquery-ui.js"></script>
+    <link type="text/css" rel="stylesheet" href="/web/web-orders.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/web-orders-show.css"/>
+    <script src="/web/web-show-time.js"></script>
+    <script src="/web/newOrders/orders-return-bond.js"></script>
+
+    <script>
+  $( function() {
+    $( "#tabs" ).tabs({
+    });
+  } );
+  </script>
+</head>
+<body>
+<div th:fragment="content" th:remove="tag">
+
+    <div class="title">
+        <b><i class="fa fa-desktop"></i> 订单详情-退还压金</b>
+        <a href="/"><i class="fa fa-mail-reply-all"></i> 返回收银台</a>
+    </div>
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1"><i class="fa fa-gavel"></i> 退还压金（<span th:text="${#httpServletRequest.getParameter('no')}" th:remove="tag"></span>）</a></li>
+        </ul>
+        <div id="tabs-1" class="text-left">
+            <div class="form-group form-group-lg">
+                <div class="input-group">
+                    <div class="input-group-addon">订单编号：</div>
+                    <input name="orderNo" type="text" th:value="${#httpServletRequest.getParameter('no')}" tabindex="1" class="form-control" placeholder="输入订单编号" />
+                    <span class="input-group-addon search-order-btn" style="cursor:pointer"><i class="fa fa-search"></i> 查询</span>
+                </div>
+            </div>
+            <table class="show-detail" th:if="${order eq null}">
+                <tr>
+                    <td style="padding:30px 0px; color:#F00; text-align:center;">未检索到对应订单信息，请重新输入订单编号后点“查询”</td>
+                </tr>
+            </table>
+            <table class="show-detail" th:if="${order ne null}">
+                <tr>
+                    <td class="field">订单类型：</td>
+                    <td>
+                    <span th:switch="${order.type}" th:remove="tag">
+                            <span th:case="1">店内订单</span>
+                            <span th:case="2">美团订单</span>
+                            <span th:case="3">微信订单</span>
+                            <span th:case="4">友情价订单</span>
+                            <span th:case="5">会员订单（已扣：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>
+                            <span th:case="6">卡券订单</span>
+                        </span>
+                    </td>
+                    <td class="field">订单编号：</td>
+                    <td th:text="${order.no}"></td>
+                </tr>
+
+                <tr>
+                    <td class="field">收银员姓名：</td>
+                    <td th:text="${order.cashierName}"></td>
+                    <td class="field">收银员电话：</td>
+                    <td th:text="${order.cashierPhone}"></td>
+                </tr>
+
+                <tr>
+                    <td class="field">就餐费用：</td>
+                    <td>
+                        <b style="color:#F00" th:text="${#numbers.formatDecimal(order.totalMoney, 0, 'COMMA', 1, 'POINT')}"></b> 元
+                    </td>
+                    <td class="field">剩余压金：</td>
+                    <td th:text="${order.surplusBond}+' 元（只收全票人员）'"></td>
+                </tr>
+
+                <tr>
+                    <td class="field">付款方式：</td>
+                    <td>
+                <span th:switch="${order.payType}" th:remove="tag">
+                    <span th:case="1">现金支付</span>
+                    <span th:case="2">刷卡支付</span>
+                    <span th:case="3">微信支付</span>
+                    <span th:case="4">支付宝支付</span>
+                </span>
+                    </td>
+                    <td class="field">订单状态：</td>
+                    <td>
+                <span th:switch="${order.status}" th:remove="tag">
+                    <span th:case="0">已下单</span>
+                    <span th:case="1">已付款</span>
+                    <span th:case="2" style="color:#00F;">就餐中…</span>
+                    <span th:case="3">美团已确认</span>
+                    <span th:case="4" style="color:#00F;">压金已全退（订单完成）</span>
+                    <span th:case="5" style="color:#F60">已退部份压金（扣<b th:text="${order.surplusBond}+' 元'"></b>）</span>
+                    <span th:case="-1" style="color:#F00;">已退票（<b th:remove="tag" th:text="${order.retreatReason}"></b>）</span>
+                    <span th:case="-2" style="color:#F00;">已取消（<b th:remove="tag" th:text="${order.retreatReason}"></b>）</span>
+                    <span th:case="-3" style="color:#F00;">被驳回（订单取消）</span>
+                </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="field">订单时间：</td>
+                    <td th:text="${order.createTime}"></td>
+                    <td class="field">入场时间：</td>
+                    <td>
+                        <span th:text="${order.entryTime}"></span>
+                        <span th:if="${order.status eq '2'}">（用时：<span th:text="${order.entryLong}" class="show-seconds-now"></span>）</span>
+                    </td>
+                </tr>
+                <tr th:if="${order.endTime ne null}">
+                    <td class="field">离场时间：</td>
+                    <td th:text="${order.endTime}"></td>
+                    <td class="field">就餐用时：</td>
+                    <td th:text="${order.endLong-order.entryLong}" class="show-seconds"></td>
+                </tr>
+            </table>
+
+            <div class="opts-btns">
+                <button onclick="javascript:history.back(-1)" class="btn btn-lg"><i class="fa fa-level-up"></i> 返回上级</button>
+                <button th:if="${order ne null}" onclick="javascript:returnBond(this);" th:attr="no=${order.no},bondMoney=${order.surplusBond}" class="btn btn-lg btn-info"><i class="fa fa-flask"></i> 退压金</button>
+                <input th:if="${order ne null}" id="ordersStatus" th:value="${order.status}" type="hidden"/>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

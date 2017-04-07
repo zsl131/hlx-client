@@ -29,6 +29,9 @@ public class SimpleDataTools {
     @Autowired
     private IOrdersService ordersService;
 
+    @Autowired
+    private ICommodityService commodityService;
+
     public void handlerPrice(JSONObject jsonObj) {
         Price price = priceService.findOne();
         if(price==null) {price = new Price();}
@@ -70,6 +73,18 @@ public class SimpleDataTools {
             MemberLevel ml = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), MemberLevel.class);
             MyBeanUtils.copyProperties(ml, memberLevel);
             memberLevelService.save(memberLevel);
+        }
+    }
+
+    public void handlerCommodity(String action, Integer dataId, JSONObject jsonObj) {
+        Commodity c = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), Commodity.class);
+        if("delete".equalsIgnoreCase(action)) {
+            commodityService.deleteByNo(c.getNo());
+        } else if("update".equalsIgnoreCase(action)) {
+            Commodity commodity = commodityService.findOne(dataId);
+            if(commodity==null) { commodity = new Commodity(); }
+            MyBeanUtils.copyProperties(c, commodity);
+            commodityService.save(commodity);
         }
     }
 

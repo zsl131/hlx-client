@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webNewModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-index.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-pay.css"/>
+    <script type="text/javascript" src="/web/newOrders/orders-index.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-list.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-member.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-friend.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-normal.js"></script>
+</head>
+<body>
+    <div th:fragment="content" th:remove="tag">
+        <div class="orders-main-div ">
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
+                    <div class="max-height pay-commodity-list">
+                        <h4 class="title">订单信息</h4>
+                        <div class="order-info">
+                            <p>订单编号：<span th:text="${order.no}"></span></p>
+                            <p>订单金额：<span th:text="${order.totalMoney}"></span> 元</p>
+                            <p>商品数量：<span th:text="${order.commodityCount}"></span></p>
+                            <p>创建时间：<span th:text="${order.createTime}"></span></p>
+                        </div>
+                        <table class="commodity-table">
+                            <tr>
+                                <th>商品</th>
+                                <th>数量</th>
+                                <th>小计</th>
+                            </tr>
+                        </table>
+                        <div class="commodity-list-hidden" style="display:none">
+                            <span th:each="commodity : ${commodityList}" th:attr="comName=${commodity.commodityName}, comNo=${commodity.commodityNo}, price=${commodity.price}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-xs-9 col-lg-9">
+                    <div class="max-height" style="padding:15px;">
+                        <div class="order-type-div">
+                            <span>订单性质：</span>
+                            <div class="btn-group" role="group" aria-label="...">
+                                <button type="button" orderType="1" th:class="'btn btn-default '+${(order.type eq null or order.type eq '' or order.type eq '1')?'btn-info':''}" ><i class="fa fa-gavel"></i> 正常订单</button>
+                                <button type="button" orderType="5" th:class="'btn btn-default '+${order.type eq '5'?'btn-info':''}" title="输入会员手机，验证通过后从会员账户上扣款"><i class="fa fa-user-secret"></i> 会员订单</button>
+                                <button type="button" orderType="4" th:class="'btn btn-default '+${order.type eq '4'?'btn-info':''}" title="输入折扣手机号码，待审核通过后方可收款入场"><i class="fa fa-group"></i> 亲情优惠订单</button>
+                                <button type="button" orderType="2" th:class="'btn btn-default '+${order.type eq '2'?'btn-info':''}" ><i class="fa fa-weixin"></i> 微信订单</button>
+                                <button type="button" orderType="3" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" ><i class="fa fa-tumblr"></i> 美团订单</button>
+                                <button type="button" orderType="6" th:class="'btn btn-default '+${order.type eq '6'?'btn-info':''}" ><i class="fa fa-ticket"></i> 卡券订单</button>
+                            </div>
+                        </div>
+                        <div class="special-type" style="display:none">
+
+                        </div>
+                        <div class="show-money">
+                            <span class="money-name">应付金额：</span>
+                            <span class="money-amount"><b class="fa fa-cny"></b> <b class="money" th:text="${order.totalMoney}"></b> 元<small>(不包含压金)</small></span>
+                        </div>
+                        <div class="pay-types">
+                            <span>支付方式：</span>
+                            <div class="btn-group" role="group" aria-label="...">
+                                <button type="button" class="btn btn-default btn-danger" payType="1"><i class="fa fa-cny"></i> 现金支付</button>
+                                <button type="button" class="btn btn-default" payType="3"><i class="fa fa-weixin"></i> 微信支付</button>
+                                <button type="button" class="btn btn-default" payType="4">支付宝支付</button>
+                                <button type="button" class="btn btn-default" payType="2"><i class="fa fa-credit-card-alt"></i> 刷卡支付</button>
+                            </div>
+                        </div>
+                        <div class="submit-pay">
+                            <input name="bondMoney" th:value="${price.bondMoney}" type="hidden"/>
+                            <input name="bondCount" type="hidden"/>
+                            <input name="payType" value="1" type="hidden"/>
+                            <input name="specialType" th:value="${order.type eq null ? '1':order.type}" type="hidden"/>
+                            <input name="orderTotalMoney" th:value="${order.totalMoney}" type="hidden"/>
+                            <input name="reserve" value="1" title="信息不全，请检查后再提交" type="hidden"/>
+                            <input name="orderNo" type="hidden" th:value="${order.no}"/>
+                            <button type="button" class="btn btn-lg btn-primary submit-order-btn" onclick="submitOrder()"><i class="fa fa-check"></i> 确认收款</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+.max-height {
+    background:#FFF;
+}
+.pay-commodity-list {
+    background:#FFF;
+}
+.pay-commodity-list h4.title {
+    width:100%; text-align:center; font-weight:normal; font-size:14px; border-bottom:1px #e8e8e8 solid; padding-bottom:8px;
+}
+.pay-commodity-list .order-info {
+    background:#f0f1f3; padding:8px; font-size:12px;
+}
+
+table.commodity-table {
+    width:100%; color:#4a4a4a;margin-top:10px;
+}
+table.commodity-table tr th {
+    color:#a86763; font-weight:normal; line-height:30px;
+}
+table.commodity-table tr td{
+    font-size:12px; line-height:26px;
+}
+
+.show-money {
+    float:left; width:100%; line-height:30px; border-bottom:1px #ddd solid; padding:22px 10px 0px 10px;
+}
+.show-money .money-name{
+    color:#999;
+}
+.show-money .money-amount {
+    float:right;
+}
+.show-money .money-amount b {
+    font-size:18px; color:#F60;
+}
+.show-money .money-amount small {
+    color:#999;
+}
+.pay-types {
+    padding:30px 0px; float:left; width:100%;
+}
+.order-type-div {
+    float:left; width:100%;
+}
+.special-type {
+    width:100%; float:left; margin:25px 0px 0px 0px; padding:10px; background:#fafafa;
+}
+.special-type p.type-name {
+    line-height:35px; border-bottom:1px #ddd solid;
+}
+
+.submit-pay {
+    float:left; width:100%;
+}
+.submit-order-btn {
+    float:right; margin-right:12%;
+}
+
+.member-info-show {
+    width:100%; font-size:12px; color:#777;
+}
+.member-info-show b {
+    font-size:14px; color:#F60;
+}
