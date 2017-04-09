@@ -32,6 +32,9 @@ public class SimpleDataTools {
     @Autowired
     private ICommodityService commodityService;
 
+    @Autowired
+    private IBuffetOrderService buffetOrderService;
+
     public void handlerPrice(JSONObject jsonObj) {
         Price price = priceService.findOne();
         if(price==null) {price = new Price();}
@@ -97,6 +100,18 @@ public class SimpleDataTools {
         } else {
             MyBeanUtils.copyProperties(o, orders, new String[]{"no"});
             ordersService.save(orders);
+        }
+    }
+
+    public void handlerBuffetOrder(JSONObject jsonObj) {
+        BuffetOrder o = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), BuffetOrder.class);
+        String no = o.getNo();
+        BuffetOrder orders = buffetOrderService.findByNo(no);
+        if(orders==null) {
+            buffetOrderService.save(o);
+        } else {
+            MyBeanUtils.copyProperties(o, orders, new String[]{"no", "id"}, true);
+            buffetOrderService.save(orders);
         }
     }
 }

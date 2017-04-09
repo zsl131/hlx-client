@@ -92,7 +92,7 @@ function removeSingle(obj) {
 function cleanAll() {
     var html = '确定清空所有已选商品吗？清空后可以再次从商品列表中选择。';
 
-    var myDialog = confirmDialog(html, '<i class="fa fa-question-circle"></i> 确定删除此商品吗？', function() {
+    var myDialog = confirmDialog(html, '<i class="fa fa-question-circle"></i> 确定清空所有已选商品吗？', function() {
         $(".shopping-list").html("");
         $(myDialog).remove();
         buildSubmitData();

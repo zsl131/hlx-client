@@ -91,6 +91,8 @@ public class TimerTaskTools {
             simpleDataTools.handlerCommodity(action, dataId, dataObj);
         } else if("orders".equalsIgnoreCase(type)) { //订单
             simpleDataTools.handlerOrder(dataObj);
+        } else if("buffetOrder".equalsIgnoreCase(type)) { //订单
+            simpleDataTools.handlerBuffetOrder(dataObj);
         }
     }
 

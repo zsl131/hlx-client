@@ -14,6 +14,7 @@ function buildFriendHtml(obj) {
                                 '<input class="form-control" name="bossName" value="输入会员电话检索" readonly="readonly"/>'+
                             '</div>'+
                         '</div>'+
+                        '<div class="member-info-show"></div>'+
                     '</div>';
 
     $(".special-type").css("display", "block");

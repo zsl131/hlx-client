@@ -77,7 +77,10 @@
                             <input name="specialType" th:value="${order.type eq null ? '1':order.type}" type="hidden"/>
                             <input name="orderTotalMoney" th:value="${order.totalMoney}" type="hidden"/>
                             <input name="reserve" value="1" title="信息不全，请检查后再提交" type="hidden"/>
+                            <input name="discountReason" th:value="${order.discountReason}" type="hidden"/>
                             <input name="orderNo" type="hidden" th:value="${order.no}"/>
+                            <input name="orderStatus" type="hidden" th:value="${order.status}"/>
+                            <input name="discountMoney" th:value="${order.discountMoney}" type="hidden"/>
                             <button type="button" class="btn btn-lg btn-primary submit-order-btn" onclick="submitOrder()"><i class="fa fa-check"></i> 确认收款</button>
                         </div>
                     </div>

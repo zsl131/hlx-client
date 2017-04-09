@@ -46,7 +46,7 @@ public class WebController {
             model.addAttribute("company", c);
             request.getSession().setAttribute("company", c);
 //            return "web/index";
-            return "redirect:/web/orders/add";
+            return "redirect:/web/newOrders/index";
         }
     }
 

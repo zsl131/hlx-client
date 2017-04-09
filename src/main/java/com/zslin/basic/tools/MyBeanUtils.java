@@ -23,6 +23,18 @@ public class MyBeanUtils extends BeanUtils {
         copyProperties(source, target, new String[]{});
     }
 
+    public static void copyProperties(Object source, Object target, boolean noAuto) {
+        copyProperties(source, target, new String[]{}, noAuto);
+    }
+
+    public static void copyProperties(Object source, Object target, String [] ignoreFields, boolean noAuto) {
+        if(noAuto) {
+            BeanUtils.copyProperties(source, target, concat(concat(ignoreFields, new String[]{"id"}), getNullPropertyNames(source)));
+        } else {
+            BeanUtils.copyProperties(source, target, concat(concat(ignoreFields, new String[]{"id", "createDate", "createTime", "createLong", "createDay"}), getNullPropertyNames(source)));
+        }
+    }
+
     private static String[] concat(String[] a, String[] b) {
         String[] c= new String[a.length+b.length];
         System.arraycopy(a, 0, c, 0, a.length);

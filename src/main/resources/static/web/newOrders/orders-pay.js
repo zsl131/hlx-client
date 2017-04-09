@@ -1,3 +1,5 @@
+var remindTitle = "信息不全，不可以提交";
+
 $(function() {
     buildCom();
     buildTotalMoney();
@@ -7,13 +9,49 @@ $(function() {
     $(".pay-types").find("button").click(function() {
         onPayType($(this));
     });
+    onFriendOrder();
 });
+
+function loadOrderTimer() {
+    setInterval(function() {
+        var orderNo = $("input[name='orderNo']").val();
+        $.get("/web/newOrders/queryOrder", {orderNo:orderNo}, function(res) {
+            if(res.status!='0') {window.location.reload();}
+        }, "json");
+    }, "1000");
+}
+
+function onFriendOrder() {
+    var specialType = $("input[name='specialType']").val();
+    if(specialType=='4') {
+        buildFriendHtml($("button[orderType='4']"));
+        remindTitle = "请先输入折扣手机号码进行验证，待审核通过后方可提交";
+        var discountReason = $("input[name='discountReason']").val();
+        var orderStatus = $("input[name='orderStatus']").val();
+        $("input[name='bossPhone']").val(discountReason);
+        var initValue = "";
+        if(orderStatus=='6') {
+            $(".member-info-show").html("已优惠 <b style='color:#F60; font-size:16px;'>"+$("input[name='discountMoney']").val() +"</b> 元");
+        }
+        if(orderStatus!='6') {
+            remindTitle = "请等待【"+discountReason+"】确认后才可享受折扣哦！";
+            $(".submit-order-btn").html("<i class='fa fa-recycle'></i> 请等待确认");
+            $(".submit-order-btn").attr("disabled", "disabled");
+            $("input[name='reserve']").val("");
+            loadOrderTimer();
+        } else {
+            initValue = discountReason;
+            $("input[name='reserve']").val(discountReason);
+        }
+        setReserveInfo(initValue, remindTitle);
+    }
+}
 
 function onOrderType(obj) {
     $(".order-type-div").find("button").each(function() {
         $(this).removeClass("btn-info")
     });
-    var remindTitle = "信息不全，不可以提交";
+
     var initValue = "";
     $(obj).addClass("btn-info");
     var orderType = $(obj).attr("orderType");

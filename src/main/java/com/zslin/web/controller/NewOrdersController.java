@@ -153,6 +153,12 @@ public class NewOrdersController {
         return "web/newOrders/payBuffetOrder";
     }
 
+    @GetMapping(value = "queryOrder")
+    public @ResponseBody BuffetOrder queryOrder(String orderNo, HttpServletRequest request) {
+        BuffetOrder order = buffetOrderService.findByNo(orderNo);
+        return order;
+    }
+
     //订单显示页面
     @GetMapping(value = "showOrder")
     public String showOrder(Model model, String orderNo, HttpServletRequest request) {
