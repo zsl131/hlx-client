@@ -21,6 +21,10 @@ public class BuffetOrder {
     @Column(name = "cashier_name")
     private String cashierName;
 
+    /** 是否为自助餐订单1-是；0-否 */
+    @Column(name = "is_self")
+    private String isSelf;
+
     /** 收银员电话 */
     @Column(name = "cashier_phone")
     private String cashierPhone;
@@ -53,6 +57,11 @@ public class BuffetOrder {
      * -1-已退票（收银员操作）
      * -2-已取消
      * -3-被老板驳回
+     *
+     * *****************
+     *
+     * 如果是外卖单品时，状态应有所不同
+     * 0-已下单
      */
     private String status;
 
@@ -66,7 +75,7 @@ public class BuffetOrder {
 
     /** 剩余的压金，如果有扣 */
     @Column(name = "surplus_bond")
-    private Float surplusBond;
+    private Float surplusBond = 0f;
 
     /** 类型，1-收银员下单；2-微信下单；3-美团下单；4-友情价下单；5-会员订单；6-卡券订单 */
     private String type;
@@ -121,6 +130,14 @@ public class BuffetOrder {
     /** 退票原因 */
     @Column(name = "retreatReason")
     private String retreatReason;
+
+    public String getIsSelf() {
+        return isSelf;
+    }
+
+    public void setIsSelf(String isSelf) {
+        this.isSelf = isSelf;
+    }
 
     public Integer getId() {
         return id;

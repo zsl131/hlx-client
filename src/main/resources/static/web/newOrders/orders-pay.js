@@ -1,6 +1,13 @@
 var remindTitle = "信息不全，不可以提交";
+var initOrderType = 0;
 
 $(function() {
+    initOrderType = $("input[name='specialType']").val(); //订单类型
+    if(initOrderType!='1') {
+        $(".order-type-div").find("button").each(function() {
+            $(this).attr("disabled", "disabled");
+        });
+    }
     buildCom();
     buildTotalMoney();
     $(".order-type-div").find("button").click(function() {
@@ -66,6 +73,10 @@ function onOrderType(obj) {
         buildFriendHtml(obj);
         remindTitle = "请先输入折扣手机号码进行验证，待审核通过后方可提交";
         initValue = "";
+    } else if(orderType == '6') { //卡券订单
+        buildTicketHtml(obj);
+        remindTitle = "请先设置对应卡券数量";
+        initValue = "";
     }
     setReserveInfo(initValue, remindTitle);
 }
@@ -95,6 +106,8 @@ function submitOrder() {
                 alert(res.msg);
                 window.location.reload();
             }, "json");
+
+            $(submitDialog).remove(); //直接关闭
         });
     }
 }

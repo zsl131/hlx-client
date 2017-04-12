@@ -12,7 +12,7 @@ function setCommodityStyle() {
         $(this).attr("canBuy", 1);
         var comType = $(this).attr("comType");
         var price = parseFloat($(this).find(".price").html());
-        if(((isDinner && comType!='2') || (!isDinner && comType!='1')) && price>0) { //时段不对
+        if(comType!='3' && (((isDinner && comType!='2') || (!isDinner && comType!='1')) && price>0)) { //时段不对
             setComStyle($(this));
         }
     })

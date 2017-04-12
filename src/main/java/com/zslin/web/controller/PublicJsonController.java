@@ -1,19 +1,15 @@
 package com.zslin.web.controller;
 
-import com.zslin.model.AdminPhone;
-import com.zslin.model.Member;
-import com.zslin.model.Price;
-import com.zslin.model.Rules;
-import com.zslin.service.IAdminPhoneService;
-import com.zslin.service.IMemberService;
-import com.zslin.service.IPriceService;
-import com.zslin.service.IRulesService;
+import com.zslin.model.*;
+import com.zslin.service.*;
 import com.zslin.tools.SingleCaseTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Created by 钟述林 393156105@qq.com on 2017/3/12 15:54.
@@ -32,7 +28,10 @@ public class PublicJsonController {
     private IAdminPhoneService adminPhoneService;
 
     @Autowired
-    public IMemberService memberService;
+    private IMemberService memberService;
+
+    @Autowired
+    private IPrizeService prizeService;
 
     @GetMapping(value = "getPrice")
     public Price getPirce() {
@@ -66,5 +65,11 @@ public class PublicJsonController {
         Member m = memberService.findByPhone(phone);
         if(m==null) {m = new Member();}
         return m;
+    }
+
+    @PostMapping(value = "getPrize")
+    public List<Prize> getPrize() {
+        List<Prize> list = prizeService.findAll();
+        return list;
     }
 }

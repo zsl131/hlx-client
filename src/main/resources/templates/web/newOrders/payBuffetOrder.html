@@ -14,6 +14,7 @@
     <script type="text/javascript" src="/web/newOrders/orders-pay.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-member.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-friend.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-ticket.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-normal.js"></script>
 </head>
 <body>
@@ -43,15 +44,16 @@
                 </div>
                 <div class="col-md-9 col-sm-9 col-xs-9 col-lg-9">
                     <div class="max-height" style="padding:15px;">
+                        <h4 th:text="${order.isSelf eq '1'?'自助餐':'外卖单品'}" style="color:#F60; padding:0px 0px 8px 15px; border-bottom:1px #eee solid;"></h4>
                         <div class="order-type-div">
                             <span>订单性质：</span>
                             <div class="btn-group" role="group" aria-label="...">
                                 <button type="button" orderType="1" th:class="'btn btn-default '+${(order.type eq null or order.type eq '' or order.type eq '1')?'btn-info':''}" ><i class="fa fa-gavel"></i> 正常订单</button>
                                 <button type="button" orderType="5" th:class="'btn btn-default '+${order.type eq '5'?'btn-info':''}" title="输入会员手机，验证通过后从会员账户上扣款"><i class="fa fa-user-secret"></i> 会员订单</button>
-                                <button type="button" orderType="4" th:class="'btn btn-default '+${order.type eq '4'?'btn-info':''}" title="输入折扣手机号码，待审核通过后方可收款入场"><i class="fa fa-group"></i> 亲情优惠订单</button>
+                                <button th:if="${order.isSelf eq '1'}" type="button" orderType="4" th:class="'btn btn-default '+${order.type eq '4'?'btn-info':''}" title="输入折扣手机号码，待审核通过后方可收款入场"><i class="fa fa-group"></i> 亲情优惠订单</button>
                                 <button type="button" orderType="2" th:class="'btn btn-default '+${order.type eq '2'?'btn-info':''}" ><i class="fa fa-weixin"></i> 微信订单</button>
                                 <button type="button" orderType="3" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" ><i class="fa fa-tumblr"></i> 美团订单</button>
-                                <button type="button" orderType="6" th:class="'btn btn-default '+${order.type eq '6'?'btn-info':''}" ><i class="fa fa-ticket"></i> 卡券订单</button>
+                                <button th:if="${order.isSelf eq '1'}" type="button" orderType="6" th:class="'btn btn-default '+${order.type eq '6'?'btn-info':''}" title="卡券总数不能超过全票总数"><i class="fa fa-ticket"></i> 卡券订单</button>
                             </div>
                         </div>
                         <div class="special-type" style="display:none">

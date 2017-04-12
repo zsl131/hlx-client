@@ -1,15 +1,20 @@
 package com.zslin.web.controller;
 
+import com.zslin.basic.repository.SimplePageBuilder;
+import com.zslin.basic.repository.SimpleSortBuilder;
 import com.zslin.basic.tools.NormalTools;
+import com.zslin.basic.utils.ParamFilterUtil;
 import com.zslin.dto.ResDto;
 import com.zslin.model.*;
 import com.zslin.service.*;
 import com.zslin.tools.OrderNoTools;
 import com.zslin.tools.OrdersOperateTools;
+import com.zslin.tools.PrintTicketTools;
 import com.zslin.tools.WorkerCookieTools;
 import com.zslin.upload.tools.UploadFileTools;
 import com.zslin.upload.tools.UploadJsonTools;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +61,12 @@ public class NewOrdersController {
     @Autowired
     private UploadFileTools uploadFileTools;
 
+    @Autowired
+    private IPrizeService prizeService;
+
+    @Autowired
+    private PrintTicketTools printTicketTools;
+
     @GetMapping(value = "index")
     public String index(Model model, String type, HttpServletRequest request) {
         type = type==null||"".equalsIgnoreCase(type)?"1":type;
@@ -71,6 +82,15 @@ public class NewOrdersController {
         return "web/newOrders/index";
     }
 
+    /** 订单列表 */
+    @GetMapping(value = "list")
+    public String list(Model model, Integer page, HttpServletRequest request) {
+        Page<BuffetOrder> datas = buffetOrderService.findAll(ParamFilterUtil.getInstance().buildSearch(model, request),
+                SimplePageBuilder.generate(page, SimpleSortBuilder.generateSort("createLong_d")));
+        model.addAttribute("datas", datas);
+        return "web/newOrders/list";
+    }
+
     @PostMapping(value = "addBuffetOrder")
     public @ResponseBody ResDto addBuffetOrder(String commodityNo, HttpServletRequest request) {
         try {
@@ -80,6 +100,7 @@ public class NewOrdersController {
             if(detailList==null || detailList.size()<=0) {return new ResDto("-2", "订单中无商品");}
             BuffetOrder order = new BuffetOrder();
             order.setCashierName(w.getName());
+            order.setIsSelf("3".equals(detailList.get(0).getCommodityType())?"0":"1"); //如果商品类型为3则表示是外卖单品
             order.setCashierPhone(w.getPhone());
             order.setNo(orderNoTools.getOrderNo("1")); //前台订单以1开头
             order.setCreateLong(System.currentTimeMillis());
@@ -204,12 +225,60 @@ public class NewOrdersController {
             order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
             order.setStatus("2"); //就餐中……
             //TODO 需要打印小票
+        } else if("4".equals(specialType)) { //如果是亲情折扣订单
+            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
+            order.setPayType(payType);
+            order.setType(specialType); //订单类型
+            order.setDiscountType("2");
+            order.setEntryLong(System.currentTimeMillis());
+            order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+            order.setStatus("2"); //就餐中……
+            //TODO 需要打印小票
+        } else if("6".equals(specialType)) { //如果是卡券订单
+            Float discountMoney = buildDiscountMoney(no, reserve);
+            order.setDiscountMoney(discountMoney);
+            order.setTotalMoney(order.getTotalMoney()-discountMoney);
+            order.setType(specialType); //订单类型
+            order.setDiscountReason(reserve);
+            order.setDiscountType("3"); //抵价券
+            order.setEntryLong(System.currentTimeMillis());
+            order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+            order.setStatus("2"); //就餐中……
+            order.setPayType(payType);
+            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
         }
         buffetOrderService.save(order);
+
+        //TODO 生成小票
+        printTicketTools.printBuffetOrder(order);
 
         sendBuffetOrder2Server(order); //发送数据到服务器
         sendBuffetOrderDetail2Server(order.getNo());
         return new ResDto("1", "操作成功");
+    }
+
+    private Float buildDiscountMoney(String orderNo, String reserve) {
+        Float res = 0f;
+        String [] array = reserve.split("_");
+        for(String single : array) {
+            if(single!=null && single.indexOf(":")>0) {
+                String [] s_a = single.split(":");
+                Integer dataId = Integer.parseInt(s_a[0]); //Prize的id
+                Integer amount = Integer.parseInt(s_a[1]); //对应数量
+                Prize prize = prizeService.findByDataId(dataId);
+                String prizeType = prize.getType();
+                if("3".equals(prizeType)) {
+                    Float price = buffetOrderDetailService.findPrice(orderNo, "88888");
+                    res += price * amount;
+                } else if("4".equals(prizeType)) {
+                    Float price = buffetOrderDetailService.findPrice(orderNo, "99999");
+                    res += price * amount;
+                } else if("2".equals(prizeType)) {
+                    res += ((1.0f*prize.getWorth()*amount)/100);
+                }
+            }
+        }
+        return res;
     }
 
     //退票

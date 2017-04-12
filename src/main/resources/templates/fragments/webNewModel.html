@@ -13,6 +13,9 @@
     <script type="text/javascript" src="/basic/bootstrap3/js/bootstrap.min.js"></script>
     <link type="text/css" rel="stylesheet" href="/basic/bootstrap3/css/bootstrap.min.css"/>
 
+    <script type="text/javascript" src="/basic/admin/myself/cms.admin.js"></script>
+    <script type="text/javascript" src="/basic/admin/myself/my_filter.js"></script>
+
     <!-- Font Awesome-->
     <!--<link rel="stylesheet" href="/basic/font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="/basic/font-awesome/css/font-awesome.min.css" />-->
@@ -51,14 +54,15 @@
             <div class="top-show">
                 午餐：<b class="breakfastPrice">-</b>元/位，晚餐：<b class="dinnerPrice">-</b>元/位，压金：<b class="bondMoney">-</b>元/位。
             </div>
-            <div class="bottom-show">
-                <ul class="opt-ul" th:if="${session.login_worker ne null}">
+            <div class="bottom-show" style="float:right;">
+                <!--<ul class="opt-ul" th:if="${session.login_worker ne null}">
                     <li><a href="/" class="btn" type="button"><img th:src="${session.login_worker.headimgurl}" style="width:24px;border-radius:20px;"/> 收银员：<span class="cashier" th:text="${session.login_worker.name}"></span></a></li>
                     <li><a href="/web/member/list" class="btn btn-primary"><i class="fa fa-user-secret"></i> 会员</a></li>
                     <li><a href="javascript:;" class="btn btn-info"><i class="fa fa-random"></i> 换班</a></li>
                     <li><a href="/web/updatePwd" class="btn btn-warning"><i class="fa fa-unlock-alt"></i> 改密</a></li>
                     <li><a href="/public/logout" class="btn btn-danger logout-href"><i class="fa fa-close"></i> 退出</a></li>
-                </ul>
+                </ul>-->
+                <div th:replace="web/modelNav :: content" th:remove="tag"></div>
             </div>
         </div>
     </div>
@@ -74,6 +78,9 @@
     <div class="container text-center login-bottom">
         &copy;<span class="show-year">2016</span><span th:text="${session.appConfig ne null ? session.appConfig.contant:'系统管理员'}"></span>
     </div>
+</div>
+<div th:each="arg : ${args}" class="search-filter-div">
+    <input th:value="${arg.value}" type="hidden" th:attr="targetId=${arg.key}"/>
 </div>
 </body>
 </html>

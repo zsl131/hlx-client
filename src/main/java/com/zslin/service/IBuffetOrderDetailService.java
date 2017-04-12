@@ -14,4 +14,7 @@ public interface IBuffetOrderDetailService extends BaseRepository<BuffetOrderDet
 
     @Query("FROM BuffetOrderDetail bod WHERE bod.orderNo=?1 ORDER BY bod.commodityNo ASC")
     List<BuffetOrderDetail> listByOrderNo(String orderNo);
+
+    @Query("SELECT price FROM BuffetOrderDetail WHERE orderNo=?1 AND commodityNo=?2 GROUP BY commodityNo")
+    Float findPrice(String orderNo, String comNo);
 }

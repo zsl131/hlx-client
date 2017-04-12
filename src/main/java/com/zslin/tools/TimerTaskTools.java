@@ -93,6 +93,8 @@ public class TimerTaskTools {
             simpleDataTools.handlerOrder(dataObj);
         } else if("buffetOrder".equalsIgnoreCase(type)) { //订单
             simpleDataTools.handlerBuffetOrder(dataObj);
+        } else if("prize".equalsIgnoreCase(type)) { //卡券、礼物
+            simpleDataTools.handlerPrize(action, dataId, dataObj);
         }
     }
 

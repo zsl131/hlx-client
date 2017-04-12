@@ -5,15 +5,13 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.ResourceUtils;
 
 import javax.print.*;
 import javax.print.attribute.DocAttributeSet;
 import javax.print.attribute.HashDocAttributeSet;
 import javax.print.attribute.HashPrintRequestAttributeSet;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * Created by 钟述林 393156105@qq.com on 2017/4/8 23:19.
@@ -60,5 +58,15 @@ public class PrintTest {
     @Test
     public void test03() {
         PrintTools2.print("D:/temp123.doc");
+    }
+
+    @Test
+    public void test04() {
+        try {
+            File f = ResourceUtils.getFile("classpath:word-temp/bond-template.doc");
+            System.out.println(f.exists());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

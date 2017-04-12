@@ -89,6 +89,10 @@ function removeSingle(obj) {
     });
 }
 
+function stageOrder() {
+    showDialog("功能完善中，敬请期待……");
+}
+
 function cleanAll() {
     var html = '确定清空所有已选商品吗？清空后可以再次从商品列表中选择。';
 

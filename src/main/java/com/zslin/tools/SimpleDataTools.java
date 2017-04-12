@@ -35,6 +35,9 @@ public class SimpleDataTools {
     @Autowired
     private IBuffetOrderService buffetOrderService;
 
+    @Autowired
+    private IPrizeService prizeService;
+
     public void handlerPrice(JSONObject jsonObj) {
         Price price = priceService.findOne();
         if(price==null) {price = new Price();}
@@ -112,6 +115,21 @@ public class SimpleDataTools {
         } else {
             MyBeanUtils.copyProperties(o, orders, new String[]{"no", "id"}, true);
             buffetOrderService.save(orders);
+        }
+    }
+
+    public void handlerPrize(String action, Integer dataId, JSONObject jsonObj) {
+        if("delete".equalsIgnoreCase(action)) {
+            prizeService.deleteByDataId(dataId);
+        } else if("update".equalsIgnoreCase(action)) {
+            Prize prize = prizeService.findByDataId(dataId);
+            if(prize==null){
+                prize = new Prize();
+            }
+            Prize p = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), Prize.class);
+            MyBeanUtils.copyProperties(p, prize, new String[]{"id"});
+            prize.setDataId(dataId);
+            prizeService.save(prize);
         }
     }
 }

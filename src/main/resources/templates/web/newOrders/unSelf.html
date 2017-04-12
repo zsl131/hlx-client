@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <div th:fragment="content" th:remove="tag">
+            <table class="show-detail">
+                <tr>
+                    <td class="field">订单类型：</td>
+                    <td>
+                        <span th:switch="${order.type}" th:remove="tag">
+                            <span th:case="1">店内订单</span>
+                            <span th:case="2">美团订单</span>
+                            <span th:case="3">微信订单</span>
+                            <span th:case="5">会员订单（已扣：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>
+                        </span>
+                    </td>
+                    <td class="field">订单编号：</td>
+                    <td th:text="${order.no}"></td>
+                </tr>
+
+                <tr>
+                    <td class="field">收银员姓名：</td>
+                    <td th:text="${order.cashierName}"></td>
+                    <td class="field">收银员电话：</td>
+                    <td th:text="${order.cashierPhone}"></td>
+                </tr>
+
+                <tr>
+                    <td class="field">就餐费用：</td>
+                    <td th:if="${order.totalMoney ne null}">
+                        <span style="color:#F00;" class="discount-money totalMoney" th:text="${#numbers.formatDecimal(order.totalMoney, 0, 'COMMA', 1, 'POINT')}"></span> 元
+                    </td>
+                    <td class="field">剩余压金：</td>
+                    <td th:text="${order.surplusBond}+' 元（只收全票人员）'" class="surplusBond"></td>
+                </tr>
+
+                <tr>
+                    <td class="field">付款方式：</td>
+                    <td>
+                        <span th:switch="${order.payType}" th:remove="tag">
+                            <span th:case="1">现金支付</span>
+                            <span th:case="2">刷卡支付</span>
+                            <span th:case="3">微信支付</span>
+                            <span th:case="4">支付宝支付</span>
+                            <span th:case="*">未知</span>
+                        </span>
+                    </td>
+                    <td class="field">订单状态：</td>
+                    <td>
+                        <span th:switch="${order.status}" th:remove="tag">
+                            <span th:case="0">已下单</span>
+                            <span th:case="1">已付款</span>
+                            <span th:case="2" style="color:#00F;">就餐中…</span>
+                            <span th:case="3">美团已确认</span>
+                            <span th:case="4" style="color:#00F">压金已全退（订单完成）</span>
+                            <span th:case="5" style="color:#F60">已退部份压金（扣<b th:text="${order.surplusBond}+' 元'"></b>）</span>
+                            <span th:case="6" style="color:#F60">折扣已确认（请收款）</span>
+                            <span th:case="-1" style="color:#F00;">已退票（<b th:remove="tag" th:text="${order.retreatReason}"></b>）</span>
+                            <span th:case="-2" style="color:#F00;">已取消（<b th:remove="tag" th:text="${order.retreatReason}"></b>）</span>
+                            <span th:case="-3" style="color:#F00;">被驳回，不可给予折扣</span>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="field">订单时间：</td>
+                    <td th:text="${order.createTime}"></td>
+                    <td class="field">入场时间：</td>
+                    <td>
+                        <span th:text="${order.entryTime}"></span>
+                        <span th:if="${order.status eq '2'}">（用时：<span th:text="${order.entryLong}" class="show-seconds-now"></span>）</span>
+                    </td>
+                </tr>
+                <tr th:if="${order.endTime ne null and order.entryTime ne null}">
+                    <td class="field">离场时间：</td>
+                    <td th:text="${order.endTime}"></td>
+                    <td class="field">就餐用时：</td>
+                    <td th:text="${order.endLong-order.entryLong}" class="show-seconds"></td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>

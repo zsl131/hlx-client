@@ -5,8 +5,9 @@ $(function() {
     });
 
     $(".show-seconds-now").each(function() {
-        var seconds = parseInt($(this).html());
-        $(this).html(buildTime(parseInt((new Date().getTime()-seconds)/1000)));
+        //var seconds = parseInt($(this).html());
+        //$(this).html(buildTime(parseInt((new Date().getTime()-seconds)/1000)));
+        rebuildCon($(this));
     });
 
     $(".show-money").each(function() {
@@ -14,6 +15,14 @@ $(function() {
         $(this).html(money/100 + " 元");
     });
 });
+
+function rebuildCon(obj) {
+    var seconds = parseInt($(obj).html());
+    $(obj).html(buildTime(parseInt((new Date().getTime()-seconds)/1000)));
+    setInterval(function() {
+        $(obj).html(buildTime(parseInt((new Date().getTime()-seconds)/1000)));
+    }, "1000");
+}
 
 function buildTime(seconds) {
     if(seconds<60) {

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webNewModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <script src="/web/web-show-time.js"></script>
+</head>
+<body>
+    <div th:fragment="content" th:remove="tag">
+        <div class="container" style="background:#FFF; min-height:400px; height:100%; padding:15px;">
+            <div class="header lighter smaller blue" style="color:#555; padding-bottom:10px;">
+                <h4><span class="fa fa-list"></span>&nbsp;订单列表（<span th:text="${datas.getTotalElements()}"></span>）</h4>
+            </div>
+            <div th:replace="web/newOrders/filter :: content" th:remove="tag"></div>
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>订单编号</th>
+                        <th>类型</th>
+                        <th>订单金额/压金</th>
+                        <th>日期</th>
+                        <th>商品数</th>
+                        <th>优惠类型</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+
+                    <tr th:each="obj : ${datas}">
+                        <td><a th:href="'/web/newOrders/payBuffetOrder?orderNo='+${obj.no}" th:text="${obj.no}"></a></td>
+                        <td>
+                            <span th:text="${obj.isSelf eq '1'?'自助券':'外卖单品'}"></span> /
+                            <span  th:switch="${obj.type}">
+                                <span th:case="1">普通订单</span>
+                                <span th:case="2">微信订单</span>
+                                <span th:case="3">美团订单</span>
+                                <span th:case="4">折扣订单</span>
+                                <span th:case="5">会员订单</span>
+                                <span th:case="6">卡券订单</span>
+                            </span>
+                        </td>
+                        <td>
+                            <span th:text="${obj.totalMoney}"></span> / <span th:text="${obj.surplusBond eq null?0:obj.surplusBond}"></span>
+                        </td>
+                        <td>
+                            <p th:title="${obj.createTime}"><span th:text="${obj.createDay}"></span>（<span th:style="'color:'+${obj.endTime ne null?'#555':'#F00'}" th:text="${obj.endTime ne null?'已结束':'未结束'}"></span>）</p>
+                            <p th:if="${obj.endTime ne null}">用时：<span th:text="${obj.endLong-(obj.entryLong eq null?obj.createLong:obj.entryLong)}" class="show-seconds"></span></p>
+                            <p th:if="${obj.endTime eq null}">用时：<span th:text="${obj.entryLong eq null?obj.createLong:obj.entryLong}" class="show-seconds-now"></span></p>
+                        </td>
+                        <td th:text="${obj.commodityCount}"></td>
+                        <td th:switch="${obj.discountType}">
+                            <span th:case="0">无优惠</span>
+                            <span th:case="1">积分抵价（<b th:text="${obj.discountMoney}"></b> 元）</span>
+                            <span th:case="2">亲情折扣（<b th:text="${obj.discountMoney}"></b> 元）</span>
+                            <span th:case="3">卡券抵价（<b th:text="${obj.discountMoney}"></b> 元）</span>
+                            <span th:case="4">微信扣款（<b th:text="${obj.discountMoney}"></b> 元）</span>
+                            <span th:case="5">会员扣款（<b th:text="${obj.discountMoney}"></b> 元）</span>
+                            <span th:case="6">美团扣款（<b th:text="${obj.discountMoney}"></b> 元）</span>
+                        </td>
+                        <td th:switch="${obj.status}">
+                            <span th:case="0">已下单</span>
+                            <span th:case="1">已付款</span>
+                            <span th:case="2" style="color:#00F;">就餐中…</span>
+                            <span th:case="3">美团已确认</span>
+                            <span th:case="4" style="color:#00F;">压金已全退（订单完成）</span>
+                            <span th:case="5" style="color:#F60">已退部份压金（扣<b th:text="${obj.surplusBond}+' 元'"></b>）</span>
+                            <span th:case="6">折扣确认可收款</span>
+                            <span th:case="-1" style="color:#F00;">已退票（<b th:remove="tag" th:text="${obj.retreatReason}"></b>）</span>
+                            <span th:case="-2" style="color:#F00;">已取消（<b th:remove="tag" th:text="${obj.retreatReason}"></b>）</span>
+                            <span th:case="-3" style="color:#F00;">被驳回（订单取消）</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a class="green" title="查看详情" th:href="'/web/newOrders/payBuffetOrder?orderNo='+${obj.no}">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <div th:include="fragments/page :: pager" th:remove="tag"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

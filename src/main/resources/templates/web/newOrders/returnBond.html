@@ -54,9 +54,9 @@
                             <span th:case="1">店内订单</span>
                             <span th:case="2">美团订单</span>
                             <span th:case="3">微信订单</span>
-                            <span th:case="4">友情价订单</span>
+                            <span th:case="4">亲情折扣（优惠：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>
                             <span th:case="5">会员订单（已扣：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>
-                            <span th:case="6">卡券订单</span>
+                            <span th:case="6">卡券订单（优惠：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>
                         </span>
                     </td>
                     <td class="field">订单编号：</td>
@@ -98,6 +98,7 @@
                     <span th:case="3">美团已确认</span>
                     <span th:case="4" style="color:#00F;">压金已全退（订单完成）</span>
                     <span th:case="5" style="color:#F60">已退部份压金（扣<b th:text="${order.surplusBond}+' 元'"></b>）</span>
+                    <span th:case="6">折扣确认可收款</span>
                     <span th:case="-1" style="color:#F00;">已退票（<b th:remove="tag" th:text="${order.retreatReason}"></b>）</span>
                     <span th:case="-2" style="color:#F00;">已取消（<b th:remove="tag" th:text="${order.retreatReason}"></b>）</span>
                     <span th:case="-3" style="color:#F00;">被驳回（订单取消）</span>

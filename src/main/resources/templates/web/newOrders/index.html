@@ -26,7 +26,7 @@
                     </div>
                     <div class="index-commodity-list">
                         <ul>
-                            <li th:each="commodity : ${commodityList}" onclick="addCommodity2Order(this)" th:attr="comType = ${commodity.type}">
+                            <li th:each="commodity : ${commodityList}" onclick="addCommodity2Order(this)" th:attr="comType = ${commodity.type}" canBuy="1" th:title="${commodity.remark}">
                                 <p><span th:text="${commodity.name}" class="name" th:attr="no=${commodity.no}"></span></p>
                                 <p><b th:text="${commodity.price}" class="price"></b> 元/<span th:text="${commodity.type eq '3'?'份':'位'}"></span></p>
                             </li>
@@ -38,7 +38,7 @@
                         <div class="index-orders-title">
                             <span class="shopping"><b class="fa fa-shopping-cart"></b></span>
                             <span class="title">已选商品</span>
-                            <span class="cleanAll" onclick="cleanAll()"><b class="fa fa-trash-o"></b></span>
+                            <span class="cleanAll" title="清空所有已选商品" onclick="cleanAll()"><b class="fa fa-trash-o"></b></span>
                         </div>
                         <div class="shopping-list">
                         </div>
@@ -47,7 +47,7 @@
                             <input name="orderNos" type="hidden"/>
                             <input name="mealTime" th:if="${type eq '1' and rules ne null}" th:value="${rules.spe}" type="hidden"/>
                             <p class="datas"><span class="count">单品总数：<b>0</b></span><span class="money">合计：<i class="fa fa-cny"></i> <b>0</b> 元</span></p>
-                            <p class="btns"><button class="btn btn-danger"><i class="fa fa-shopping-basket"></i> 挂单</button><button class="submit-pay-btn btn btn-primary"><i class="fa fa-gavel"></i> 结账</button></p>
+                            <p class="btns"><button class="btn btn-danger" onclick="stageOrder()"><i class="fa fa-shopping-basket"></i> 挂单</button><button class="submit-pay-btn btn btn-primary"><i class="fa fa-gavel"></i> 结账</button></p>
                         </div>
                     </div>
                 </div>
