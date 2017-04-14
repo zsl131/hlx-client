@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webNewModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-index.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-pay.css"/>
+    <script type="text/javascript" src="/web/newOrders/orders-index.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-list.js"></script>
+    <script type="text/javascript" src="/web/newOrders/out-orders-pay.js"></script>
+</head>
+<body>
+    <div th:fragment="content" th:remove="tag">
+        <div class="orders-main-div ">
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
+                    <div class="max-height pay-commodity-list">
+                        <h4 class="title">订单信息</h4>
+                        <div class="order-info">
+                            <p>订单编号：<span th:text="${order.no}"></span></p>
+                            <p>订单金额：<span th:text="${order.totalMoney}"></span> 元</p>
+                            <p>商品数量：<span th:text="${order.commodityCount}"></span></p>
+                            <p>创建时间：<span th:text="${order.createTime}"></span></p>
+                        </div>
+                        <table class="commodity-table">
+                            <tr>
+                                <th>商品</th>
+                                <th>数量</th>
+                                <th>小计</th>
+                            </tr>
+                        </table>
+                        <div class="commodity-list-hidden" style="display:none">
+                            <span th:each="commodity : ${commodityList}" th:attr="comName=${commodity.commodityName}, comNo=${commodity.commodityNo}, price=${commodity.price}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-xs-9 col-lg-9">
+                    <div class="max-height" style="padding:15px;">
+                        <h4 th:text="${order.isSelf eq '1'?'自助餐':'外卖单品'}" style="color:#F60; padding:0px 0px 8px 15px; border-bottom:1px #eee solid;"></h4>
+                        <div class="order-type-div">
+                            <span>订单性质：</span>
+                            <div class="btn-group" role="group" aria-label="...">
+                                <button type="button" orderType="1" title="收款后点击“确认收款”按钮即可打印小票" th:class="'btn btn-default '+${(order.type eq null or order.type eq '' or order.type eq '1')?'btn-info':''}" ><i class="fa fa-gavel"></i> 店内付款</button>
+                                <button type="button" orderType="7" title="先送货，再由送货人员收款后交由收银员登记" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" ><i class="fa fa-flask"></i> 货到付款</button>
+                                <!--<button type="button" orderType="3" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" ><i class="fa fa-tumblr"></i> 美团订单</button>-->
+                            </div>
+                        </div>
+                        <div class="special-type">
+
+                        </div>
+                        <div class="show-money">
+                            <span class="money-name">产生金额：</span>
+                            <span class="money-amount"><b class="fa fa-cny"></b> <b th:text="${order.totalMoney}"></b> 元</span>
+                        </div>
+                        <div class="pay-types" >
+                            <span>支付方式：</span>
+                            <div class="btn-group" role="group" aria-label="...">
+                                <button type="button" class="btn btn-default btn-danger" payType="1"><i class="fa fa-cny"></i> 现金支付</button>
+                                <button type="button" class="btn btn-default" payType="3"><i class="fa fa-weixin"></i> 微信支付</button>
+                                <button type="button" class="btn btn-default" payType="4">支付宝支付</button>
+                                <button type="button" class="btn btn-default" payType="2"><i class="fa fa-credit-card-alt"></i> 刷卡支付</button>
+                            </div>
+                        </div>
+                        <div class="submit-pay" style="margin-top:12px;">
+                            <input name="payType" value="1" type="hidden"/>
+                            <input name="specialType" th:value="${order.type eq null ? '1':order.type}" type="hidden"/>
+                            <input name="orderNo" type="hidden" th:value="${order.no}"/>
+                            <input name="orderStatus" type="hidden" th:value="${order.status}"/>
+                            <button type="button" class="btn btn-lg btn-primary submit-order-btn" onclick="submitOrder()"><i class="fa fa-check"></i> 确认收款</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

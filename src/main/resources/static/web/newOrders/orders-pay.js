@@ -8,7 +8,7 @@ $(function() {
             $(this).attr("disabled", "disabled");
         });
     }
-    buildCom();
+
     buildTotalMoney();
     $(".order-type-div").find("button").click(function() {
         onOrderType($(this));

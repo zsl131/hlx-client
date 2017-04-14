@@ -54,7 +54,8 @@ public class WordTemplateTools {
         return getTemplateFile("ticket-template.docx");
     }
 
-    public File buildTicketFile(String shopName, String level, String date, String orderNo) {
+    public File buildTicketFile(String shopName, String level, String date, String orderNo,
+                                String phone, String address) {
         File targetFile = new File(configTools.getUploadPath("tickets/")+"ticket-"+(UUID.randomUUID().toString())+".docx");
         try {
             File f = getTicketTempate();
@@ -66,6 +67,8 @@ public class WordTemplateTools {
             datas.put("shopName", shopName);
             datas.put("level", level);
             datas.put("date", date);
+            datas.put("phone", phone);
+            datas.put("address", address);
             mainDocumentPart.variableReplace(datas);
 
             InputStream is = new FileInputStream(getTemplateFile("qrcode.jpg"));
@@ -85,7 +88,8 @@ public class WordTemplateTools {
         return targetFile;
     }
 
-    public File buildBondFile(String shopName, Integer peopleCount, Float bondMoney, String date, String orderNo) {
+    public File buildBondFile(String shopName, Integer peopleCount, Float bondMoney, String date, String orderNo,
+                              String phone, String address) {
         File targetFile = new File(configTools.getUploadPath("tickets/")+"bond-"+(UUID.randomUUID().toString())+".docx");
         try {
             File f = getBondTemplate();
@@ -99,6 +103,8 @@ public class WordTemplateTools {
             datas.put("bondMoney", bondMoney+"");
             datas.put("code", orderNo);
             datas.put("date", date);
+            datas.put("phone", phone);
+            datas.put("address", address);
             mainDocumentPart.variableReplace(datas);
 
 //            byte[] bytes = qrGenerateTools.genQr(orderNo);

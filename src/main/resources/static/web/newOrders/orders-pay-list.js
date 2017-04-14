@@ -1,3 +1,7 @@
+$(function() {
+    buildCom();
+});
+
 function setBondCount(count) {
     $("input[name='bondCount']").val(count);
 }
@@ -27,6 +31,7 @@ function buildCommodityList(no, name, price) {
 }
 
 function modifyCom(no, name, price) {
+//alert(no+"==="+name+"==="+price);
     var oldObj = $(".commodity-table").find("tr[no='"+no+"']");
     if(oldObj.attr("no")) {
         var num = parseInt($(oldObj).find(".num").html());

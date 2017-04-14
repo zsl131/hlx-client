@@ -164,6 +164,9 @@ public class NewOrdersController {
     @GetMapping(value = "payBuffetOrder")
     public String payBuffetOrder(Model model, String orderNo, HttpServletRequest request) {
         BuffetOrder order = buffetOrderService.findByNo(orderNo);
+        if("0".equals(order.getIsSelf())) { //如果是外卖单品，则跳转
+            return "redirect:/web/newOrders/payOutOrder?orderNo="+orderNo;
+        }
         String status = order.getStatus();
         if(!"0".equalsIgnoreCase(status) && !"1".equalsIgnoreCase(status) && !"6".equals(status)) {
             return "redirect:/web/newOrders/showOrder?orderNo="+orderNo;
@@ -172,6 +175,60 @@ public class NewOrdersController {
         model.addAttribute("commodityList", buffetOrderDetailService.listByOrderNo(orderNo));
         model.addAttribute("price", priceService.findOne());
         return "web/newOrders/payBuffetOrder";
+    }
+
+    @GetMapping(value = "payOutOrder")
+    public String payOutOrder(Model model, String orderNo, HttpServletRequest request) {
+        BuffetOrder order = buffetOrderService.findByNo(orderNo);
+        if("1".equals(order.getIsSelf())) { //如果是自助餐则跳转
+            return "redirect:/web/newOrders/payBuffetOrder?orderNo="+orderNo;
+        }
+        String status = order.getStatus();
+        if(!"0".equalsIgnoreCase(status)) {
+            return "redirect:/web/newOrders/showOrder?orderNo="+orderNo;
+        }
+        model.addAttribute("order", order);
+        model.addAttribute("commodityList", buffetOrderDetailService.listByOrderNo(orderNo));
+        return "web/newOrders/payOutOrder";
+    }
+
+    /** 提交订单 */
+    @PostMapping(value = "postOutOrder")
+    public @ResponseBody ResDto postOutOrder(String no, String payType,
+                                          String specialType, HttpServletRequest request) {
+        Worker w = workerCookieTools.getWorker(request);
+        if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
+        BuffetOrder order = buffetOrderService.findByNo(no);
+        if(order==null) {return new ResDto("-2", "未检查到订单信息");}
+        if("1".equals(specialType)) { //普通订单
+            order.setSurplusBond(0f); //剩余压金金额
+            order.setType(specialType); //订单类型
+            order.setPayType(payType);
+            order.setDiscountType("0");
+            order.setEntryLong(System.currentTimeMillis());
+            order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+            order.setStatus("2"); //确认收款
+
+            order.setEndLong(System.currentTimeMillis());
+            order.setEndTime(NormalTools.curDate());
+            //TODO 需要打印小票
+        } else if("7".equals(specialType)) { //如果是货到付款
+            order.setSurplusBond(0f); //剩余压金金额
+            order.setType(specialType); //订单类型
+            order.setDiscountType("0");
+            order.setEntryLong(System.currentTimeMillis());
+            order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+            order.setStatus("1"); //已下单，配货送货中……
+            //TODO 需要打印小票
+        }
+        buffetOrderService.save(order);
+
+        //TODO 生成小票
+        printTicketTools.printBuffetOrder(order);
+
+        sendBuffetOrder2Server(order); //发送数据到服务器
+        sendBuffetOrderDetail2Server(order.getNo());
+        return new ResDto("1", "操作成功");
     }
 
     @GetMapping(value = "queryOrder")
@@ -382,6 +439,36 @@ public class NewOrdersController {
                 return new ResDto("0", "取消完成");
             }
         }
+    }
+
+    @GetMapping(value = "receiveMoney")
+    public String receiveMoney(Model model, String no, HttpServletRequest request) {
+        if(no!=null && !"".equalsIgnoreCase(no)) {
+            model.addAttribute("order", buffetOrderService.findByNo(no));
+        }
+        return "web/newOrders/receiveMoney";
+    }
+
+    @PostMapping(value = "receiveMoney")
+    public @ResponseBody ResDto receiveMoney(String no, String payType, HttpServletRequest request) {
+        Worker w = workerCookieTools.getWorker(request);
+        if(w==null) {
+            return new ResDto("-1", "未检测到收银员");
+        }
+        BuffetOrder orders = buffetOrderService.findByNo(no);
+        if(orders==null) {return new ResDto("-2", "订单不存在");}
+        if(!"1".equalsIgnoreCase(orders.getStatus())) { //只有在配送状态才可收款
+            return new ResDto("-3", "只有在就餐状态才可退压金");
+        }
+        orders.setStatus("2"); //已完成
+        orders.setPayType(payType);
+        orders.setEndLong(System.currentTimeMillis());
+        orders.setEndTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+
+        buffetOrderService.save(orders);
+
+        sendBuffetOrder2Server(orders);
+        return new ResDto("0", "操作完成！");
     }
 
     @GetMapping(value = "returnBond")

@@ -62,6 +62,8 @@ public class BuffetOrder {
      *
      * 如果是外卖单品时，状态应有所不同
      * 0-已下单
+     * 1-送货中
+     * 2-确认收款
      */
     private String status;
 
@@ -77,7 +79,7 @@ public class BuffetOrder {
     @Column(name = "surplus_bond")
     private Float surplusBond = 0f;
 
-    /** 类型，1-收银员下单；2-微信下单；3-美团下单；4-友情价下单；5-会员订单；6-卡券订单 */
+    /** 类型，1-收银员下单；2-微信下单；3-美团下单；4-友情价下单；5-会员订单；6-卡券订单；7-货到付款（只对外卖） */
     private String type;
 
     /** 只针对微信下单订单 */

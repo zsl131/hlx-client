@@ -87,11 +87,11 @@ public class InternetTools {
 			System.out.println("response content:" + EntityUtils.toString(entity));
 			res = httpResponse.getStatusLine().getStatusCode();
 		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
+			//e1.printStackTrace();
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return res;
 	}

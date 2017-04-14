@@ -55,6 +55,28 @@ public class Company {
     @Column(name = "site_count")
     private Integer siteCount;
 
+    /** 联系电话，主要显示在小票上 */
+    private String phone;
+
+    /** 地址，主要显示在小票上 */
+    private String address;
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public Integer getDeskCount() {
         return deskCount;
     }

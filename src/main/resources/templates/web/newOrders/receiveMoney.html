@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'外卖收款'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/basic/js-lib/themes/base/jquery-ui.css"/>
+    <script src="/basic/js-lib/ui/jquery-ui.js"></script>
+    <link type="text/css" rel="stylesheet" href="/web/web-orders.css"/>
+    <link type="text/css" rel="stylesheet" href="/web/web-orders-show.css"/>
+    <script src="/web/web-show-time.js"></script>
+    <script src="/web/newOrders/order-receive-money.js"></script>
+
+    <script>
+      $( function() {
+        $( "#tabs" ).tabs({
+        });
+      } );
+  </script>
+</head>
+<body>
+<div th:fragment="content" th:remove="tag">
+
+    <div class="title">
+        <b><i class="fa fa-desktop"></i> 订单详情-外卖收款</b>
+        <a href="/"><i class="fa fa-mail-reply-all"></i> 返回收银台</a>
+    </div>
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1"><i class="fa fa-gavel"></i> 外卖收款（<span th:text="${#httpServletRequest.getParameter('no')}" th:remove="tag"></span>）</a></li>
+        </ul>
+        <div id="tabs-1" class="text-left">
+            <div class="form-group form-group-lg">
+                <div class="input-group">
+                    <div class="input-group-addon">订单编号：</div>
+                    <input name="orderNo" type="text" th:value="${#httpServletRequest.getParameter('no')}" tabindex="1" class="form-control" placeholder="输入订单编号" />
+                    <span class="input-group-addon search-order-btn" style="cursor:pointer"><i class="fa fa-search"></i> 查询</span>
+                </div>
+            </div>
+            <table class="show-detail" th:if="${order eq null}">
+                <tr>
+                    <td style="padding:30px 0px; color:#F00; text-align:center;">未检索到对应订单信息，请重新输入订单编号后点“查询”</td>
+                </tr>
+            </table>
+            <table class="show-detail" th:if="${order ne null}">
+                <tr>
+                    <td class="field">订单类型：</td>
+                    <td>
+                    <span th:switch="${order.type}" th:remove="tag">
+                        <span th:case="1">店内付款</span>
+                        <span th:case="7">货到付款</span>
+                    </span>
+                    </td>
+                    <td class="field">订单编号：</td>
+                    <td th:text="${order.no}"></td>
+                </tr>
+
+                <tr>
+                    <td class="field">收银员姓名：</td>
+                    <td th:text="${order.cashierName}"></td>
+                    <td class="field">收银员电话：</td>
+                    <td th:text="${order.cashierPhone}"></td>
+                </tr>
+
+                <tr>
+                    <td class="field">付款方式：</td>
+                    <td>
+                    <span th:switch="${order.payType}" th:remove="tag">
+                        <span th:case="1">现金支付</span>
+                        <span th:case="2">刷卡支付</span>
+                        <span th:case="3">微信支付</span>
+                        <span th:case="4">支付宝支付</span>
+                        <span th:case="*">未知</span>
+                    </span>
+                        （<span style="color:#F00;" class="discount-money totalMoney" th:text="${#numbers.formatDecimal(order.totalMoney, 0, 'COMMA', 1, 'POINT')}"></span> 元）
+                    </td>
+                    <td class="field">订单状态：</td>
+                    <td>
+                    <span th:switch="${order.status}" th:remove="tag">
+                        <span th:case="0">已下单</span>
+                        <span th:case="1" style="color:#F60;">配送中……</span>
+                        <span th:case="2" style="color:#00F;">已完成</span>
+                        <span th:case="3">美团已确认</span>
+                    </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="field">订单时间：</td>
+                    <td th:text="${order.createTime}"></td>
+                    <td class="field">配送时间：</td>
+                    <td>
+                        <span th:text="${order.entryTime}"></span>
+                    </td>
+                </tr>
+                <tr th:if="${order.endTime ne null and order.entryTime ne null}">
+                    <td class="field">完成时间：</td>
+                    <td th:text="${order.endTime}"></td>
+                    <td class="field">订单耗时：</td>
+                    <td th:text="${order.endLong-order.createLong}" class="show-seconds"></td>
+                </tr>
+            </table>
+
+            <div class="opts-btns">
+                <button onclick="javascript:history.back(-1)" class="btn btn-lg"><i class="fa fa-level-up"></i> 返回上级</button>
+                <button th:if="${order ne null}" onclick="javascript:receiveMoney(this);" th:attr="no=${order.no}" class="btn btn-lg btn-info"><i class="fa fa-money"></i> 外卖收款</button>
+                <input th:if="${order ne null}" id="ordersStatus" th:value="${order.status}" type="hidden"/>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

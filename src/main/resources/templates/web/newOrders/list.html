@@ -35,8 +35,8 @@
                     <tr th:each="obj : ${datas}">
                         <td><a th:href="'/web/newOrders/payBuffetOrder?orderNo='+${obj.no}" th:text="${obj.no}"></a></td>
                         <td>
-                            <span th:text="${obj.isSelf eq '1'?'自助券':'外卖单品'}"></span> /
-                            <span  th:switch="${obj.type}">
+                            <span th:text="${obj.isSelf eq '1'?'自助':'外卖'}"></span> /
+                            <span  th:switch="${obj.type}" th:if="${obj.isSelf eq '1'}">
                                 <span th:case="1">普通订单</span>
                                 <span th:case="2">微信订单</span>
                                 <span th:case="3">美团订单</span>
@@ -44,14 +44,24 @@
                                 <span th:case="5">会员订单</span>
                                 <span th:case="6">卡券订单</span>
                             </span>
+
+                            <span  th:switch="${obj.type}" th:if="${obj.isSelf eq '0'}">
+                                <span th:case="1">店内下单</span>
+                                <span th:case="7">货到付款</span>
+                            </span>
                         </td>
                         <td>
-                            <span th:text="${obj.totalMoney}"></span> / <span th:text="${obj.surplusBond eq null?0:obj.surplusBond}"></span>
+                            <span th:text="${obj.totalMoney}"></span> <span th:if="${obj.isSelf eq '1'}">/ <span th:text="${obj.surplusBond eq null?0:obj.surplusBond}"></span></span>
                         </td>
-                        <td>
+                        <td th:if="${obj.isSelf eq '1'}">
                             <p th:title="${obj.createTime}"><span th:text="${obj.createDay}"></span>（<span th:style="'color:'+${obj.endTime ne null?'#555':'#F00'}" th:text="${obj.endTime ne null?'已结束':'未结束'}"></span>）</p>
                             <p th:if="${obj.endTime ne null}">用时：<span th:text="${obj.endLong-(obj.entryLong eq null?obj.createLong:obj.entryLong)}" class="show-seconds"></span></p>
                             <p th:if="${obj.endTime eq null}">用时：<span th:text="${obj.entryLong eq null?obj.createLong:obj.entryLong}" class="show-seconds-now"></span></p>
+                        </td>
+                        <td th:if="${obj.isSelf eq '0'}">
+                            <p th:title="${obj.createTime}"><span th:text="${obj.createTime}"></span>（<span th:style="'color:'+${obj.endTime ne null?'#555':'#F00'}" th:text="${obj.endTime ne null?'已结束':'未结束'}"></span>）</p>
+                            <p th:if="${obj.endTime ne null}">耗时：<span th:text="${obj.endLong-obj.createLong}" class="show-seconds"></span></p>
+                            <p th:if="${obj.endTime eq null}">耗时：<span th:text="${obj.entryLong eq null?obj.createLong:obj.entryLong}" class="show-seconds"></span></p>
                         </td>
                         <td th:text="${obj.commodityCount}"></td>
                         <td th:switch="${obj.discountType}">
@@ -62,8 +72,9 @@
                             <span th:case="4">微信扣款（<b th:text="${obj.discountMoney}"></b> 元）</span>
                             <span th:case="5">会员扣款（<b th:text="${obj.discountMoney}"></b> 元）</span>
                             <span th:case="6">美团扣款（<b th:text="${obj.discountMoney}"></b> 元）</span>
+                            <span th:case="*">-</span>
                         </td>
-                        <td th:switch="${obj.status}">
+                        <td th:switch="${obj.status}" th:if="${obj.isSelf eq '1'}">
                             <span th:case="0">已下单</span>
                             <span th:case="1">已付款</span>
                             <span th:case="2" style="color:#00F;">就餐中…</span>
@@ -74,6 +85,11 @@
                             <span th:case="-1" style="color:#F00;">已退票（<b th:remove="tag" th:text="${obj.retreatReason}"></b>）</span>
                             <span th:case="-2" style="color:#F00;">已取消（<b th:remove="tag" th:text="${obj.retreatReason}"></b>）</span>
                             <span th:case="-3" style="color:#F00;">被驳回（订单取消）</span>
+                        </td>
+                        <td th:switch="${obj.status}" th:if="${obj.isSelf eq '0'}">
+                            <span th:case="0">已下单</span>
+                            <span th:case="1" style="color:#F60">配送中</span>
+                            <span th:case="2" style="color:#00F;">已完成</span>
                         </td>
                         <td>
                             <div class="action-buttons">

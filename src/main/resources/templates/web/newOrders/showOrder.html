@@ -14,11 +14,6 @@
     <script type="text/javascript" src="/web/newOrders/orders-show-btn.js"></script>
     <link type="text/css" rel="stylesheet" href="/web/web-orders-show.css"/>
     <script src="/web/web-show-time.js"></script>
-    <script type="text/javascript">
-        $(function() {
-            buildCom();
-        });
-    </script>
 </head>
 <body>
     <div th:fragment="content" th:remove="tag">
@@ -40,7 +35,7 @@
                                 <th>小计</th>
                             </tr>
                         </table>
-                        <div class="commodity-list-hidden" style="display:none">
+                        <div class="commodity-list-hidden" style="display:none1">
                             <span th:each="commodity : ${commodityList}" th:attr="comName=${commodity.commodityName}, comNo=${commodity.commodityNo}, price=${commodity.price}"></span>
                         </div>
                     </div>
@@ -54,16 +49,19 @@
                         <div th:remove="tag" th:if="${order.isSelf eq '0'}">
                             <div th:replace="web/newOrders/unSelf :: content" th:remove="tag"></div>
                         </div>
-                        <div style="width:100%; padding-top:15px; padding-left:10px;" th:if="${order.status eq '0' or order.status eq '1' or order.status eq '2' or order.status eq '3'}">
+                        <div style="width:100%; padding-top:15px; padding-left:10px;" th:if="${order.isSelf eq '1' and (order.status eq '0' or order.status eq '1' or order.status eq '2' or order.status eq '3')}">
                             <button th:if="${order.status eq '2'}" th:onclick="'window.location.href=\'/web/newOrders/returnBond?no='+${order.no}+'\''" class="btn btn-info"><i class="fa fa-flask"></i> 退压金</button>
                             <button onclick="onRetreatBtnClick()" class="btn  btn-danger retreat-btn"><i class="fa fa-times-circle"></i> 全额退票</button>
                             <button onclick="onCancelBtnClick()" th:if="${order.type eq '4'}" class="btn btn-danger"><i class="fa fa-window-close"></i> 取消订单</button>
-                            <input id="ordersNo" th:value="${order.no}" type="hidden"/>
-                            <input id="ordersStatus" th:value="${order.status}" type="hidden"/>
-                            <input id="refundMin" th:value="${rules.refundMin}" type="hidden"/>
-                            <input id="entryLong" th:value="${order.entryLong}" type="hidden"/>
-                            <input id="ordersType" th:value="${order.type}" type="hidden"/>
                         </div>
+                        <div style="width:100%; padding-top:15px; padding-left:10px;" th:if="${order.isSelf eq '0' and (order.status eq '1')}">
+                            <button th:onclick="'window.location.href=\'/web/newOrders/receiveMoney?no='+${order.no}+'\''" class="btn btn-info"><i class="fa fa-money"></i> 外卖收款</button>
+                        </div>
+                        <input id="ordersNo" th:value="${order.no}" type="hidden"/>
+                        <input id="ordersStatus" th:value="${order.status}" type="hidden"/>
+                        <input id="refundMin" th:value="${rules.refundMin}" type="hidden"/>
+                        <input id="entryLong" th:value="${order.entryLong}" type="hidden"/>
+                        <input id="ordersType" th:value="${order.type}" type="hidden"/>
                     </div>
                 </div>
             </div>

@@ -38,21 +38,21 @@ public class PrintTicketTools {
                 Long start = System.currentTimeMillis();
                 Company com = companyService.loadOne();
                 List<BuffetOrderDetail> detailList = buffetOrderDetailService.listByOrderNo(order.getNo());
-                printTicket(order, detailList, com.getName());
-                printBond(order, com.getName());
+                printTicket(order, detailList, com.getName(), com.getPhone(), com.getAddress());
+                printBond(order, com.getName(), com.getPhone(), com.getAddress());
                 Long end = System.currentTimeMillis();
                 System.out.println("耗时============="+((end-start)/1000));
             }
         }).start();
     }
 
-    private void printBond(BuffetOrder order, String shopName) {
+    private void printBond(BuffetOrder order, String shopName, String phone, String address) {
         File f = wordTemplateTools.buildBondFile(shopName, order.getCommodityCount(), order.getSurplusBond(),
-                order.getEntryTime()==null?order.getCreateTime():order.getEntryTime(), order.getNo());
+                order.getEntryTime()==null?order.getCreateTime():order.getEntryTime(), order.getNo(), phone, address);
 
         PrintTools.print(f.getAbsolutePath());
 
-        f.delete();
+//        f.delete();
     }
 
     /**
@@ -61,16 +61,16 @@ public class PrintTicketTools {
      * @param detailList 订单详情列表
      * @param shopName 公司名称
      */
-    private void printTicket(BuffetOrder order, List<BuffetOrderDetail> detailList, String shopName) {
+    private void printTicket(BuffetOrder order, List<BuffetOrderDetail> detailList, String shopName, String phone, String address) {
         String level = getLevel(detailList);
         for(BuffetOrderDetail detail : detailList) {
             if(detail.getPrice()>0) {
                 File f = wordTemplateTools.buildTicketFile(shopName,
                         level + ("77777".equals(detail.getCommodityNo()) || "66666".equals(detail.getCommodityNo()) ? "儿童" : ""),
-                        order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo());
+                        order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address);
 
                 PrintTools.print(f.getAbsolutePath());
-                f.delete();
+//                f.delete();
             }
         }
     }
