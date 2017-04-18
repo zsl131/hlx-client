@@ -14,6 +14,6 @@ public interface IBuffetOrderService extends BaseRepository<BuffetOrder, Integer
 
     BuffetOrder findByNo(String no);
 
-    @Query("FROM BuffetOrder b WHERE b.createDay>=?1 AND b.createDay<=?1 AND b.isSelf=?3")
+    @Query("FROM BuffetOrder b WHERE b.createDay>=?1 AND b.createDay<=?2 AND b.isSelf=?3")
     List<BuffetOrder> findByDate(String startDate, String endDate, String isSelf);
 }

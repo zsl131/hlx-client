@@ -39,11 +39,77 @@ public class PrintTicketTools {
                 Company com = companyService.loadOne();
                 List<BuffetOrderDetail> detailList = buffetOrderDetailService.listByOrderNo(order.getNo());
                 printTicket(order, detailList, com.getName(), com.getPhone(), com.getAddress());
-                printBond(order, com.getName(), com.getPhone(), com.getAddress());
                 Long end = System.currentTimeMillis();
                 System.out.println("耗时============="+((end-start)/1000));
             }
         }).start();
+    }
+
+    /**
+     * 打印外卖票据
+     * @param order 订单对象
+     */
+    public void printOutOrder(BuffetOrder order) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Long start = System.currentTimeMillis();
+                Company com = companyService.loadOne();
+                List<BuffetOrderDetail> detailList = buffetOrderDetailService.listByOrderNo(order.getNo());
+                privateOut(order, buildCommodity(detailList), order.getTotalMoney(), com.getName(), com.getPhone(), com.getAddress());
+                Long end = System.currentTimeMillis();
+                System.out.println("耗时============="+((end-start)/1000));
+            }
+        }).start();
+    }
+
+    private String buildCommodity(List<BuffetOrderDetail> detailList) {
+        StringBuffer sb = new StringBuffer();
+        for(BuffetOrderDetail detail : detailList) {
+            sb.append(buildBlank(detail.getCommodityName()));
+        }
+        return sb.toString();
+    }
+    private String buildBlank(String commodityName) {
+        StringBuffer sb = new StringBuffer(commodityName);
+        //24-
+        for(int i=0;i<23-calNameLen(commodityName); i++) {
+            sb.append("·");
+        }
+        sb.append(" 1 ");
+        return sb.toString();
+    }
+
+    private int calNameLen(String commodityName) {
+        int res = 0;
+        char [] array = commodityName.toCharArray();
+        for(char c : array) {
+            if(isChinese(c)) {
+                res += 2;
+            } else {res ++;}
+        }
+        return res;
+    }
+
+    // 根据Unicode编码完美的判断中文汉字和符号
+    private boolean isChinese(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B
+                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS
+                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION) {
+            return true;
+        }
+        return false;
+    }
+
+    private void privateOut(BuffetOrder order, String commodity, Float money, String shopName, String phone, String address) {
+        File f = wordTemplateTools.buildOutFile(shopName, commodity, money,
+                order.getEntryTime()==null?order.getCreateTime():order.getEntryTime(), order.getNo(), phone, address);
+
+        PrintTools.print(f.getAbsolutePath());
+
+//        f.delete();
     }
 
     private void printBond(BuffetOrder order, String shopName, String phone, String address) {

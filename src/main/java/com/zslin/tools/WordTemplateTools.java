@@ -54,6 +54,42 @@ public class WordTemplateTools {
         return getTemplateFile("ticket-template.docx");
     }
 
+    public File getOutTemplate() {
+        return getTemplateFile("out-template.docx");
+    }
+
+    public File buildOutFile(String shopName, String commodity, Float money, String date, String orderNo,
+                              String phone, String address) {
+        File targetFile = new File(configTools.getUploadPath("tickets/")+"out-"+(UUID.randomUUID().toString())+".docx");
+        try {
+            File f = getOutTemplate();
+            // 载入模板文件
+            WordprocessingMLPackage wPackage = WordprocessingMLPackage.load(f);
+            // 提取正文
+            MainDocumentPart mainDocumentPart = wPackage.getMainDocumentPart();
+            HashMap<String, String> datas = new HashMap<>();
+            datas.put("shopName", shopName);
+            datas.put("commodity", commodity);
+            datas.put("money", money+"");
+            datas.put("code", orderNo);
+            datas.put("date", date);
+            datas.put("phone", phone);
+            datas.put("address", address);
+            mainDocumentPart.variableReplace(datas);
+
+            byte[] barcode = qrGenerateTools.getBarcode(orderNo);
+            ImageAdd.replaceImage(wPackage, "barcode", barcode, "test1", "haha1");
+            wPackage.save(targetFile);
+        } catch (Docx4JException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return targetFile;
+    }
+
     public File buildTicketFile(String shopName, String level, String date, String orderNo,
                                 String phone, String address) {
         File targetFile = new File(configTools.getUploadPath("tickets/")+"ticket-"+(UUID.randomUUID().toString())+".docx");

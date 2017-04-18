@@ -192,7 +192,7 @@ public class NewOrdersController {
         return "web/newOrders/payOutOrder";
     }
 
-    /** 提交订单 */
+    /** 提交外卖订单 */
     @PostMapping(value = "postOutOrder")
     public @ResponseBody ResDto postOutOrder(String no, String payType,
                                           String specialType, HttpServletRequest request) {
@@ -224,7 +224,7 @@ public class NewOrdersController {
         buffetOrderService.save(order);
 
         //TODO 生成小票
-        printTicketTools.printBuffetOrder(order);
+        printTicketTools.printOutOrder(order);
 
         sendBuffetOrder2Server(order); //发送数据到服务器
         sendBuffetOrderDetail2Server(order.getNo());
