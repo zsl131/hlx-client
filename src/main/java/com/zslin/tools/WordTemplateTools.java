@@ -34,12 +34,9 @@ public class WordTemplateTools {
     private QrGenerateTools qrGenerateTools;
 
     public File getTemplateFile(String fileName) {
-        try {
-            File f = ResourceUtils.getFile("classpath:word-temp/"+fileName);
-            return f;
-        } catch (FileNotFoundException e) {
-            return null;
-        }
+//            File f = ResourceUtils.getFile("classpath:word-temp/"+fileName);
+        File f = new File(configTools.getUploadPath("word-temp/")+fileName);
+        return f;
     }
 
     /**
@@ -105,6 +102,7 @@ public class WordTemplateTools {
             datas.put("date", date);
             datas.put("phone", phone);
             datas.put("address", address);
+            datas.put("code", orderNo);
             mainDocumentPart.variableReplace(datas);
 
             InputStream is = new FileInputStream(getTemplateFile("qrcode.jpg"));

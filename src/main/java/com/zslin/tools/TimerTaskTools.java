@@ -95,6 +95,8 @@ public class TimerTaskTools {
             simpleDataTools.handlerBuffetOrder(dataObj);
         } else if("prize".equalsIgnoreCase(type)) { //卡券、礼物
             simpleDataTools.handlerPrize(action, dataId, dataObj);
+        } else if("walletDetail".equalsIgnoreCase(type)) { //钱包明细
+            simpleDataTools.handlerWalletDetail(dataObj);
         }
     }
 

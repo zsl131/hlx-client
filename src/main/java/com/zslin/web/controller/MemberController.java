@@ -60,9 +60,16 @@ public class MemberController {
 
     @Token(flag= Token.READY)
     @GetMapping(value = "add")
-    public String add(Model model, HttpServletRequest request) {
+    public String add(Model model, Integer id, HttpServletRequest request) {
         model.addAttribute("levelList", memberLevelService.findAll());
-        model.addAttribute("member", new Member());
+        Member m = null;
+        if(id!=null && id>0) {
+            m = memberService.findOne(id);
+            if(m==null) {m = new Member();}
+        } else {
+            m = new Member();
+        }
+        model.addAttribute("member", m);
         return "web/member/add";
     }
 
@@ -104,7 +111,9 @@ public class MemberController {
         mc.setPhone(m.getPhone());
         mc.setStatus("1");
 
-        m.setSurplus(ml.getGiveMoney()*100+ml.getChargeMoney()*100);
+        Integer old = m.getSurplus();
+        old = old==null?0:old;
+        m.setSurplus(old+ml.getGiveMoney()*100+ml.getChargeMoney()*100);
         memberService.save(m);
 
         memberChargeService.save(mc);

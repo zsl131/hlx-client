@@ -23,6 +23,19 @@
     <div th:replace="web/member/member-title-opts :: content" th:remove="tag"></div>
 
     <div class="table-responsive" style="background:#FFF; padding:10px;">
+        <div id="sys_filter" class="form-inline" style="padding-bottom:10px; float:left;">
+            <div class="input-group">
+                <span class="input-group-addon">姓名</span>
+                <input type='text' style="width:140px;" class='filter_element form-control' opt="like" name='filter_name'/>
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-addon">电话</span>
+                <input type='text' style="width:140px;" class='filter_element form-control' opt="like" name='filter_phone'/>
+            </div>
+
+            <span><button type="button" class="btn btn-primary btn-sm" id="beginFilter">查询</button></span>
+        </div>
         <table class="table table-hover">
             <thead>
             <tr>
@@ -31,6 +44,7 @@
                 <th>余额</th>
                 <th>办理人员</th>
                 <th>办理时间</th>
+                <th>操作</th>
             </tr>
             </thead>
 
@@ -40,6 +54,9 @@
                 <td th:text="${obj.surplus}" class="show-money"></td>
                 <td th:text="${obj.cachierName}"></td>
                 <td th:text="${obj.createTime}"></td>
+                <td>
+                    <a th:href="'/web/member/add?id='+${obj.id}"><i class="fa fa-plug"></i> 充值</a>
+                </td>
             </tr>
         </table>
 

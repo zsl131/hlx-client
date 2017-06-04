@@ -38,6 +38,12 @@ public class SimpleDataTools {
     @Autowired
     private IPrizeService prizeService;
 
+    @Autowired
+    private IMemberService memberService;
+
+    @Autowired
+    private IMemberChargeService memberChargeService;
+
     public void handlerPrice(JSONObject jsonObj) {
         Price price = priceService.findOne();
         if(price==null) {price = new Price();}
@@ -131,5 +137,37 @@ public class SimpleDataTools {
             prize.setDataId(dataId);
             prizeService.save(prize);
         }
+    }
+
+    public void handlerWalletDetail(JSONObject jsonObj) {
+        MemberCharge mc = new MemberCharge();
+        Integer amount = jsonObj.getInt("amount");
+        String phone = jsonObj.getString("phone");
+        mc.setChargeMoney(amount*1f);
+        mc.setName(jsonObj.getString("accountName"));
+        mc.setCreateTime(jsonObj.getString("createTime"));
+        mc.setCreateLong(jsonObj.getLong("createLong"));
+        mc.setCreateDay(jsonObj.getString("createDay"));
+        mc.setPhone(phone);
+        mc.setNickname(jsonObj.getString("accountName"));
+        mc.setStatus("1");
+
+        Member m = memberService.findByPhone(phone);
+        if(m!=null) {
+            memberService.plusMoneyByPhone(amount, phone);
+            mc.setBalance(m.getSurplus()+amount);
+        } else {
+            m = new Member();
+            m.setCreateTime(mc.getCreateTime());
+            m.setSurplus(amount);
+            m.setCreateLong(mc.getCreateLong());
+            m.setPhone(phone);
+            m.setCreateDay(mc.getCreateDay());
+            m.setName(mc.getName());
+            m.setCachierName("微信办理");
+            memberService.save(m);
+            mc.setBalance(amount);
+        }
+        memberChargeService.save(mc);
     }
 }

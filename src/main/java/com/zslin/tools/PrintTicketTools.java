@@ -39,6 +39,7 @@ public class PrintTicketTools {
                 Company com = companyService.loadOne();
                 List<BuffetOrderDetail> detailList = buffetOrderDetailService.listByOrderNo(order.getNo());
                 printTicket(order, detailList, com.getName(), com.getPhone(), com.getAddress());
+                printBond(order, com.getName(), com.getPhone(), com.getAddress());
                 Long end = System.currentTimeMillis();
                 System.out.println("耗时============="+((end-start)/1000));
             }
@@ -56,7 +57,7 @@ public class PrintTicketTools {
                 Long start = System.currentTimeMillis();
                 Company com = companyService.loadOne();
                 List<BuffetOrderDetail> detailList = buffetOrderDetailService.listByOrderNo(order.getNo());
-                privateOut(order, buildCommodity(detailList), order.getTotalMoney(), com.getName(), com.getPhone(), com.getAddress());
+                printOut(order, buildCommodity(detailList), order.getTotalMoney(), com.getName(), com.getPhone(), com.getAddress());
                 Long end = System.currentTimeMillis();
                 System.out.println("耗时============="+((end-start)/1000));
             }
@@ -103,13 +104,13 @@ public class PrintTicketTools {
         return false;
     }
 
-    private void privateOut(BuffetOrder order, String commodity, Float money, String shopName, String phone, String address) {
+    private void printOut(BuffetOrder order, String commodity, Float money, String shopName, String phone, String address) {
         File f = wordTemplateTools.buildOutFile(shopName, commodity, money,
                 order.getEntryTime()==null?order.getCreateTime():order.getEntryTime(), order.getNo(), phone, address);
 
         PrintTools.print(f.getAbsolutePath());
 
-//        f.delete();
+        f.delete();
     }
 
     private void printBond(BuffetOrder order, String shopName, String phone, String address) {
@@ -118,7 +119,7 @@ public class PrintTicketTools {
 
         PrintTools.print(f.getAbsolutePath());
 
-//        f.delete();
+        f.delete();
     }
 
     /**
@@ -136,7 +137,7 @@ public class PrintTicketTools {
                         order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address);
 
                 PrintTools.print(f.getAbsolutePath());
-//                f.delete();
+                f.delete();
             }
         }
     }
