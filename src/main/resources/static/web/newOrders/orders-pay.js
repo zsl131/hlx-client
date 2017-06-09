@@ -59,6 +59,9 @@ function onOrderType(obj) {
         $(this).removeClass("btn-info")
     });
 
+//    $(".show-money").find(".money-amount").find(".money").html($("input[name='needMoney']").val()); //每次切换都重新显示原始金额
+    buildTotalMoney();
+
     var initValue = "";
     $(obj).addClass("btn-info");
     var orderType = $(obj).attr("orderType");
@@ -72,6 +75,10 @@ function onOrderType(obj) {
     } else if(orderType == '4') { //友情折扣订单
         buildFriendHtml(obj);
         remindTitle = "请先输入折扣手机号码进行验证，待审核通过后方可提交";
+        initValue = "";
+    } else if(orderType == '3') { //美团订单
+        buildMtHtml(obj);
+        remindTitle = "请先输入美团编码";
         initValue = "";
     } else if(orderType == '6') { //卡券订单
         buildTicketHtml(obj);
@@ -103,7 +110,25 @@ function submitOrder() {
         var html = '<i class="fa fa-info"></i> 确定已收款并提交订单吗？';
         var submitDialog = confirmDialog(html, '<i class="fa fa-info-circle"></i> 系统提示', function() {
             $.post("/web/newOrders/postOrder", {no:no, bondMoney:bondMoney, bondCount:bondCount, payType:payType, specialType:specialType, reserve:reserve}, function(res) {
-                alert(res.msg);
+//                alert(res.msg);
+                window.location.reload();
+            }, "json");
+
+            $(submitDialog).remove(); //直接关闭
+        });
+    }
+}
+
+function removeOrder() {
+    var no = $("input[name='orderNo']").val();
+    var status = $("input[name='orderStatus']").val();
+
+    if(status!='0') {
+        showDialog("只有在刚下单状态下才可取消订单");
+    } else {
+        var html = '<i class="fa fa-question-circle"></i> 此操作不可逆，确定要删除该订单吗？';
+        var submitDialog = confirmDialog(html, '<i class="fa fa-info-circle"></i> 系统提示', function() {
+            $.post("/web/newOrders/removeOrder", {no:no}, function(res) {
                 window.location.reload();
             }, "json");
 
@@ -122,12 +147,17 @@ function onPayType(obj) {
 
 function buildTotalMoney() {
     var count = parseInt($("input[name='bondCount']").val());
-    var price = parseFloat($("input[name='bondMoney']").val());
+    var price = parseFloat($("input[name='bondMoney']").val()); //之前是每个本票收取的费用，目前是每桌本票人数不小于2时的费用
     var tarObj = $(".money-amount");
     var moneyObj = $(tarObj).find(".money");
     var remindObj = $(tarObj).find("small");
-    $(moneyObj).html(parseFloat($(moneyObj).html()) + count*price);
-    $(remindObj).html("（包含"+(count*price)+" 元压金，只收取全票人的压金）");
+
+    var needBondMoney = (count>=2)?price:0;
+
+    $(moneyObj).html(parseFloat($("#totalMoney").html()) + needBondMoney);
+    $(remindObj).html("（包含"+(needBondMoney)+" 元压金，只收取全票人的压金）");
+//    $(moneyObj).html(parseFloat($("#totalMoney").html()) + count*price);
+//    $(remindObj).html("（包含"+(count*price)+" 元压金，只收取全票人的压金）");
 }
 
 

@@ -9,12 +9,17 @@
     <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
     <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-index.css"/>
     <link type="text/css" rel="stylesheet" href="/web/newOrders/orders-pay.css"/>
+
+    <!--<script type="text/javascript" src="/tags/fm.tag.js"></script>
+    <link rel="stylesheet" type="text/css" href="/tags/fm.tag.css"/>-->
+
     <script type="text/javascript" src="/web/newOrders/orders-index.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-list.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-member.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-friend.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-ticket.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-meituan.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-normal.js"></script>
 </head>
 <body>
@@ -26,7 +31,7 @@
                         <h4 class="title">订单信息</h4>
                         <div class="order-info">
                             <p>订单编号：<span th:text="${order.no}"></span></p>
-                            <p>订单金额：<span th:text="${order.totalMoney}"></span> 元</p>
+                            <p>订单金额：<span id="totalMoney" th:text="${order.totalMoney}"></span> 元</p>
                             <p>商品数量：<span th:text="${order.commodityCount}"></span></p>
                             <p>创建时间：<span th:text="${order.createTime}"></span></p>
                         </div>
@@ -38,7 +43,7 @@
                             </tr>
                         </table>
                         <div class="commodity-list-hidden" style="display:none">
-                            <span th:each="commodity : ${commodityList}" th:attr="comName=${commodity.commodityName}, comNo=${commodity.commodityNo}, price=${commodity.price}"></span>
+                           <span th:each="commodity : ${commodityList}" th:attr="comName=${commodity.commodityName}, comNo=${commodity.commodityNo}, price=${commodity.price}"></span>
                         </div>
                     </div>
                 </div>
@@ -52,7 +57,7 @@
                                 <button type="button" orderType="5" th:class="'btn btn-default '+${order.type eq '5'?'btn-info':''}" title="输入会员手机，验证通过后从会员账户上扣款"><i class="fa fa-user-secret"></i> 会员订单</button>
                                 <button th:if="${order.isSelf eq '1'}" type="button" orderType="4" th:class="'btn btn-default '+${order.type eq '4'?'btn-info':''}" title="输入折扣手机号码，待审核通过后方可收款入场"><i class="fa fa-group"></i> 亲情优惠订单</button>
                                 <button type="button" orderType="2" th:class="'btn btn-default '+${order.type eq '2'?'btn-info':''}" ><i class="fa fa-weixin"></i> 微信订单</button>
-                                <button type="button" orderType="3" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" ><i class="fa fa-tumblr"></i> 美团订单</button>
+                                <button type="button" orderType="3" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" title="输入美团编号，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-tumblr"></i> 美团订单</button>
                                 <button th:if="${order.isSelf eq '1'}" type="button" orderType="6" th:class="'btn btn-default '+${order.type eq '6'?'btn-info':''}" title="卡券总数不能超过全票总数"><i class="fa fa-ticket"></i> 卡券订单</button>
                             </div>
                         </div>
@@ -61,6 +66,7 @@
                         </div>
                         <div class="show-money">
                             <span class="money-name">应付金额：</span>
+                            <input name="needMoney" th:value="${order.totalMoney}" type="hidden"/>
                             <span class="money-amount"><b class="fa fa-cny"></b> <b class="money" th:text="${order.totalMoney}"></b> 元<small>(不包含压金)</small></span>
                         </div>
                         <div class="pay-types">
@@ -83,7 +89,8 @@
                             <input name="orderNo" type="hidden" th:value="${order.no}"/>
                             <input name="orderStatus" type="hidden" th:value="${order.status}"/>
                             <input name="discountMoney" th:value="${order.discountMoney}" type="hidden"/>
-                            <button type="button" class="btn btn-lg btn-primary submit-order-btn" onclick="submitOrder()"><i class="fa fa-check"></i> 确认收款</button>
+                            <button type="button" class="btn btn-lg btn-danger" onclick="removeOrder()" style="float:right;margin-right:20px;"><i class="fa fa-remove"></i> 删除订单</button>
+                            <button type="button" class="btn btn-lg btn-primary submit-order-btn" style="margin-right:20px;" onclick="submitOrder()"><i class="fa fa-check"></i> 确认收款</button>
                         </div>
                     </div>
                 </div>

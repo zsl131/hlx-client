@@ -2,6 +2,7 @@ package com.zslin.tools;
 
 import com.zslin.model.Worker;
 import com.zslin.service.IWorkerService;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,10 @@ public class WorkerDataTools {
             if(w==null) {
                 w = new Worker();
             }
-            w.setHeadimgurl(jsonObj.getString("headimgurl"));
+            try {
+                w.setHeadimgurl(jsonObj.getString("headimgurl"));
+            } catch (JSONException e) {
+            }
             w.setName(jsonObj.getString("name"));
             w.setObjId(dataId);
             w.setOpenid(jsonObj.getString("openid"));

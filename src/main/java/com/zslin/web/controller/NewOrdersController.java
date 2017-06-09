@@ -248,6 +248,25 @@ public class NewOrdersController {
         return "web/newOrders/showOrder";
     }
 
+    @PostMapping(value = "removeOrder")
+    public @ResponseBody ResDto removeOrder(String no, HttpServletRequest request) {
+        Worker w = workerCookieTools.getWorker(request);
+        if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
+        BuffetOrder order = buffetOrderService.findByNo(no);
+        if(order==null) {return new ResDto("-2", "未检查到订单信息");}
+        if(!"0".equals(order.getStatus())) { //只要status为0时可删除订单
+            return new ResDto("-3", "只有在刚下单状态下才可取消订单");
+        }
+        order.setStatus("-2");
+        order.setRetreatName(w.getName());
+        order.setRetreatReason("下单错误");
+        order.setEndLong(System.currentTimeMillis());
+        order.setEndTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+        order.setRetreatTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+        buffetOrderService.save(order);
+        return new ResDto("1", "操作成功");
+    }
+
     /** 提交订单 */
     @PostMapping(value = "postOrder")
     public @ResponseBody ResDto postOrder(String no, Float bondMoney, Integer bondCount, String payType,
@@ -256,10 +275,12 @@ public class NewOrdersController {
         if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
         BuffetOrder order = buffetOrderService.findByNo(no);
         if(order==null) {return new ResDto("-2", "未检查到订单信息");}
+        Float totalBondMoney = (bondCount>=2)?bondMoney:0f;
         if("5".equalsIgnoreCase(specialType)) { //如果是会员订单
             Member m = memberService.findByPhone(reserve);
             if(m==null) {return new ResDto("-3", "未检测到会员信息");}
-            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
+//            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
+            order.setSurplusBond(totalBondMoney); //剩余压金金额
             order.setType(specialType); //订单类型
             order.setPayType(payType);
             Float memberSurplus = m.getSurplus()*1.0f/100;
@@ -274,7 +295,8 @@ public class NewOrdersController {
             //TODO 服务器端需要自行对会员账户进行消费处理
             //TODO 需要打印小票
         } else if("1".equals(specialType)) { //普通订单
-            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
+//            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
+            order.setSurplusBond(totalBondMoney); //剩余压金金额
             order.setType(specialType); //订单类型
             order.setPayType(payType);
             order.setDiscountType("0");
@@ -283,7 +305,8 @@ public class NewOrdersController {
             order.setStatus("2"); //就餐中……
             //TODO 需要打印小票
         } else if("4".equals(specialType)) { //如果是亲情折扣订单
-            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
+//            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
+            order.setSurplusBond(totalBondMoney); //剩余压金金额
             order.setPayType(payType);
             order.setType(specialType); //订单类型
             order.setDiscountType("2");
@@ -302,7 +325,21 @@ public class NewOrdersController {
             order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
             order.setStatus("2"); //就餐中……
             order.setPayType(payType);
-            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
+//            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
+            order.setSurplusBond(totalBondMoney); //剩余压金金额
+        } else if("3".equalsIgnoreCase(specialType)) { //美团订单
+            Float discountMoney = buildDiscountMoneyByMt(no, reserve);
+            order.setDiscountMoney(discountMoney);
+            order.setTotalMoney(order.getTotalMoney()-discountMoney);
+            order.setType(specialType); //订单类型
+            order.setDiscountReason(reserve);
+            order.setDiscountType("6"); //美团
+            order.setEntryLong(System.currentTimeMillis());
+            order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+            order.setStatus("2"); //就餐中……
+            order.setPayType(payType);
+//            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
+            order.setSurplusBond(totalBondMoney); //剩余压金金额
         }
         buffetOrderService.save(order);
 
@@ -312,6 +349,20 @@ public class NewOrdersController {
         sendBuffetOrder2Server(order); //发送数据到服务器
         sendBuffetOrderDetail2Server(order.getNo());
         return new ResDto("1", "操作成功");
+    }
+
+    private Float buildDiscountMoneyByMt(String orderNo, String reserve) {
+        Float res = 0f;
+        String [] array = reserve.split(",");
+        List<BuffetOrderDetail> details = buffetOrderDetailService.listByOrderNo(orderNo);
+        int flag = 0;
+        for(String single : array) {
+            if(single!=null && single.length()==12 && flag<details.size()) {
+                res += details.get(flag).getPrice();
+                flag ++;
+            }
+        }
+        return res;
     }
 
     private Float buildDiscountMoney(String orderNo, String reserve) {

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface IBuffetOrderDetailService extends BaseRepository<BuffetOrderDetail, Integer>, JpaSpecificationExecutor<BuffetOrderDetail> {
 
-    @Query("FROM BuffetOrderDetail bod WHERE bod.orderNo=?1 ORDER BY bod.commodityNo ASC")
+    @Query("FROM BuffetOrderDetail bod WHERE bod.orderNo=?1 ORDER BY bod.price DESC, bod.commodityNo ASC")
     List<BuffetOrderDetail> listByOrderNo(String orderNo);
 
     @Query("SELECT price FROM BuffetOrderDetail WHERE orderNo=?1 AND commodityNo=?2 GROUP BY commodityNo")

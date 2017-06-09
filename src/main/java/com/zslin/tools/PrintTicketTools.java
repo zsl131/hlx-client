@@ -54,12 +54,12 @@ public class PrintTicketTools {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Long start = System.currentTimeMillis();
+//                Long start = System.currentTimeMillis();
                 Company com = companyService.loadOne();
                 List<BuffetOrderDetail> detailList = buffetOrderDetailService.listByOrderNo(order.getNo());
                 printOut(order, buildCommodity(detailList), order.getTotalMoney(), com.getName(), com.getPhone(), com.getAddress());
-                Long end = System.currentTimeMillis();
-                System.out.println("耗时============="+((end-start)/1000));
+//                Long end = System.currentTimeMillis();
+//                System.out.println("耗时============="+((end-start)/1000));
             }
         }).start();
     }

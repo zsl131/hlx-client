@@ -105,9 +105,9 @@ public class WordTemplateTools {
             datas.put("code", orderNo);
             mainDocumentPart.variableReplace(datas);
 
-            InputStream is = new FileInputStream(getTemplateFile("qrcode.jpg"));
-            byte[] bytes = IOUtils.toByteArray(is);
-            ImageAdd.replaceImage(wPackage, "qrcode", bytes, "test", "haha");
+//            InputStream is = new FileInputStream(getTemplateFile("qrcode.jpg"));
+//            byte[] bytes = IOUtils.toByteArray(is);
+//            ImageAdd.replaceImage(wPackage, "qrcode", bytes, "test", "haha");
 //            byte[] barcode = BarcodeUtil.generate(orderNo);
             byte[] barcode = qrGenerateTools.getBarcode(orderNo);
             ImageAdd.replaceImage(wPackage, "barcode", barcode, "test1", "haha1");

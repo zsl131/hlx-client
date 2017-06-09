@@ -39,6 +39,7 @@ public class ParamFilterUtil<T> {
                     //以下面方法的好处是解决value中有“-”的问题
                     String operate = parVal.substring(0, parVal.indexOf(PARAM_SPE)); //比较符号
                     String fieldVal = parVal.substring(parVal.indexOf(PARAM_SPE)+1, parVal.length());
+                    System.out.println(operate+"=========="+fieldVal);
 //                    SimpleSpecificationBuilder ssb = new SimpleSpecificationBuilder(field, operate, fieldVal);
                     builder.add(field, operate, fieldVal);
                     args.put(key, fieldVal);
