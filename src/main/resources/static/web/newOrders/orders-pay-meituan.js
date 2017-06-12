@@ -1,14 +1,17 @@
 var mtTotalMoney = 0;
 function buildMtHtml(obj) {
     var html = '<p class="type-name">'+$(obj).html() +'（'+$(obj).attr("title")+'）</small></p>'+
-                    '<div class="special-content">'+
-                        '<div class="form-group">'+
-                            '<div class="input-group">'+
-                                '<div class="input-group-addon">美团编号：</div>'+
-                                '<input name="mt-no" type="text"  tabindex="1" class="form-control" placeholder="输入美团编号，输完一个按回车，用扫码枪不用按回车" />'+
-                            '</div>'+
+                '<div class="special-content">'+
+                    '<div class="form-group">'+
+                        '<div class="input-group">'+
+                            '<div class="input-group-addon">美团编号：</div>'+
+                            '<input name="mt-no" type="text"  tabindex="1" class="form-control" placeholder="输入美团编号，输完一个按回车，用扫码枪不用按回车" />'+
                         '</div>'+
-                    '</div>';
+                    '</div>'+
+
+                    '<div><button class="btn btn-info" onclick="addOneCode()"><i class="fa fa-plus"></i> 添加一位</button>（当存在美团编码是多人套餐时才使用此按钮）</div>'+
+
+                '</div>';
 
     $(".special-type").css("display", "block");
     $(".special-type").html(html);
@@ -19,6 +22,24 @@ function buildMtHtml(obj) {
     mtTotalMoney = parseFloat($(".show-money").find(".money-amount").find(".money").html());
 
     //alert(mtTotalMoney);
+}
+
+function addOneCode() {
+    //calMtMoney();
+    var nos = $('input[name="mt-no"]').val();
+    $('input[name="mt-no"]').val(nos+buildSingleCode()+",");
+
+    rebuildNo();
+    calMtMoney();
+}
+
+function buildSingleCode() {
+    var code = "";
+    for(var i=0;i<12;i++) {
+        var d = parseInt(Math.random()*10);
+        code += d+"";
+    }
+    return code;
 }
 
 function calMtMoney() {

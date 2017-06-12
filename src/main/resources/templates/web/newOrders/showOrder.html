@@ -51,7 +51,7 @@
                         </div>
                         <div style="width:100%; padding-top:15px; padding-left:10px;" th:if="${order.isSelf eq '1' and (order.status eq '0' or order.status eq '1' or order.status eq '2' or order.status eq '3')}">
                             <button th:if="${order.status eq '2'}" th:onclick="'window.location.href=\'/web/newOrders/returnBond?no='+${order.no}+'\''" class="btn btn-info"><i class="fa fa-flask"></i> 退压金</button>
-                            <button onclick="onRetreatBtnClick()" class="btn  btn-danger retreat-btn"><i class="fa fa-times-circle"></i> 全额退票</button>
+                            <!--<button onclick="onRetreatBtnClick()" class="btn  btn-danger retreat-btn"><i class="fa fa-times-circle"></i> 全额退票</button>-->
                             <button onclick="onCancelBtnClick()" th:if="${order.type eq '4'}" class="btn btn-danger"><i class="fa fa-window-close"></i> 取消订单</button>
                         </div>
                         <div style="width:100%; padding-top:15px; padding-left:10px;" th:if="${order.isSelf eq '0' and (order.status eq '1')}">

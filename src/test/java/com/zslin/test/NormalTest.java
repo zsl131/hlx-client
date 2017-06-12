@@ -1,6 +1,8 @@
 package com.zslin.test;
 
 import com.zslin.basic.tools.SecurityUtil;
+import com.zslin.model.BuffetOrder;
+import com.zslin.service.IBuffetOrderService;
 import com.zslin.tools.OrderNoTools;
 import com.zslin.tools.WordTools;
 import org.junit.Test;
@@ -18,6 +20,8 @@ import javax.swing.*;
 import java.awt.print.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 钟述林 393156105@qq.com on 2017/3/10 15:51.
@@ -26,6 +30,23 @@ import java.io.FileInputStream;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("zsl")
 public class NormalTest {
+
+    @Autowired
+    private IBuffetOrderService buffetOrderService;
+
+    @Test
+    public void test21() throws Exception {
+        Date d1 = new Date();
+        Thread.sleep(1000);
+        Date d2 = new Date();
+        System.out.println(d2.before(d1));
+    }
+
+    @Test
+    public void test20() {
+        List<BuffetOrder> list = buffetOrderService.findByNoBond();
+        System.out.println(list.size());
+    }
 
     @Test
     public void test110() throws Exception {

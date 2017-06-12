@@ -35,13 +35,10 @@ public class PrintTicketTools {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Long start = System.currentTimeMillis();
                 Company com = companyService.loadOne();
                 List<BuffetOrderDetail> detailList = buffetOrderDetailService.listByOrderNo(order.getNo());
                 printTicket(order, detailList, com.getName(), com.getPhone(), com.getAddress());
                 printBond(order, com.getName(), com.getPhone(), com.getAddress());
-                Long end = System.currentTimeMillis();
-                System.out.println("耗时============="+((end-start)/1000));
             }
         }).start();
     }
@@ -114,12 +111,14 @@ public class PrintTicketTools {
     }
 
     private void printBond(BuffetOrder order, String shopName, String phone, String address) {
-        File f = wordTemplateTools.buildBondFile(shopName, order.getCommodityCount(), order.getSurplusBond(),
-                order.getEntryTime()==null?order.getCreateTime():order.getEntryTime(), order.getNo(), phone, address);
+        if(order.getSurplusBond()>0) { //当压金金额大于0时才需要出单
+            File f = wordTemplateTools.buildBondFile(shopName, order.getCommodityCount(), order.getSurplusBond(),
+                    order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address);
 
-        PrintTools.print(f.getAbsolutePath());
+            PrintTools.print(f.getAbsolutePath());
 
-        f.delete();
+            f.delete();
+        }
     }
 
     /**
