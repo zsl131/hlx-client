@@ -72,7 +72,7 @@ function buildMemberMoney(memberSurplus) {
 }
 
 function buildMemberNeedMoney(memberSurplus) {
-    var orderMoney = $("input[name='orderTotalMoney']").val();
+    /*var orderMoney = $("input[name='orderTotalMoney']").val();
     var surplus = memberSurplus - orderMoney;
     var bondMoney = parseFloat($("input[name='bondMoney']").val());
     var bondCount = parseInt($("input[name='bondCount']").val());
@@ -81,5 +81,32 @@ function buildMemberNeedMoney(memberSurplus) {
         needMoney = needMoney - surplus;
     }
 
+    $(".show-money").find(".money-amount").find(".money").html(needMoney);*/
+
+    var orderMoney = $("input[name='orderTotalMoney']").val();
+    var surplus = memberSurplus - orderMoney;
+    var bondMoney = parseFloat($("input[name='bondMoney']").val());
+    var bondCount = parseInt($("input[name='bondCount']").val());
+//    var needMoney = bondMoney * bondCount;
+//    var needMoney = (bondCount>=2)?bondMoney:0; //押金
+    var needMoney = (bondCount<2)?0:(bondCount<5?bondMoney:50); //押金
+    if(surplus<0) {
+        needMoney = needMoney - surplus;
+    }
+
+    if(surplus>=0) {
+        $(".pay-types").css("display", "none");
+    } else {
+        $(".pay-types").css("display", "block");
+    }
+
+    if(needMoney<=0) {
+        $(".bond-pay-types").css("display", "none");
+    } else {
+        $(".bond-pay-types").css("display", "block");
+    }
+
+    //$(moneyObj).html(parseFloat($("#totalMoney").html()) + needMoney);
     $(".show-money").find(".money-amount").find(".money").html(needMoney);
+    $(".show-money").find(".money-amount").find(".money").find("small").html("（包含"+((bondCount>=2)?bondMoney:0)+" 元押金，只收取全票人的押金）");
 }

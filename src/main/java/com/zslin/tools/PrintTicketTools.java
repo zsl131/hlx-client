@@ -113,11 +113,11 @@ public class PrintTicketTools {
     private void printBond(BuffetOrder order, String shopName, String phone, String address) {
         if(order.getSurplusBond()>0) { //当压金金额大于0时才需要出单
             File f = wordTemplateTools.buildBondFile(shopName, order.getCommodityCount(), order.getSurplusBond(),
-                    order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address);
+                    order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address, order.getPayType(), order.getBondPayType(), order.getType());
 
             PrintTools.print(f.getAbsolutePath());
 
-            f.delete();
+//            f.delete();
         }
     }
 
@@ -133,10 +133,10 @@ public class PrintTicketTools {
             if(detail.getPrice()>0) {
                 File f = wordTemplateTools.buildTicketFile(shopName,
                         level + ("77777".equals(detail.getCommodityNo()) || "66666".equals(detail.getCommodityNo()) ? "儿童" : ""),
-                        order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address);
+                        order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address, order.getType());
 
                 PrintTools.print(f.getAbsolutePath());
-                f.delete();
+//                f.delete();
             }
         }
     }

@@ -95,6 +95,12 @@ function recalMoney(breakCount, dinnerCount, ticketWorth) {
     $(".ticket-discount-money").html(totalMoney);
     var moneyObj = $(".show-money").find(".money-amount").find(".money");
     //var moneyBefore = parseFloat($(moneyObj).html());
+    var bondMoney = parseFloat($(".show-money").find(".money-amount").find("small").attr("bondMoney"));
+    if(moneyBefore-totalMoney-bondMoney<=0) {
+        $(".pay-types").css("display", "none");
+    } else {
+        $(".pay-types").css("display", "block");
+    }
     $(moneyObj).html(moneyBefore-totalMoney);
 }
 

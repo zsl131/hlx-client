@@ -88,7 +88,7 @@ public class WordTemplateTools {
     }
 
     public File buildTicketFile(String shopName, String level, String date, String orderNo,
-                                String phone, String address) {
+                                String phone, String address, String type) {
         File targetFile = new File(configTools.getUploadPath("tickets/")+"ticket-"+(UUID.randomUUID().toString())+".docx");
         try {
             File f = getTicketTempate();
@@ -101,8 +101,9 @@ public class WordTemplateTools {
             datas.put("level", level);
             datas.put("date", date);
             datas.put("phone", phone);
-            datas.put("address", address);
+//            datas.put("address", address);
             datas.put("code", orderNo);
+            datas.put("type", buildOrderType(type));
             mainDocumentPart.variableReplace(datas);
 
 //            InputStream is = new FileInputStream(getTemplateFile("qrcode.jpg"));
@@ -122,8 +123,30 @@ public class WordTemplateTools {
         return targetFile;
     }
 
+    private String buildOrderType(String type) {
+        String res = "";
+        if("1".equals(type)) {
+            res = "店内订单";
+        } else if("2".equals(type)) {
+            res = "微信订单";
+        } else if("3".equals(type)) {
+            res = "美团订单";
+        } else if("4".equals(type)) {
+            res = "亲情订单";
+        } else if("5".equals(type)) {
+            res = "会员订单";
+        } else if("6".equals(type)) {
+            res = "卡券订单";
+        } else if("8".equals(type)) {
+            res = "商场订单";
+        } else if("7".equals(type)) {
+            res = "货到付款";
+        }
+        return res;
+    }
+
     public File buildBondFile(String shopName, Integer peopleCount, Float bondMoney, String date, String orderNo,
-                              String phone, String address) {
+                              String phone, String address, String payType, String bondPayType, String type) {
         File targetFile = new File(configTools.getUploadPath("tickets/")+"bond-"+(UUID.randomUUID().toString())+".docx");
         try {
             File f = getBondTemplate();
@@ -139,12 +162,15 @@ public class WordTemplateTools {
             datas.put("date", date);
             datas.put("phone", phone);
             datas.put("address", address);
+            datas.put("payType", buildPayType(payType));
+            datas.put("bondPayType", buildPayType(bondPayType));
+            datas.put("type", buildOrderType(type));
             mainDocumentPart.variableReplace(datas);
 
 //            byte[] bytes = qrGenerateTools.genQr(orderNo);
-            InputStream is = new FileInputStream(getTemplateFile("qrcode.jpg"));
-            byte[] bytes = IOUtils.toByteArray(is);
-            ImageAdd.replaceImage(wPackage, "qrcode", bytes, "test", "haha");
+//            InputStream is = new FileInputStream(getTemplateFile("qrcode.jpg"));
+//            byte[] bytes = IOUtils.toByteArray(is);
+//            ImageAdd.replaceImage(wPackage, "qrcode", bytes, "test", "haha");
 //            byte[] barcode = BarcodeUtil.generate(orderNo);
             byte[] barcode = qrGenerateTools.getBarcode(orderNo);
             ImageAdd.replaceImage(wPackage, "barcode", barcode, "test1", "haha1");
@@ -157,6 +183,27 @@ public class WordTemplateTools {
             e.printStackTrace();
         }
         return targetFile;
+    }
+
+    private String buildPayType(String payType) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("（");
+        //1-现金；2-刷卡；3-微信支付；4-支付宝支付；5-商场支付
+        if("1".equals(payType)) {
+            sb.append("现");
+        } else if("2".equals(payType)) {
+            sb.append("卡");
+        } else if ("3".equals(payType)) {
+            sb.append("微");
+        } else if("4".equals(payType)) {
+            sb.append("支");
+        } else if("5".equals(payType)) {
+            sb.append("商");
+        } else {
+            sb.append("其他");
+        }
+        sb.append("）");
+        return sb.toString();
     }
 /*
     public File buildBondFile(String shopName, Integer peopleCount, Float bondMoney, String date) {

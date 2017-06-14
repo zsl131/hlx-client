@@ -270,7 +270,7 @@ public class NewOrdersController {
     /** 提交订单 */
     @PostMapping(value = "postOrder")
     public @ResponseBody ResDto postOrder(String no, Float bondMoney, Integer bondCount, String payType,
-                                          String specialType, String reserve, HttpServletRequest request) {
+                                          String bondPayType, String specialType, String reserve, HttpServletRequest request) {
         Worker w = workerCookieTools.getWorker(request);
         if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
         BuffetOrder order = buffetOrderService.findByNo(no);
@@ -287,6 +287,7 @@ public class NewOrdersController {
             Float curSurplus = memberSurplus - order.getTotalMoney(); //消费后剩余
             order.setDiscountMoney(curSurplus>=0?order.getTotalMoney():memberSurplus);
             order.setDiscountReason(reserve);
+            order.setTotalMoney(order.getTotalMoney()-order.getDiscountMoney());
             order.setDiscountType("5");
             order.setEntryLong(System.currentTimeMillis());
             order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
@@ -341,6 +342,7 @@ public class NewOrdersController {
 //            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
             order.setSurplusBond(totalBondMoney); //剩余压金金额
         }
+        order.setBondPayType(bondPayType);
         buffetOrderService.save(order);
 
         //TODO 生成小票
@@ -553,6 +555,7 @@ public class NewOrdersController {
         } else {
             orders.setStatus("4");
         }
+        orders.setBackBond(orders.getSurplusBond()-money); //已退还的押金
         orders.setSurplusBond(money); //扣下来的压金
         orders.setEndLong(System.currentTimeMillis());
         orders.setEndTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));

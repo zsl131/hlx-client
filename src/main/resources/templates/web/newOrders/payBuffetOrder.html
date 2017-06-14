@@ -71,7 +71,7 @@
                             <span class="money-amount"><b class="fa fa-cny"></b> <b class="money" th:text="${order.totalMoney}"></b> 元<small>(不包含压金)</small></span>
                         </div>
                         <div class="pay-types">
-                            <span>支付方式：</span>
+                            <span><b style="color:#00F;">餐费</b>支付方式：</span>
                             <div class="btn-group" role="group" aria-label="...">
                                 <button type="button" class="btn btn-default btn-danger" payType="1"><i class="fa fa-cny"></i> 现金支付</button>
                                 <button type="button" class="btn btn-default" payType="3"><i class="fa fa-weixin"></i> 微信支付</button>
@@ -80,10 +80,19 @@
                                 <button type="button" class="btn btn-default" payType="5"><i class="fa fa-university"></i> 商场支付</button>
                             </div>
                         </div>
+                        <div class="bond-pay-types">
+                            <span><b style="color:#F00">押金</b>支付方式：</span>
+                            <div class="btn-group" role="group" aria-label="...">
+                                <button type="button" class="btn btn-default btn-danger" payType="1"><i class="fa fa-cny"></i> 现金支付</button>
+                                <button type="button" class="btn btn-default" payType="3"><i class="fa fa-weixin"></i> 微信支付</button>
+                                <button type="button" class="btn btn-default" payType="4">支付宝支付</button>
+                            </div>
+                        </div>
                         <div class="submit-pay">
                             <input name="bondMoney" th:value="${price.bondMoney}" type="hidden"/>
                             <input name="bondCount" type="hidden"/>
                             <input name="payType" value="1" type="hidden"/>
+                            <input name="bondPayType" value="1" type="hidden"/>
                             <input name="specialType" th:value="${order.type eq null ? '1':order.type}" type="hidden"/>
                             <input name="orderTotalMoney" th:value="${order.totalMoney}" type="hidden"/>
                             <input name="reserve" value="1" title="信息不全，请检查后再提交" type="hidden"/>

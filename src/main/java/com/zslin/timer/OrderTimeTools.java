@@ -27,7 +27,7 @@ public class OrderTimeTools {
     @Autowired
     private UploadFileTools uploadFileTools;
 
-    //第一次延迟30秒执行，当执行完后15分钟再执行
+    //第一次延迟50秒执行，当执行完后30分钟再执行，半小时未付款则自动取消
     @Scheduled(initialDelay = 1000*50, fixedDelay = 1000*60*30)
     public void processCancelOrders() {
         List<BuffetOrder> list = buffetOrderService.findByNoPay();
@@ -47,7 +47,7 @@ public class OrderTimeTools {
         }
     }
 
-    //第一次延迟30秒执行，当执行完后15分钟再执行
+    //第一次延迟30秒执行，当执行完后15分钟再执行，15分钟内自动处理押金为0的订单
     @Scheduled(initialDelay = 1000*30, fixedDelay = 1000*60*15)
     public void processOrders() {
         List<BuffetOrder> list = buffetOrderService.findByNoBond();

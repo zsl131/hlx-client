@@ -56,12 +56,17 @@ function calMtMoney() {
         var needMoney = mtTotalMoney;
         for(var i=0;i<array.length-1;i++) {
             var price = parseFloat($(orderList[i]).attr("price"));
-            console.log("price:"+price);
+//            console.log("price:"+price);
             needMoney -= price;
         }
         //console.log("================="+needMoney);
         $(".show-money").find(".money-amount").find(".money").html(needMoney);
-
+        var bondMoney = parseFloat($(".show-money").find(".money-amount").find("small").attr("bondMoney"));
+        if(needMoney-bondMoney<=0) {
+            $(".pay-types").css("display", "none");
+        } else {
+            $(".pay-types").css("display", "block");
+        }
         setReserveDatasByMt(array.join(","), "可提交");
     }
 }

@@ -16,6 +16,10 @@ $(function() {
     $(".pay-types").find("button").click(function() {
         onPayType($(this));
     });
+
+    $(".bond-pay-types").find("button").click(function() {
+            onBondPayType($(this));
+    });
     onFriendOrder();
 });
 
@@ -100,6 +104,7 @@ function submitOrder() {
     var bondMoney = $("input[name='bondMoney']").val();
     var bondCount = $("input[name='bondCount']").val();
     var payType = $("input[name='payType']").val();
+    var bondPayType = $("input[name='bondPayType']").val();
     var specialType = $("input[name='specialType']").val();
     var reserve = $("input[name='reserve']").val();
 
@@ -109,7 +114,7 @@ function submitOrder() {
     } else {
         var html = '<i class="fa fa-info"></i> 确定已收款并提交订单吗？';
         var submitDialog = confirmDialog(html, '<i class="fa fa-info-circle"></i> 系统提示', function() {
-            $.post("/web/newOrders/postOrder", {no:no, bondMoney:bondMoney, bondCount:bondCount, payType:payType, specialType:specialType, reserve:reserve}, function(res) {
+            $.post("/web/newOrders/postOrder", {no:no, bondPayType:bondPayType, bondMoney:bondMoney, bondCount:bondCount, payType:payType, specialType:specialType, reserve:reserve}, function(res) {
 //                alert(res.msg);
                 window.location.reload();
             }, "json");
@@ -145,19 +150,43 @@ function onPayType(obj) {
     $("input[name='payType']").val($(obj).attr("payType"));
 }
 
+function onBondPayType(obj) {
+    $(".bond-pay-types").find("button").each(function() {
+        $(this).removeClass("btn-danger");
+    });
+    $(obj).addClass("btn-danger");
+    $("input[name='bondPayType']").val($(obj).attr("payType"));
+}
+
 function buildTotalMoney() {
     var count = parseInt($("input[name='bondCount']").val());
-    var price = parseFloat($("input[name='bondMoney']").val()); //之前是每个本票收取的费用，目前是每桌本票人数不小于2时的费用
+    var price = parseFloat($("input[name='bondMoney']").val()); //之前是每个全票收取的费用，目前是每桌本票人数不小于2时的费用
     var tarObj = $(".money-amount");
     var moneyObj = $(tarObj).find(".money");
     var remindObj = $(tarObj).find("small");
 
-    var needBondMoney = (count>=2)?price:0;
+//    var needBondMoney = (count>=2)?price:0;//押金
+    var needBondMoney = (count<2)?0:(count<5?price:50);//押金
 
     $(moneyObj).html(parseFloat($("#totalMoney").html()) + needBondMoney);
-    $(remindObj).html("（包含"+(needBondMoney)+" 元压金，只收取全票人的压金）");
+    $(remindObj).html("（包含"+(needBondMoney)+" 元押金）");
+    $(remindObj).attr("bondMoney", needBondMoney);
 //    $(moneyObj).html(parseFloat($("#totalMoney").html()) + count*price);
-//    $(remindObj).html("（包含"+(count*price)+" 元压金，只收取全票人的压金）");
+//    $(remindObj).html("（包含"+(count*price)+" 元押金）");
+
+    if(parseFloat($("#totalMoney").html())<=0) {
+        $(".pay-types").css("display", "none");
+    } else {
+        $(".pay-types").css("display", "block");
+    }
+
+    if(needBondMoney<=0) {
+        $(".bond-pay-types").css("display", "none");
+    } else {
+        $(".bond-pay-types").css("display", "block");
+    }
+
+    $("input[name='bondMoney']").val(needBondMoney); //重设押金金额
 }
 
 

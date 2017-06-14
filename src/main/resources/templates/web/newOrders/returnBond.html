@@ -72,23 +72,34 @@
 
                 <tr>
                     <td class="field">就餐费用：</td>
-                    <td>
-                        <b style="color:#F00" th:text="${#numbers.formatDecimal(order.totalMoney, 0, 'COMMA', 1, 'POINT')}"></b> 元
+                    <td th:if="${order.totalMoney ne null}">
+                        <span style="color:#F00;" class="discount-money totalMoney" th:text="${#numbers.formatDecimal(order.totalMoney, 0, 'COMMA', 1, 'POINT')}"></span> 元
+                        （
+                        <span th:switch="${order.payType}" th:remove="tag">
+                            <span th:case="1">现金支付</span>
+                            <span th:case="2">刷卡支付</span>
+                            <span th:case="3">微信支付</span>
+                            <span th:case="4">支付宝支付</span>
+                            <span th:case="*">未知</span>
+                        </span>
+                        ）
                     </td>
                     <td class="field">剩余压金：</td>
-                    <td th:text="${order.surplusBond}+' 元（只收全票人员）'"></td>
+                    <td class="surplusBond"><span style="color:#F00;" th:text="${order.surplusBond}+' 元'" ></span>
+                        （
+                        <span th:switch="${order.bondPayType}" th:remove="tag">
+                            <span th:case="1">现金支付</span>
+                            <span th:case="3">微信支付</span>
+                            <span th:case="4">支付宝支付</span>
+                            <span th:case="*">未知</span>
+                        </span>
+                        ）
+                    </td>
                 </tr>
 
                 <tr>
-                    <td class="field">付款方式：</td>
-                    <td>
-                <span th:switch="${order.payType}" th:remove="tag">
-                    <span th:case="1">现金支付</span>
-                    <span th:case="2">刷卡支付</span>
-                    <span th:case="3">微信支付</span>
-                    <span th:case="4">支付宝支付</span>
-                </span>
-                    </td>
+                    <td class="field">订单总额：</td>
+                    <td><b th:text="${order.surplusBond+order.totalMoney}" style="color:#F00;"></b> 元</td>
                     <td class="field">订单状态：</td>
                     <td>
                 <span th:switch="${order.status}" th:remove="tag">
