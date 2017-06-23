@@ -34,8 +34,8 @@ function addOneCode() {
 }
 
 function buildSingleCode() {
-    var code = "";
-    for(var i=0;i<12;i++) {
+    var code = "999999";
+    for(var i=0;i<6;i++) {
         var d = parseInt(Math.random()*10);
         code += d+"";
     }
@@ -100,7 +100,7 @@ function rebuildNo() {
         var d = array[i];
         if($.trim(d)!=''){
             if($.inArray(d, newArray)<0) {
-                newArray.unshift(d);
+                newArray.push(d);
             }
         }
     }

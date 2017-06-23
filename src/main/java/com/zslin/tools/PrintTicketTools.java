@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,7 +42,7 @@ public class PrintTicketTools {
                 Company com = companyService.loadOne();
                 List<BuffetOrderDetail> detailList = buffetOrderDetailService.listByOrderNo(order.getNo());
                 printTicket(order, detailList, com.getName(), com.getPhone(), com.getAddress());
-                printBond(order, com.getName(), com.getPhone(), com.getAddress());
+                printBond(order, com.getName(), com.getPhone(), com.getAddress(), com.getHaveTime());
             }
         }).start();
     }
@@ -110,14 +114,31 @@ public class PrintTicketTools {
         f.delete();
     }
 
-    private void printBond(BuffetOrder order, String shopName, String phone, String address) {
+    private void printBond(BuffetOrder order, String shopName, String phone, String address, Integer haveTime) {
         if(order.getSurplusBond()>0) { //当压金金额大于0时才需要出单
+
             File f = wordTemplateTools.buildBondFile(shopName, order.getCommodityCount(), order.getSurplusBond(),
-                    order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address, order.getPayType(), order.getBondPayType(), order.getType());
+                    order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address, order.getPayType(),
+                    order.getBondPayType(), order.getType(), buildTime(order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), haveTime));
 
             PrintTools.print(f.getAbsolutePath());
 
-//            f.delete();
+            f.delete();
+        }
+    }
+
+    private String buildTime(String createTime, Integer haveTime) {
+        try {
+            haveTime = (haveTime==null||haveTime<=0)?120:haveTime;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date cDate = sdf.parse(createTime);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(cDate);
+            cal.add(Calendar.MINUTE, haveTime);
+            String [] array = sdf.format(cal.getTime()).split(" ");
+            return array[1];
+        } catch (ParseException e) {
+            return null;
         }
     }
 
@@ -136,7 +157,7 @@ public class PrintTicketTools {
                         order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address, order.getType());
 
                 PrintTools.print(f.getAbsolutePath());
-//                f.delete();
+                f.delete();
             }
         }
     }
@@ -144,7 +165,7 @@ public class PrintTicketTools {
     private String getLevel(List<BuffetOrderDetail> detailList) {
         String level = "午餐";
         for(BuffetOrderDetail detail : detailList) {
-            if(detail.getPrice()>0 && "99999".equals(detail.getCommodityNo())) {
+            if(detail.getPrice()>0 && ("99999".equals(detail.getCommodityNo()) || "77777".equals(detail.getCommodityNo()))) {
                 level = "晚餐";
                 break;
             }

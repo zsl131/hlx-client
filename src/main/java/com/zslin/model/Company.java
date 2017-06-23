@@ -61,6 +61,18 @@ public class Company {
     /** 地址，主要显示在小票上 */
     private String address;
 
+    /** 用餐时长，单位分钟 */
+    @Column(name = "have_time")
+    private Integer haveTime;
+
+    public Integer getHaveTime() {
+        return haveTime;
+    }
+
+    public void setHaveTime(Integer haveTime) {
+        this.haveTime = haveTime;
+    }
+
     public String getPhone() {
         return phone;
     }

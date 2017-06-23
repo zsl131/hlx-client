@@ -146,7 +146,7 @@ public class WordTemplateTools {
     }
 
     public File buildBondFile(String shopName, Integer peopleCount, Float bondMoney, String date, String orderNo,
-                              String phone, String address, String payType, String bondPayType, String type) {
+                              String phone, String address, String payType, String bondPayType, String type, String endTime) {
         File targetFile = new File(configTools.getUploadPath("tickets/")+"bond-"+(UUID.randomUUID().toString())+".docx");
         try {
             File f = getBondTemplate();
@@ -165,6 +165,7 @@ public class WordTemplateTools {
             datas.put("payType", buildPayType(payType));
             datas.put("bondPayType", buildPayType(bondPayType));
             datas.put("type", buildOrderType(type));
+            datas.put("time", endTime==null?"2小时内":endTime);
             mainDocumentPart.variableReplace(datas);
 
 //            byte[] bytes = qrGenerateTools.genQr(orderNo);
