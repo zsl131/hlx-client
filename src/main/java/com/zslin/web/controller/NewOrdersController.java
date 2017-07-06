@@ -5,6 +5,8 @@ import com.zslin.basic.repository.SimpleSortBuilder;
 import com.zslin.basic.tools.NormalTools;
 import com.zslin.basic.utils.ParamFilterUtil;
 import com.zslin.dto.ResDto;
+import com.zslin.meituan.dto.ReturnDto;
+import com.zslin.meituan.tools.MeituanHandlerTools;
 import com.zslin.model.*;
 import com.zslin.service.*;
 import com.zslin.tools.OrderNoTools;
@@ -174,6 +176,7 @@ public class NewOrdersController {
         model.addAttribute("order", order);
         model.addAttribute("commodityList", buffetOrderDetailService.listByOrderNo(orderNo));
         model.addAttribute("price", priceService.findOne());
+        model.addAttribute("rules", rulesService.loadOne());
         return "web/newOrders/payBuffetOrder";
     }
 
@@ -267,6 +270,9 @@ public class NewOrdersController {
         return new ResDto("1", "操作成功");
     }
 
+    @Autowired
+    private MeituanHandlerTools meituanHandlerTools;
+
     /** 提交订单 */
     @PostMapping(value = "postOrder")
     public @ResponseBody ResDto postOrder(String no, Float bondMoney, Integer bondCount, String payType,
@@ -333,7 +339,14 @@ public class NewOrdersController {
             order.setDiscountMoney(discountMoney);
             order.setTotalMoney(order.getTotalMoney()-discountMoney);
             order.setType(specialType); //订单类型
-            order.setDiscountReason(reserve);
+            String discountReason = buildDiscountReasonByMt(no, reserve);
+            if(discountReason!=null && discountReason.length()>11) {
+                order.setDiscountReason(discountReason);
+                order.setMtStatus("1");
+            } else {
+                order.setDiscountReason(reserve);
+                order.setMtStatus("0");
+            }
             order.setDiscountType("6"); //美团
             order.setEntryLong(System.currentTimeMillis());
             order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
@@ -353,13 +366,40 @@ public class NewOrdersController {
         return new ResDto("1", "操作成功");
     }
 
+    private String buildDiscountReasonByMt(String orderNo, String reserve) {
+//        meituanHandlerTools.h
+        StringBuffer sb = new StringBuffer();
+        String [] array = reserve.split(",");
+        for(String single : array) {
+            if(single==null) {continue;}
+            if(single.indexOf("_")>=0) {
+                String[] tmpArray = single.split("_");
+                Integer count = Integer.parseInt(tmpArray[1]); //美团券张数
+                ReturnDto dto = meituanHandlerTools.handlerCheck(tmpArray[0], count, orderNo);
+                if(dto!=null && dto.getCode()>0 && dto.getData()!=null) {
+                    sb.append(dto.getData().toString());
+                }
+            }
+        }
+        return sb.toString();
+    }
+
     private Float buildDiscountMoneyByMt(String orderNo, String reserve) {
         Float res = 0f;
         String [] array = reserve.split(",");
         List<BuffetOrderDetail> details = buffetOrderDetailService.listByOrderNo(orderNo);
         int flag = 0;
         for(String single : array) {
-            if(single!=null && single.length()==12 && flag<details.size()) {
+            if(single==null) {continue;}
+            if(single.indexOf("_")>=0) {
+                String [] tmpArray = single.split("_");
+                Integer count = Integer.parseInt(tmpArray[1]); //美团券张数
+                Integer amount = Integer.parseInt(tmpArray[2]); //一张券所抵人数
+                for(int i=0;i<count*amount;i++) {
+                    res += details.get(flag).getPrice();
+                    flag ++;
+                }
+            } else if(single!=null && single.length()==12 && flag<details.size()) {
                 res += details.get(flag).getPrice();
                 flag ++;
             }
@@ -564,6 +604,24 @@ public class NewOrdersController {
 
         sendBuffetOrder2Server(orders);
         return new ResDto("0", "操作完成！");
+    }
+
+    /** 修改支付方式 */
+    @PostMapping(value = "updatePayType")
+    public @ResponseBody ResDto updatePayType(String orderNo, String field, String payType) {
+        BuffetOrder order = buffetOrderService.findByNo(orderNo);
+        if(order!=null && "2".equalsIgnoreCase(order.getStatus())) {
+            if("payType".equalsIgnoreCase(field)) {
+                order.setPayType(payType);
+            } else if("bondPayType".equalsIgnoreCase(field)) {
+                order.setBondPayType(payType);
+            }
+            buffetOrderService.save(order);
+            sendBuffetOrder2Server(order);
+            return new ResDto("1", "操作完成！");
+        } else {
+            return new ResDto("0", "只有就餐中的订单才可修改支付方式");
+        }
     }
 
     public void sendBuffetOrder2Server(BuffetOrder order) {

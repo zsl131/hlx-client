@@ -81,9 +81,16 @@ function onOrderType(obj) {
         remindTitle = "请先输入折扣手机号码进行验证，待审核通过后方可提交";
         initValue = "";
     } else if(orderType == '3') { //美团订单
-        buildMtHtml(obj);
-        remindTitle = "请先输入美团编码";
-        initValue = "";
+        var net = $(obj).attr("net");
+        if(net=='1') {
+            buildMtHtml(obj);
+            remindTitle = "请先输入美团编码";
+            initValue = "";
+        } else {
+            buildMtHtmlNoNet(obj);
+            remindTitle = "请先输入美团编码";
+            initValue = "";
+        }
     } else if(orderType == '6') { //卡券订单
         buildTicketHtml(obj);
         remindTitle = "请先设置对应卡券数量";

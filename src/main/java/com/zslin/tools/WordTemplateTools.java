@@ -165,7 +165,7 @@ public class WordTemplateTools {
             datas.put("payType", buildPayType(payType));
             datas.put("bondPayType", buildPayType(bondPayType));
             datas.put("type", buildOrderType(type));
-            datas.put("time", endTime==null?"2小时内":endTime);
+            datas.put("haveTime", endTime==null?"2小时内":endTime);
             mainDocumentPart.variableReplace(datas);
 
 //            byte[] bytes = qrGenerateTools.genQr(orderNo);

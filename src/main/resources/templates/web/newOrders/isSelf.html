@@ -3,6 +3,7 @@
       xmlns:th="http://www.thymeleaf.org">
     <body>
         <div th:fragment="content" th:remove="tag">
+            <script type="text/javascript" src="/web/newOrders/orders-update-pay-type.js"></script>
             <table class="show-detail">
                 <tr>
                     <td class="field">订单类型：</td>
@@ -17,7 +18,7 @@
                         </span>
                     </td>
                     <td class="field">订单编号：</td>
-                    <td th:text="${order.no}"></td>
+                    <td th:text="${order.no}" id="orderNo"></td>
                 </tr>
 
                 <tr>
@@ -31,26 +32,46 @@
                     <td class="field">就餐费用：</td>
                     <td th:if="${order.totalMoney ne null}">
                         <span style="color:#F00;" class="discount-money totalMoney" th:text="${#numbers.formatDecimal(order.totalMoney, 0, 'COMMA', 1, 'POINT')}"></span> 元
-                        （
-                        <span th:switch="${order.payType}" th:remove="tag">
-                            <span th:case="1">现金支付</span>
-                            <span th:case="2">刷卡支付</span>
-                            <span th:case="3">微信支付</span>
-                            <span th:case="4">支付宝支付</span>
-                            <span th:case="*">未知</span>
-                        </span>
-                        ）
+                        <div class="btn-group" style="float:right; padding-right:20px;">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span th:switch="${order.payType}" th:remove="tag">
+                                    <span th:case="1">现金支付</span>
+                                    <span th:case="2">刷卡支付</span>
+                                    <span th:case="3">微信支付</span>
+                                    <span th:case="4">支付宝支付</span>
+                                    <span th:case="*">未知</span>
+                                </span>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" field="payType">
+                                <li><a href="javascript:void(0)" class="update-pay-type-href" val="1">现金支付</a></li>
+                                <li><a href="javascript:void(0)" class="update-pay-type-href" val="3">微信支付</a></li>
+                                <li><a href="javascript:void(0)" class="update-pay-type-href" val="4">支付宝支付</a></li>
+                                <li><a href="javascript:void(0)" class="update-pay-type-href" val="2">刷卡支付</a></li>
+                                <li><a href="javascript:void(0)" class="update-pay-type-href" val="5">商场支付</a></li>
+                            </ul>
+                        </div>
                     </td>
-                    <td class="field">剩余压金：</td>
+                    <td class="field">剩余押金：</td>
                     <td class="surplusBond"><span style="color:#F00;" th:text="${order.surplusBond}+' 元'" ></span>
-                    （
-                        <span th:switch="${order.bondPayType}" th:remove="tag">
-                            <span th:case="1">现金支付</span>
-                            <span th:case="3">微信支付</span>
-                            <span th:case="4">支付宝支付</span>
-                            <span th:case="*">未知</span>
-                        </span>
-                    ）
+                        <div class="btn-group" style="float:right; padding-right:20px;">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span th:switch="${order.bondPayType}" th:remove="tag">
+                                    <span th:case="1">现金支付</span>
+                                    <span th:case="2">刷卡支付</span>
+                                    <span th:case="3">微信支付</span>
+                                    <span th:case="4">支付宝支付</span>
+                                    <span th:case="*">未知</span>
+                                </span>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" field="bondPayType">
+                                <li><a href="javascript:void(0)" class="update-pay-type-href" val="1">现金支付</a></li>
+                                <li><a href="javascript:void(0)" class="update-pay-type-href" val="3">微信支付</a></li>
+                                <li><a href="javascript:void(0)" class="update-pay-type-href" val="4">支付宝支付</a></li>
+                                <li><a href="javascript:void(0)" class="update-pay-type-href" val="2">刷卡支付</a></li>
+                            </ul>
+                        </div>
                     </td>
                 </tr>
 
@@ -90,7 +111,7 @@
                 </tr>
                 <tr th:if="${order.type eq '3' or order.type eq '4' or order.type eq '5'}">
                     <td class="field">抵价备注：</td>
-                    <td colspan="3" th:text="${order.discountReason}"></td>
+                    <td colspan="3"><b th:if="${order.mtStatus eq '1'}" style="color:#F60; padding:10px;">已自动验证</b><span th:text="${order.discountReason}"></span></td>
                 </tr>
             </table>
         </div>

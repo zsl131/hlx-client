@@ -2,6 +2,10 @@ package com.zslin.tools;
 
 import com.alibaba.fastjson.JSON;
 import com.zslin.basic.tools.MyBeanUtils;
+import com.zslin.meituan.model.MeituanConfig;
+import com.zslin.meituan.model.MeituanShop;
+import com.zslin.meituan.service.IMeituanConfigService;
+import com.zslin.meituan.service.IMeituanShopService;
 import com.zslin.model.*;
 import com.zslin.service.*;
 import org.json.JSONObject;
@@ -169,5 +173,37 @@ public class SimpleDataTools {
             mc.setBalance(amount);
         }
         memberChargeService.save(mc);
+    }
+
+    @Autowired
+    private IMeituanConfigService meituanConfigService;
+
+    public void handlerMeituanConfig(JSONObject jsonObj) {
+        MeituanConfig config = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), MeituanConfig.class);
+        MeituanConfig mc = meituanConfigService.loadOne();
+        if(mc==null) {
+            meituanConfigService.save(config);
+        } else {
+            MyBeanUtils.copyProperties(config, mc, new String[]{"id"});
+            meituanConfigService.save(mc);
+        }
+    }
+
+    @Autowired
+    private IMeituanShopService meituanShopService;
+
+    public void handlerMeituanShop(String action, JSONObject jsonObj) {
+        MeituanShop shop = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), MeituanShop.class);
+        if("update".equalsIgnoreCase(action)) {
+            MeituanShop ms = meituanShopService.findByPoiId(shop.getPoiId());
+            if(ms==null) {
+                meituanShopService.save(shop);
+            } else {
+                MyBeanUtils.copyProperties(shop, ms, new String[]{"id"});
+                meituanShopService.save(ms);
+            }
+        } else if("delete".equalsIgnoreCase(action)) {
+            meituanShopService.deleteByPoiId(shop.getPoiId());
+        }
     }
 }

@@ -119,7 +119,7 @@ public class PrintTicketTools {
 
             File f = wordTemplateTools.buildBondFile(shopName, order.getCommodityCount(), order.getSurplusBond(),
                     order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address, order.getPayType(),
-                    order.getBondPayType(), order.getType(), buildTime(order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), haveTime));
+                    order.getBondPayType(), order.getType(), buildTime(haveTime));
 
             PrintTools.print(f.getAbsolutePath());
 
@@ -127,6 +127,22 @@ public class PrintTicketTools {
         }
     }
 
+    //生成用餐时间时长
+    private String buildTime(Integer haveTime) {
+        StringBuffer sb = new StringBuffer();
+        haveTime = (haveTime==null||haveTime<=0)?120:haveTime;
+        Integer hour = haveTime/60;
+        Integer min = haveTime%60;
+        if(hour>0) {
+            sb.append(hour).append("小时");
+        }
+        if(min>0) {
+            sb.append(min).append("分钟");
+        }
+        return sb.toString();
+    }
+
+    //生成就餐时间截止
     private String buildTime(String createTime, Integer haveTime) {
         try {
             haveTime = (haveTime==null||haveTime<=0)?120:haveTime;

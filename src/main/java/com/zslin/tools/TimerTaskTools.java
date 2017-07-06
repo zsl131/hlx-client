@@ -97,6 +97,10 @@ public class TimerTaskTools {
             simpleDataTools.handlerPrize(action, dataId, dataObj);
         } else if("walletDetail".equalsIgnoreCase(type)) { //钱包明细
             simpleDataTools.handlerWalletDetail(dataObj);
+        } else if("meituanConfig".equalsIgnoreCase(type)) { //美团配置
+            simpleDataTools.handlerMeituanConfig(dataObj);
+        } else if("meituanShop".equalsIgnoreCase(type)) { //美团门店
+            simpleDataTools.handlerMeituanShop(action, dataObj);
         }
     }
 
