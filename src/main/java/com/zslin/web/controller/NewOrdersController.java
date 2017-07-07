@@ -339,6 +339,7 @@ public class NewOrdersController {
             order.setDiscountMoney(discountMoney);
             order.setTotalMoney(order.getTotalMoney()-discountMoney);
             order.setType(specialType); //订单类型
+            order.setMeituanNum(reserve);
             String discountReason = buildDiscountReasonByMt(no, reserve);
             if(discountReason!=null && discountReason.length()>11) {
                 order.setDiscountReason(discountReason);

@@ -121,7 +121,7 @@ public class MeituanHandlerTools {
             request.setType(1);
             request.setCouponCode(code);
             String str = request.doRequest();
-//            System.out.println("++++++++++"+str);
+            System.out.println("++++++++++"+str);
         } catch (Exception e) {
             e.printStackTrace();
         }

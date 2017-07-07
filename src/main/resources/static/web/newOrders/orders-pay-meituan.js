@@ -41,7 +41,7 @@ function checkNo(obj) {
                 $.post("/meituan/handlerReady", {code:val}, function(res) {
                     //console.log(res);
                     if(res.code==0) {
-                        showDialog(res.msg, '<i class="fa fa-info-circle"></i> 系统提示');
+                        showDialog(res.msg+'【<b style="color:#F00;">'+val+'</b>】', '<i class="fa fa-info-circle"></i> 系统提示');
                     } else {
                         //var orderSize = $(".commodity-list-hidden").find("span").length; //
                         //var
@@ -73,8 +73,8 @@ function appendSingleCodeInner(obj) {
 }
 
 function appendSingleCode(obj) {
-    //var isDinner = isDinnerTime($("input[name='mealTime']").val());
-    var isDinner = false;
+    var isDinner = isDinnerTime($("input[name='mealTime']").val());
+//    var isDinner = false;
     var dealTitle = obj.dealTitle;
     if(!isDinner) {
         appendSingleCodeInner(obj);
