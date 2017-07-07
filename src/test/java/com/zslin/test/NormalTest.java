@@ -3,6 +3,7 @@ package com.zslin.test;
 import com.zslin.basic.tools.SecurityUtil;
 import com.zslin.model.BuffetOrder;
 import com.zslin.service.IBuffetOrderService;
+import com.zslin.service.IMemberChargeService;
 import com.zslin.tools.OrderNoTools;
 import com.zslin.tools.WordTools;
 import org.junit.Test;
@@ -33,6 +34,17 @@ public class NormalTest {
 
     @Autowired
     private IBuffetOrderService buffetOrderService;
+
+    @Autowired
+    private IMemberChargeService memberChargeService;
+
+    @Test
+    public void test22() {
+        Float f1 = memberChargeService.queryMoneyByPayType("2017-07-08", "1");
+        Float f2 = memberChargeService.queryMoneyByPayType("2017-07-08", "2");
+        Float f3 = memberChargeService.queryMoneyByPayType("2017-07-08", "3");
+        System.out.println("f1:"+f1+",f2:"+f2+",f3:"+f3);
+    }
 
     @Test
     public void test21() throws Exception {

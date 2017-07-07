@@ -75,7 +75,7 @@ public class MemberController {
 
     @Token(flag= Token.CHECK)
     @PostMapping(value="add")
-    public String add(Integer levelId, Member member, HttpServletRequest request) {
+    public String add(Integer levelId, String payType, Member member, HttpServletRequest request) {
         if(TokenTools.isNoRepeat(request)) {
             Worker w = workerCookieTools.getWorker(request);
             if(w==null) {throw new SystemException("未检测到收银员");}
@@ -89,15 +89,15 @@ public class MemberController {
                 memberService.save(member);
                 sendMember2Server(member);
 
-                addMemberCharge(levelId, member);
+                addMemberCharge(levelId, member, payType);
             } else {
-                addMemberCharge(levelId, m);
+                addMemberCharge(levelId, m, payType);
             }
         }
         return "redirect:/web/member/list";
     }
 
-    private void addMemberCharge(Integer levelId, Member m) {
+    private void addMemberCharge(Integer levelId, Member m, String payType) {
         MemberLevel ml = memberLevelService.findOne(levelId);
         MemberCharge mc = new MemberCharge();
         mc.setCreateTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
@@ -110,6 +110,7 @@ public class MemberController {
         mc.setName(m.getName());
         mc.setPhone(m.getPhone());
         mc.setStatus("1");
+        mc.setPayType(payType);
 
         Integer old = m.getSurplus();
         old = old==null?0:old;

@@ -41,6 +41,19 @@ public class WebNewOrdersController {
     @Autowired
     private IPrizeService prizeService;
 
+    @Autowired
+    private IMemberChargeService memberChargeService;
+
+    //会员充值统计
+    private void calMemberCharge(Model model, String day) {
+        Float mCash = memberChargeService.queryMoneyByPayType(day, "1"); //会员现金
+        Float mWeixin = memberChargeService.queryMoneyByPayType(day, "3"); //会员微信
+        Float mAlipay = memberChargeService.queryMoneyByPayType(day, "2"); //会员支付宝
+        model.addAttribute("mCash", mCash==null?0:mCash);
+        model.addAttribute("mWeixin", mWeixin==null?0:mWeixin);
+        model.addAttribute("mAlipay", mAlipay==null?0:mAlipay);
+    }
+
     @GetMapping(value = "cal")
     public String cal(Model model, String day, HttpServletRequest request) {
         if(day==null) {
@@ -54,6 +67,7 @@ public class WebNewOrdersController {
         queryCount(day, model);
         queryTotalMoney(mtd, model);
         model.addAttribute("day", day);
+        calMemberCharge(model, day);
 
         Float marketMoneyAM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimeAM(), mtd.getEndTimeAM(), "5");
         model.addAttribute("marketMoneyAM", marketMoneyAM==null?0:marketMoneyAM); //商场签单

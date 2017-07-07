@@ -8,6 +8,7 @@ import com.zslin.meituan.service.IMeituanConfigService;
 import com.zslin.meituan.service.IMeituanShopService;
 import com.zslin.model.*;
 import com.zslin.service.*;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -148,12 +149,20 @@ public class SimpleDataTools {
         Integer amount = jsonObj.getInt("amount");
         String phone = jsonObj.getString("phone");
         mc.setChargeMoney(amount*1f);
-        mc.setName(jsonObj.getString("accountName"));
+        try {
+            mc.setName(jsonObj.getString("accountName"));
+        } catch (Exception e) {
+            mc.setName("");
+        }
         mc.setCreateTime(jsonObj.getString("createTime"));
         mc.setCreateLong(jsonObj.getLong("createLong"));
         mc.setCreateDay(jsonObj.getString("createDay"));
         mc.setPhone(phone);
-        mc.setNickname(jsonObj.getString("accountName"));
+        try {
+            mc.setNickname(jsonObj.getString("accountName"));
+        } catch (Exception e) {
+            mc.setNickname("");
+        }
         mc.setStatus("1");
 
         Member m = memberService.findByPhone(phone);

@@ -57,6 +57,11 @@ public class MeituanTest {
     }
 
     @Test
+    public void test12() {
+        meituanHandlerTools.handlerReady("297705887364");
+    }
+
+    @Test
     public void test11() {
         String str = "{\"data\":{\"couponCodes\":[\"018679450756\"],\"result\":0,\"dealId\":41777850,\"dealValue\":0.11,\"dealTitle\":\"kfpttest_zl5_02人餐\",\"poiid\":156596339,\"message\":\"\"}}";
         String data = JsonTools.getJsonParam(str, "data").toString();

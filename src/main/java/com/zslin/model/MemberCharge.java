@@ -45,6 +45,10 @@ public class MemberCharge {
 
     private String phone;
 
+    /** 支付方式，1-现金；2-支付宝；3-微信；4-刷卡 */
+    @Column(name = "pay_type")
+    private String payType;
+
     /** 每次充值加1 */
     @Column(name = "order_no")
     private Integer orderNo=1;
@@ -79,6 +83,14 @@ public class MemberCharge {
     /** 创建日期，格式 yyyy-MM-dd HH:mm:ss */
     @Column(name = "create_time")
     private String createTime;
+
+    public String getPayType() {
+        return payType;
+    }
+
+    public void setPayType(String payType) {
+        this.payType = payType;
+    }
 
     public Integer getId() {
         return id;

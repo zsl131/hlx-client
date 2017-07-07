@@ -57,11 +57,11 @@
                             <div class="btn-group" role="group" aria-label="...">
                                 <button type="button" orderType="1" th:class="'btn btn-default '+${(order.type eq null or order.type eq '' or order.type eq '1')?'btn-info':''}" ><i class="fa fa-gavel"></i> 正常订单</button>
                                 <button type="button" orderType="3" net="1" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" title="输入美团编号，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-tumblr"></i> 美团订单</button>
-                                <button type="button" orderType="3" net="0" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" title="输入美团编号，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-tumblr"></i> 美团（断网）</button>
                                 <button type="button" orderType="5" th:class="'btn btn-default '+${order.type eq '5'?'btn-info':''}" title="输入会员手机，验证通过后从会员账户上扣款"><i class="fa fa-user-secret"></i> 会员订单</button>
                                 <button th:if="${order.isSelf eq '1'}" type="button" orderType="6" th:class="'btn btn-default '+${order.type eq '6'?'btn-info':''}" title="卡券总数不能超过全票总数"><i class="fa fa-ticket"></i> 卡券订单</button>
                                 <button th:if="${order.isSelf eq '1'}" type="button" orderType="4" th:class="'btn btn-default '+${order.type eq '4'?'btn-info':''}" title="输入折扣手机号码，待审核通过后方可收款入场"><i class="fa fa-group"></i> 亲情订单</button>
                                 <button type="button" orderType="2" th:class="'btn btn-default '+${order.type eq '2'?'btn-info':''}" ><i class="fa fa-weixin"></i> 微信订单</button>
+                                <button type="button" orderType="3" net="0" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" title="输入美团编号，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-tumblr"></i> 美团（断网）</button>
                                 <!--<button th:if="${order.isSelf eq '1'}" type="button" orderType="8" th:class="'btn btn-default '+${order.type eq '8'?'btn-info':''}" title="卡券总数不能超过全票总数"><i class="fa fa-university"></i> 商场订单</button>-->
                             </div>
                         </div>
