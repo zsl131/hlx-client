@@ -355,6 +355,22 @@ public class NewOrdersController {
             order.setPayType(payType);
 //            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
             order.setSurplusBond(totalBondMoney); //剩余压金金额
+        } else if("9".equals(specialType)) { //飞凡订单
+            Float discountMoney = buildDiscountMoneyByFfan(no, reserve);
+            order.setDiscountMoney(discountMoney);
+            order.setTotalMoney(order.getTotalMoney()-discountMoney);
+            order.setType(specialType); //订单类型
+            order.setMeituanNum(reserve);
+            String discountReason = buildDiscountReasonByMt(no, reserve);
+            order.setDiscountReason(reserve);
+            order.setMtStatus("0");
+            order.setDiscountType("9"); //飞凡
+            order.setEntryLong(System.currentTimeMillis());
+            order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+            order.setStatus("2"); //就餐中……
+            order.setPayType(payType);
+//            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
+            order.setSurplusBond(totalBondMoney); //剩余压金金额
         }
         order.setBondPayType(bondPayType);
         buffetOrderService.save(order);
@@ -401,6 +417,30 @@ public class NewOrdersController {
                     flag ++;
                 }
             } else if(single!=null && single.length()==12 && flag<details.size()) {
+                res += details.get(flag).getPrice();
+                flag ++;
+            }
+        }
+        return res;
+    }
+
+
+    private Float buildDiscountMoneyByFfan(String orderNo, String reserve) {
+        Float res = 0f;
+        String [] array = reserve.split(",");
+        List<BuffetOrderDetail> details = buffetOrderDetailService.listByOrderNo(orderNo);
+        int flag = 0;
+        for(String single : array) {
+            if(single==null) {continue;}
+            if(single.indexOf("_")>=0) {
+                String [] tmpArray = single.split("_");
+                Integer count = Integer.parseInt(tmpArray[1]); //飞凡券张数
+                Integer amount = Integer.parseInt(tmpArray[2]); //一张券所抵人数
+                for(int i=0;i<count*amount;i++) {
+                    res += details.get(flag).getPrice();
+                    flag ++;
+                }
+            } else if(single!=null && flag<details.size()) {
                 res += details.get(flag).getPrice();
                 flag ++;
             }

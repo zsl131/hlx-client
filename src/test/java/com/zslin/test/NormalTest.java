@@ -6,6 +6,7 @@ import com.zslin.service.IBuffetOrderService;
 import com.zslin.service.IMemberChargeService;
 import com.zslin.tools.OrderNoTools;
 import com.zslin.tools.WordTools;
+import com.zslin.web.dto.MyTimeDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,13 @@ public class NormalTest {
 
     @Autowired
     private IMemberChargeService memberChargeService;
+
+    @Test
+    public void test23() {
+        MyTimeDto mtd = new MyTimeDto("2017-08-23");
+        Float ffanMoneyAM = buffetOrderService.queryMoneyByFfan(mtd.getStartTimeAM(), mtd.getEndTimeAM());
+        System.out.println("========="+ffanMoneyAM);
+    }
 
     @Test
     public void test22() {

@@ -139,6 +139,8 @@ public class WordTemplateTools {
             res = "卡券订单";
         } else if("8".equals(type)) {
             res = "商场订单";
+        } else if("9".equals(type)) {
+            res = "飞凡订单";
         } else if("7".equals(type)) {
             res = "货到付款";
         }

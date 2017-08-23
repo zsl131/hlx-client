@@ -11,10 +11,11 @@
                         <span th:switch="${order.type}" th:remove="tag">
                             <span th:case="1">店内订单</span>
                             <span th:case="2">微信订单</span>
-                            <span th:case="3">美团订单</span>
+                            <span th:case="3">美团订单（抵价：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>
                             <span th:case="4">亲情折扣（优惠：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>
                             <span th:case="5">会员订单（已扣：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>
                             <span th:case="6">卡券订单（优惠：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>
+                            <span th:case="9">飞凡订单（抵价：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>
                         </span>
                     </td>
                     <td class="field">订单编号：</td>

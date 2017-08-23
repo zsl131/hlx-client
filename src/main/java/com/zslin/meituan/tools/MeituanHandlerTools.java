@@ -41,7 +41,7 @@ public class MeituanHandlerTools {
             request.setCouponCode(code);
             String str = request.doRequest();
 
-System.out.println("========="+str);
+//System.out.println("========="+str);
 
             Object data = JsonTools.getJsonParam(str, "data");
             Integer resCode = 1;

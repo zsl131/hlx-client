@@ -7,6 +7,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +60,7 @@ public class TimerTaskTools {
                 String datas = JsonTools.getJsonParam(json, "data").toString();
                 processDatas(datas);
             }
-            System.out.println(json);
+//            System.out.println(json);
         }
     }
 
