@@ -58,6 +58,14 @@ public class MemberController {
         return "web/member/list";
     }
 
+    @GetMapping(value = "listCharges")
+    public String listCharges(Model model, Integer page, HttpServletRequest request) {
+        Page<MemberCharge> datas = memberChargeService.findAll(ParamFilterUtil.getInstance().buildSearch(model, request),
+                SimplePageBuilder.generate(page, SimpleSortBuilder.generateSort("id_d")));
+        model.addAttribute("datas", datas);
+        return "web/member/listCharges";
+    }
+
     @Token(flag= Token.READY)
     @GetMapping(value = "add")
     public String add(Model model, Integer id, HttpServletRequest request) {
@@ -94,7 +102,7 @@ public class MemberController {
                 addMemberCharge(levelId, m, payType);
             }
         }
-        return "redirect:/web/member/list";
+        return "redirect:/web/member/listCharges";
     }
 
     private void addMemberCharge(Integer levelId, Member m, String payType) {
@@ -115,6 +123,7 @@ public class MemberController {
         Integer old = m.getSurplus();
         old = old==null?0:old;
         m.setSurplus(old+ml.getGiveMoney()*100+ml.getChargeMoney()*100);
+        mc.setTotalBalance(m.getSurplus()/100);
         memberService.save(m);
 
         memberChargeService.save(mc);

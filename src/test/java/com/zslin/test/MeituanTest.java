@@ -48,7 +48,7 @@ public class MeituanTest {
 
     @Test
     public void test09() {
-        meituanHandlerTools.handlerCheck("018679450756", 1, "2017070610002");
+        meituanHandlerTools.handlerCheck("051831387051", 1, "2017070610002");
     }
 
     @Test

@@ -83,7 +83,7 @@ public class BuffetOrder {
     @Column(name = "back_bond")
     private Float backBond = 0f;
 
-    /** 类型，1-收银员下单；2-微信下单；3-美团下单；4-友情价下单；5-会员订单；6-卡券订单；7-货到付款（只对外卖）；8-商场订单 */
+    /** 类型，1-收银员下单；2-微信下单；3-美团下单；4-友情价下单；5-会员订单；6-卡券订单；7-货到付款（只对外卖）；8-商场订单；9-飞凡订单 */
     private String type;
 
     /** 只针对微信下单订单 */
@@ -105,7 +105,7 @@ public class BuffetOrder {
     @Column(name = "discount_reason")
     private String discountReason;
 
-    /** 优惠类型；0-无优惠；1-积分抵价；2-友情价；3-抵价券；4-微信扣款订单；5-会员扣款订单；6-美团扣款订单 */
+    /** 优惠类型；0-无优惠；1-积分抵价；2-友情价；3-抵价券；4-微信扣款订单；5-会员扣款订单；6-美团扣款订单；9-飞凡扣款订单 */
     @Column(name = "discount_type")
     private String discountType;
 

@@ -34,6 +34,10 @@ public class MemberCharge {
     /** 此次充值余额，余额 */
     private Integer balance;
 
+    /** 充值后，总余额 */
+    @Column(name = "total_balance")
+    private Integer totalBalance;
+
     @Column(name = "account_id")
     private Integer accountId;
 
@@ -83,6 +87,14 @@ public class MemberCharge {
     /** 创建日期，格式 yyyy-MM-dd HH:mm:ss */
     @Column(name = "create_time")
     private String createTime;
+
+    public Integer getTotalBalance() {
+        return totalBalance;
+    }
+
+    public void setTotalBalance(Integer totalBalance) {
+        this.totalBalance = totalBalance;
+    }
 
     public String getPayType() {
         return payType;

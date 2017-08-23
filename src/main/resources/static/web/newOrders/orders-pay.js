@@ -95,6 +95,10 @@ function onOrderType(obj) {
         buildTicketHtml(obj);
         remindTitle = "请先设置对应卡券数量";
         initValue = "";
+    } else if(orderType == '9') { //飞凡订单
+        buildFfanHtml(obj);
+        remindTitle = "请先输入飞凡提货码或券码";
+        initValue = '';
     }
     setReserveInfo(initValue, remindTitle);
 }
@@ -126,9 +130,15 @@ function submitOrder() {
                 window.location.reload();
             }, "json");
 
+            setSubmitBtnStyle();
             $(submitDialog).remove(); //直接关闭
         });
     }
+}
+
+function setSubmitBtnStyle() {
+    $(".submit-remind-btn").css("display", "block");
+    $(".submit-order-btn").css("display", "none");
 }
 
 function removeOrder() {
