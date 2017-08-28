@@ -22,7 +22,7 @@ public class MyTicketDto {
     @Override
     public boolean equals(Object obj) {
         MyTicketDto d = (MyTicketDto)obj;
-        System.out.println(d.getPrizeId()+"==="+this.getPrizeId()+"=="+d.getPrizeId().equals(this.getPrizeId()));
+//        System.out.println(d.getPrizeId()+"==="+this.getPrizeId()+"=="+d.getPrizeId().equals(this.getPrizeId()));
         return d.getPrizeId()==(this.getPrizeId());
     }
 

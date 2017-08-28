@@ -20,6 +20,7 @@ $(function() {
     $(".bond-pay-types").find("button").click(function() {
             onBondPayType($(this));
     });
+    buildNormalHtml();
     onFriendOrder();
 });
 

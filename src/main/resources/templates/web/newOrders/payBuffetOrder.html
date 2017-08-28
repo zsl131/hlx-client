@@ -35,6 +35,7 @@
                         <div class="order-info">
                             <p>订单编号：<span th:text="${order.no}"></span></p>
                             <p>订单金额：<span id="totalMoney" th:text="${order.totalMoney}"></span> 元</p>
+                            <p th:if="${order.discountMoney>0}">可以折扣：<b style="color:#F00;" th:text="${order.discountMoney}"></b>元（<span th:text="${order.discountReason}"></span>）</p>
                             <p>用餐人数：<span th:text="${order.commodityCount}" style="font-size:24px; font-weight:bold; color:#F00; padding:0px 5px;"></span>人</p>
                             <p>创建时间：<span th:text="${order.createTime}"></span></p>
                         </div>

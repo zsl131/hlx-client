@@ -103,6 +103,8 @@ public class TimerTaskTools {
             simpleDataTools.handlerMeituanConfig(dataObj);
         } else if("meituanShop".equalsIgnoreCase(type)) { //美团门店
             simpleDataTools.handlerMeituanShop(action, dataObj);
+        } else if("discountTime".equalsIgnoreCase(type)) { //时段折扣
+            simpleDataTools.handlerDiscountTime(dataObj, dataId);
         }
     }
 

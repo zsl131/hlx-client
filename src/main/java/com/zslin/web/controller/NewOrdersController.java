@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -69,11 +71,14 @@ public class NewOrdersController {
     @Autowired
     private PrintTicketTools printTicketTools;
 
+    @Autowired
+    private IDiscountTimeService discountTimeService;
+
     @GetMapping(value = "index")
     public String index(Model model, String type, HttpServletRequest request) {
-        type = type==null||"".equalsIgnoreCase(type)?"1":type;
-        List<Commodity> commodityList ;
-        if("1".equalsIgnoreCase(type)) {
+        type = type == null || "".equalsIgnoreCase(type) ? "1" : type;
+        List<Commodity> commodityList;
+        if ("1".equalsIgnoreCase(type)) {
             commodityList = commodityService.listByTicket();
             model.addAttribute("rules", rulesService.loadOne());
         } else {
@@ -81,10 +86,13 @@ public class NewOrdersController {
         }
         model.addAttribute("commodityList", commodityList);
         model.addAttribute("type", type);
+        model.addAttribute("discountTime", discountTimeService.findByTime(Integer.parseInt((new SimpleDateFormat("HHmm").format(new Date())))));
         return "web/newOrders/index";
     }
 
-    /** 订单列表 */
+    /**
+     * 订单列表
+     */
     @GetMapping(value = "list")
     public String list(Model model, Integer page, HttpServletRequest request) {
         Page<BuffetOrder> datas = buffetOrderService.findAll(ParamFilterUtil.getInstance().buildSearch(model, request),
@@ -94,15 +102,21 @@ public class NewOrdersController {
     }
 
     @PostMapping(value = "addBuffetOrder")
-    public @ResponseBody ResDto addBuffetOrder(String commodityNo, HttpServletRequest request) {
+    public
+    @ResponseBody
+    ResDto addBuffetOrder(String commodityNo, HttpServletRequest request) {
         try {
             Worker w = workerCookieTools.getWorker(request);
-            if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
+            if (w == null) {
+                return new ResDto("-1", "未检测到收银员");
+            } //未检测到收银员，刷新重新登陆
             List<BuffetOrderDetail> detailList = buildDetail(commodityNo);
-            if(detailList==null || detailList.size()<=0) {return new ResDto("-2", "订单中无商品");}
+            if (detailList == null || detailList.size() <= 0) {
+                return new ResDto("-2", "订单中无商品");
+            }
             BuffetOrder order = new BuffetOrder();
             order.setCashierName(w.getName());
-            order.setIsSelf("3".equals(detailList.get(0).getCommodityType())?"0":"1"); //如果商品类型为3则表示是外卖单品
+            order.setIsSelf("3".equals(detailList.get(0).getCommodityType()) ? "0" : "1"); //如果商品类型为3则表示是外卖单品
             order.setCashierPhone(w.getPhone());
             order.setNo(orderNoTools.getOrderNo("1")); //前台订单以1开头
             order.setCreateLong(System.currentTimeMillis());
@@ -112,6 +126,18 @@ public class NewOrdersController {
             order.setType("1");
             order.setCommodityCount(detailList.size()); //订单中商品数量
             order.setTotalMoney(buildTotalMoney(detailList)); //订单总价
+            order.setDiscountType("0");
+
+            DiscountTime discountTime = discountTimeService.findByTime(Integer.parseInt((new SimpleDateFormat("HHmm").format(new Date()))));
+            if (discountTime != null && discountTime.getDiscountMoney() > 0) {
+                Float needDiscountMoney = buildDiscountMoney(detailList, discountTime.getDiscountMoney());
+                if (needDiscountMoney > 0) {
+                    order.setDiscountMoney(needDiscountMoney);
+                    //order.setTotalMoney(order.getTotalMoney() - needDiscountMoney);
+                    order.setDiscountType("10");
+                    order.setDiscountReason("时段折扣");
+                }
+            }
             buffetOrderService.save(order);
 
             addOrderDetail(detailList, order); //保存订单商品信息
@@ -121,8 +147,19 @@ public class NewOrdersController {
         }
     }
 
+    //计算时段折扣应折扣的金额
+    private Float buildDiscountMoney(List<BuffetOrderDetail> detailList, Float price) {
+        Float res = 0f;
+        for (BuffetOrderDetail bod : detailList) {
+            if ("88888".equalsIgnoreCase(bod.getCommodityNo()) || "99999".equalsIgnoreCase(bod.getCommodityNo())) {
+                res += price;
+            }
+        }
+        return res;
+    }
+
     private void addOrderDetail(List<BuffetOrderDetail> detailList, BuffetOrder order) {
-        for(BuffetOrderDetail bod : detailList) {
+        for (BuffetOrderDetail bod : detailList) {
             bod.setOrderId(order.getId());
             bod.setOrderNo(order.getNo());
             buffetOrderDetailService.save(bod);
@@ -132,7 +169,7 @@ public class NewOrdersController {
     //订单总价
     private Float buildTotalMoney(List<BuffetOrderDetail> detailList) {
         Float res = 0f;
-        for(BuffetOrderDetail bod : detailList) {
+        for (BuffetOrderDetail bod : detailList) {
             res += bod.getPrice();
         }
         return res;
@@ -140,12 +177,14 @@ public class NewOrdersController {
 
     private List<BuffetOrderDetail> buildDetail(String commodityNo) {
         List<BuffetOrderDetail> res = new ArrayList<>();
-        if(commodityNo==null || "".equalsIgnoreCase(commodityNo) || commodityNo.indexOf(",")<0) {return res;}
-        String [] nos = commodityNo.split(",");
-        for(String no : nos) {
-            if(no!=null && !"".equalsIgnoreCase(no) && !"0".equalsIgnoreCase(no)) {
+        if (commodityNo == null || "".equalsIgnoreCase(commodityNo) || commodityNo.indexOf(",") < 0) {
+            return res;
+        }
+        String[] nos = commodityNo.split(",");
+        for (String no : nos) {
+            if (no != null && !"".equalsIgnoreCase(no) && !"0".equalsIgnoreCase(no)) {
                 Commodity c = commodityService.findByNo(no);
-                if(c!=null) {
+                if (c != null) {
                     BuffetOrderDetail bod = new BuffetOrderDetail();
                     bod.setPrice(c.getPrice());
                     bod.setCommodityId(c.getId());
@@ -166,12 +205,12 @@ public class NewOrdersController {
     @GetMapping(value = "payBuffetOrder")
     public String payBuffetOrder(Model model, String orderNo, HttpServletRequest request) {
         BuffetOrder order = buffetOrderService.findByNo(orderNo);
-        if("0".equals(order.getIsSelf())) { //如果是外卖单品，则跳转
-            return "redirect:/web/newOrders/payOutOrder?orderNo="+orderNo;
+        if ("0".equals(order.getIsSelf())) { //如果是外卖单品，则跳转
+            return "redirect:/web/newOrders/payOutOrder?orderNo=" + orderNo;
         }
         String status = order.getStatus();
-        if(!"0".equalsIgnoreCase(status) && !"1".equalsIgnoreCase(status) && !"6".equals(status)) {
-            return "redirect:/web/newOrders/showOrder?orderNo="+orderNo;
+        if (!"0".equalsIgnoreCase(status) && !"1".equalsIgnoreCase(status) && !"6".equals(status)) {
+            return "redirect:/web/newOrders/showOrder?orderNo=" + orderNo;
         }
         model.addAttribute("order", order);
         model.addAttribute("commodityList", buffetOrderDetailService.listByOrderNo(orderNo));
@@ -183,27 +222,35 @@ public class NewOrdersController {
     @GetMapping(value = "payOutOrder")
     public String payOutOrder(Model model, String orderNo, HttpServletRequest request) {
         BuffetOrder order = buffetOrderService.findByNo(orderNo);
-        if("1".equals(order.getIsSelf())) { //如果是自助餐则跳转
-            return "redirect:/web/newOrders/payBuffetOrder?orderNo="+orderNo;
+        if ("1".equals(order.getIsSelf())) { //如果是自助餐则跳转
+            return "redirect:/web/newOrders/payBuffetOrder?orderNo=" + orderNo;
         }
         String status = order.getStatus();
-        if(!"0".equalsIgnoreCase(status)) {
-            return "redirect:/web/newOrders/showOrder?orderNo="+orderNo;
+        if (!"0".equalsIgnoreCase(status)) {
+            return "redirect:/web/newOrders/showOrder?orderNo=" + orderNo;
         }
         model.addAttribute("order", order);
         model.addAttribute("commodityList", buffetOrderDetailService.listByOrderNo(orderNo));
         return "web/newOrders/payOutOrder";
     }
 
-    /** 提交外卖订单 */
+    /**
+     * 提交外卖订单
+     */
     @PostMapping(value = "postOutOrder")
-    public @ResponseBody ResDto postOutOrder(String no, String payType,
-                                          String specialType, HttpServletRequest request) {
+    public
+    @ResponseBody
+    ResDto postOutOrder(String no, String payType,
+                        String specialType, HttpServletRequest request) {
         Worker w = workerCookieTools.getWorker(request);
-        if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
+        if (w == null) {
+            return new ResDto("-1", "未检测到收银员");
+        } //未检测到收银员，刷新重新登陆
         BuffetOrder order = buffetOrderService.findByNo(no);
-        if(order==null) {return new ResDto("-2", "未检查到订单信息");}
-        if("1".equals(specialType)) { //普通订单
+        if (order == null) {
+            return new ResDto("-2", "未检查到订单信息");
+        }
+        if ("1".equals(specialType)) { //普通订单
             order.setSurplusBond(0f); //剩余压金金额
             order.setType(specialType); //订单类型
             order.setPayType(payType);
@@ -215,7 +262,7 @@ public class NewOrdersController {
             order.setEndLong(System.currentTimeMillis());
             order.setEndTime(NormalTools.curDate());
             //TODO 需要打印小票
-        } else if("7".equals(specialType)) { //如果是货到付款
+        } else if ("7".equals(specialType)) { //如果是货到付款
             order.setSurplusBond(0f); //剩余压金金额
             order.setType(specialType); //订单类型
             order.setDiscountType("0");
@@ -235,7 +282,9 @@ public class NewOrdersController {
     }
 
     @GetMapping(value = "queryOrder")
-    public @ResponseBody BuffetOrder queryOrder(String orderNo, HttpServletRequest request) {
+    public
+    @ResponseBody
+    BuffetOrder queryOrder(String orderNo, HttpServletRequest request) {
         BuffetOrder order = buffetOrderService.findByNo(orderNo);
         return order;
     }
@@ -252,12 +301,18 @@ public class NewOrdersController {
     }
 
     @PostMapping(value = "removeOrder")
-    public @ResponseBody ResDto removeOrder(String no, HttpServletRequest request) {
+    public
+    @ResponseBody
+    ResDto removeOrder(String no, HttpServletRequest request) {
         Worker w = workerCookieTools.getWorker(request);
-        if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
+        if (w == null) {
+            return new ResDto("-1", "未检测到收银员");
+        } //未检测到收银员，刷新重新登陆
         BuffetOrder order = buffetOrderService.findByNo(no);
-        if(order==null) {return new ResDto("-2", "未检查到订单信息");}
-        if(!"0".equals(order.getStatus())) { //只要status为0时可删除订单
+        if (order == null) {
+            return new ResDto("-2", "未检查到订单信息");
+        }
+        if (!"0".equals(order.getStatus())) { //只要status为0时可删除订单
             return new ResDto("-3", "只有在刚下单状态下才可取消订单");
         }
         order.setStatus("-2");
@@ -273,45 +328,58 @@ public class NewOrdersController {
     @Autowired
     private MeituanHandlerTools meituanHandlerTools;
 
-    /** 提交订单 */
+    /**
+     * 提交订单
+     */
     @PostMapping(value = "postOrder")
-    public @ResponseBody ResDto postOrder(String no, Float bondMoney, Integer bondCount, String payType,
-                                          String bondPayType, String specialType, String reserve, HttpServletRequest request) {
+    public
+    @ResponseBody
+    ResDto postOrder(String no, Float bondMoney, Integer bondCount, String payType,
+                     String bondPayType, String specialType, String reserve, HttpServletRequest request) {
         Worker w = workerCookieTools.getWorker(request);
-        if(w==null) {return new ResDto("-1", "未检测到收银员");} //未检测到收银员，刷新重新登陆
+        if (w == null) {
+            return new ResDto("-1", "未检测到收银员");
+        } //未检测到收银员，刷新重新登陆
         BuffetOrder order = buffetOrderService.findByNo(no);
-        if(order==null) {return new ResDto("-2", "未检查到订单信息");}
-        Float totalBondMoney = (bondCount>=2)?bondMoney:0f;
-        if("5".equalsIgnoreCase(specialType)) { //如果是会员订单
+        if (order == null) {
+            return new ResDto("-2", "未检查到订单信息");
+        }
+        Float totalBondMoney = (bondCount >= 2) ? bondMoney : 0f;
+        if ("5".equalsIgnoreCase(specialType)) { //如果是会员订单
             Member m = memberService.findByPhone(reserve);
-            if(m==null) {return new ResDto("-3", "未检测到会员信息");}
+            if (m == null) {
+                return new ResDto("-3", "未检测到会员信息");
+            }
 //            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
             order.setSurplusBond(totalBondMoney); //剩余压金金额
             order.setType(specialType); //订单类型
             order.setPayType(payType);
-            Float memberSurplus = m.getSurplus()*1.0f/100;
+            Float memberSurplus = m.getSurplus() * 1.0f / 100;
             Float curSurplus = memberSurplus - order.getTotalMoney(); //消费后剩余
-            order.setDiscountMoney(curSurplus>=0?order.getTotalMoney():memberSurplus);
+            order.setDiscountMoney(curSurplus >= 0 ? order.getTotalMoney() : memberSurplus);
             order.setDiscountReason(reserve);
-            order.setTotalMoney(order.getTotalMoney()-order.getDiscountMoney());
+            order.setTotalMoney(order.getTotalMoney() - order.getDiscountMoney());
             order.setDiscountType("5");
             order.setEntryLong(System.currentTimeMillis());
             order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
             order.setStatus("2"); //就餐中……
-            memberService.plusMoneyByPhone(0-(int)(order.getDiscountMoney()*100), reserve);
+            memberService.plusMoneyByPhone(0 - (int) (order.getDiscountMoney() * 100), reserve);
             //TODO 服务器端需要自行对会员账户进行消费处理
             //TODO 需要打印小票
-        } else if("1".equals(specialType)) { //普通订单
+        } else if ("1".equals(specialType)) { //普通订单
 //            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
             order.setSurplusBond(totalBondMoney); //剩余压金金额
             order.setType(specialType); //订单类型
             order.setPayType(payType);
-            order.setDiscountType("0");
+//            order.setDiscountType("0");
             order.setEntryLong(System.currentTimeMillis());
+            if("10".equalsIgnoreCase(order.getDiscountType())) { //如果是时段折扣
+                order.setTotalMoney(order.getTotalMoney()-order.getDiscountMoney());
+            }
             order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
             order.setStatus("2"); //就餐中……
             //TODO 需要打印小票
-        } else if("4".equals(specialType)) { //如果是亲情折扣订单
+        } else if ("4".equals(specialType)) { //如果是亲情折扣订单
 //            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
             order.setSurplusBond(totalBondMoney); //剩余压金金额
             order.setPayType(payType);
@@ -321,10 +389,10 @@ public class NewOrdersController {
             order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
             order.setStatus("2"); //就餐中……
             //TODO 需要打印小票
-        } else if("6".equals(specialType)) { //如果是卡券订单
+        } else if ("6".equals(specialType)) { //如果是卡券订单
             Float discountMoney = buildDiscountMoney(no, reserve);
             order.setDiscountMoney(discountMoney);
-            order.setTotalMoney(order.getTotalMoney()-discountMoney);
+            order.setTotalMoney(order.getTotalMoney() - discountMoney);
             order.setType(specialType); //订单类型
             order.setDiscountReason(reserve);
             order.setDiscountType("3"); //抵价券
@@ -334,14 +402,14 @@ public class NewOrdersController {
             order.setPayType(payType);
 //            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
             order.setSurplusBond(totalBondMoney); //剩余压金金额
-        } else if("3".equalsIgnoreCase(specialType)) { //美团订单
+        } else if ("3".equalsIgnoreCase(specialType)) { //美团订单
             Float discountMoney = buildDiscountMoneyByMt(no, reserve);
             order.setDiscountMoney(discountMoney);
-            order.setTotalMoney(order.getTotalMoney()-discountMoney);
+            order.setTotalMoney(order.getTotalMoney() - discountMoney);
             order.setType(specialType); //订单类型
             order.setMeituanNum(reserve);
             String discountReason = buildDiscountReasonByMt(no, reserve);
-            if(discountReason!=null && discountReason.length()>11) {
+            if (discountReason != null && discountReason.length() > 11) {
                 order.setDiscountReason(discountReason);
                 order.setMtStatus("1");
             } else {
@@ -355,10 +423,10 @@ public class NewOrdersController {
             order.setPayType(payType);
 //            order.setSurplusBond(bondMoney*bondCount); //剩余压金金额
             order.setSurplusBond(totalBondMoney); //剩余压金金额
-        } else if("9".equals(specialType)) { //飞凡订单
+        } else if ("9".equals(specialType)) { //飞凡订单
             Float discountMoney = buildDiscountMoneyByFfan(no, reserve);
             order.setDiscountMoney(discountMoney);
-            order.setTotalMoney(order.getTotalMoney()-discountMoney);
+            order.setTotalMoney(order.getTotalMoney() - discountMoney);
             order.setType(specialType); //订单类型
             order.setMeituanNum(reserve);
             String discountReason = buildDiscountReasonByMt(no, reserve);
@@ -386,14 +454,16 @@ public class NewOrdersController {
     private String buildDiscountReasonByMt(String orderNo, String reserve) {
 //        meituanHandlerTools.h
         StringBuffer sb = new StringBuffer();
-        String [] array = reserve.split(",");
-        for(String single : array) {
-            if(single==null) {continue;}
-            if(single.indexOf("_")>=0) {
+        String[] array = reserve.split(",");
+        for (String single : array) {
+            if (single == null) {
+                continue;
+            }
+            if (single.indexOf("_") >= 0) {
                 String[] tmpArray = single.split("_");
                 Integer count = Integer.parseInt(tmpArray[1]); //美团券张数
                 ReturnDto dto = meituanHandlerTools.handlerCheck(tmpArray[0], count, orderNo);
-                if(dto!=null && dto.getCode()>0 && dto.getData()!=null) {
+                if (dto != null && dto.getCode() > 0 && dto.getData() != null) {
                     sb.append(dto.getData().toString());
                 }
             }
@@ -403,22 +473,24 @@ public class NewOrdersController {
 
     private Float buildDiscountMoneyByMt(String orderNo, String reserve) {
         Float res = 0f;
-        String [] array = reserve.split(",");
+        String[] array = reserve.split(",");
         List<BuffetOrderDetail> details = buffetOrderDetailService.listByOrderNo(orderNo);
         int flag = 0;
-        for(String single : array) {
-            if(single==null) {continue;}
-            if(single.indexOf("_")>=0) {
-                String [] tmpArray = single.split("_");
+        for (String single : array) {
+            if (single == null) {
+                continue;
+            }
+            if (single.indexOf("_") >= 0) {
+                String[] tmpArray = single.split("_");
                 Integer count = Integer.parseInt(tmpArray[1]); //美团券张数
                 Integer amount = Integer.parseInt(tmpArray[2]); //一张券所抵人数
-                for(int i=0;i<count*amount;i++) {
+                for (int i = 0; i < count * amount; i++) {
                     res += details.get(flag).getPrice();
-                    flag ++;
+                    flag++;
                 }
-            } else if(single!=null && single.length()==12 && flag<details.size()) {
+            } else if (single != null && single.length() == 12 && flag < details.size()) {
                 res += details.get(flag).getPrice();
-                flag ++;
+                flag++;
             }
         }
         return res;
@@ -427,22 +499,24 @@ public class NewOrdersController {
 
     private Float buildDiscountMoneyByFfan(String orderNo, String reserve) {
         Float res = 0f;
-        String [] array = reserve.split(",");
+        String[] array = reserve.split(",");
         List<BuffetOrderDetail> details = buffetOrderDetailService.listByOrderNo(orderNo);
         int flag = 0;
-        for(String single : array) {
-            if(single==null) {continue;}
-            if(single.indexOf("_")>=0) {
-                String [] tmpArray = single.split("_");
+        for (String single : array) {
+            if (single == null) {
+                continue;
+            }
+            if (single.indexOf("_") >= 0) {
+                String[] tmpArray = single.split("_");
                 Integer count = Integer.parseInt(tmpArray[1]); //飞凡券张数
                 Integer amount = Integer.parseInt(tmpArray[2]); //一张券所抵人数
-                for(int i=0;i<count*amount;i++) {
+                for (int i = 0; i < count * amount; i++) {
                     res += details.get(flag).getPrice();
-                    flag ++;
+                    flag++;
                 }
-            } else if(single!=null && flag<details.size()) {
+            } else if (single != null && flag < details.size()) {
                 res += details.get(flag).getPrice();
-                flag ++;
+                flag++;
             }
         }
         return res;
@@ -450,22 +524,22 @@ public class NewOrdersController {
 
     private Float buildDiscountMoney(String orderNo, String reserve) {
         Float res = 0f;
-        String [] array = reserve.split("_");
-        for(String single : array) {
-            if(single!=null && single.indexOf(":")>0) {
-                String [] s_a = single.split(":");
+        String[] array = reserve.split("_");
+        for (String single : array) {
+            if (single != null && single.indexOf(":") > 0) {
+                String[] s_a = single.split(":");
                 Integer dataId = Integer.parseInt(s_a[0]); //Prize的id
                 Integer amount = Integer.parseInt(s_a[1]); //对应数量
                 Prize prize = prizeService.findByDataId(dataId);
                 String prizeType = prize.getType();
-                if("3".equals(prizeType)) {
+                if ("3".equals(prizeType)) {
                     Float price = buffetOrderDetailService.findPrice(orderNo, "88888");
                     res += price * amount;
-                } else if("4".equals(prizeType)) {
+                } else if ("4".equals(prizeType)) {
                     Float price = buffetOrderDetailService.findPrice(orderNo, "99999");
                     res += price * amount;
-                } else if("2".equals(prizeType)) {
-                    res += ((1.0f*prize.getWorth()*amount)/100);
+                } else if ("2".equals(prizeType)) {
+                    res += ((1.0f * prize.getWorth() * amount) / 100);
                 }
             }
         }
@@ -474,21 +548,25 @@ public class NewOrdersController {
 
     //退票
     @PostMapping(value = "retreatOrders")
-    public @ResponseBody
+    public
+    @ResponseBody
     ResDto retreatOrders(String no, String reason, HttpServletRequest request) {
         Worker w = workerCookieTools.getWorker(request);
-        if(w==null) {return new ResDto("-10", "无权操作");}
+        if (w == null) {
+            return new ResDto("-10", "无权操作");
+        }
         Rules rules = rulesService.loadOne(); //先获取规则
         BuffetOrder orders = buffetOrderService.findByNo(no);
-        if(orders==null) {
+        if (orders == null) {
             return new ResDto("-1", "订单不存在"); //订单不存在
         } else {
-            if(orders.getEndTime()!=null) {return new ResDto("-2", "订单已完结，不可退票");}
-            else if(!"1".equalsIgnoreCase(orders.getType()) && !"4".equalsIgnoreCase(orders.getType())) {
+            if (orders.getEndTime() != null) {
+                return new ResDto("-2", "订单已完结，不可退票");
+            } else if (!"1".equalsIgnoreCase(orders.getType()) && !"4".equalsIgnoreCase(orders.getType())) {
                 return new ResDto("-3", "此订单类型不可退票");
-            } else if(!OrdersOperateTools.canRetreat(rules.getRefundMin(), orders.getEntryLong())) {
+            } else if (!OrdersOperateTools.canRetreat(rules.getRefundMin(), orders.getEntryLong())) {
                 return new ResDto("-4", "已超过退票时间");
-            } else if(!"2".equalsIgnoreCase(orders.getStatus())) {
+            } else if (!"2".equalsIgnoreCase(orders.getStatus())) {
                 return new ResDto("-5", "只能在就餐状态才可退票");
             } else {
                 orders.setStatus("-1");
@@ -508,19 +586,23 @@ public class NewOrdersController {
 
     //发送友情价订单到服务器
     @PostMapping(value = "sendFriendOrder")
-    public @ResponseBody ResDto sendFriendOrder(String no, String bossPhone, HttpServletRequest request) {
+    public
+    @ResponseBody
+    ResDto sendFriendOrder(String no, String bossPhone, HttpServletRequest request) {
         Worker w = workerCookieTools.getWorker(request);
-        if(w==null) {return new ResDto("-10", "无权操作");}
+        if (w == null) {
+            return new ResDto("-10", "无权操作");
+        }
         BuffetOrder orders = buffetOrderService.findByNo(no);
-        if(orders==null) {
+        if (orders == null) {
             return new ResDto("-1", "订单不存在"); //订单不存在
         } else {
-            if(!"0".equals(orders.getStatus())) {
+            if (!"0".equals(orders.getStatus())) {
                 return new ResDto("-2", "当前状态不可再进行亲情折扣");
             }
             orders.setType("4");
             Float totalMoney = buildFriendMoney(no);
-            Float discountMoney = orders.getTotalMoney()-totalMoney;
+            Float discountMoney = orders.getTotalMoney() - totalMoney;
             orders.setTotalMoney(totalMoney);
             orders.setDiscountMoney(discountMoney);
             orders.setDiscountReason(bossPhone);
@@ -535,10 +617,10 @@ public class NewOrdersController {
         List<BuffetOrderDetail> list = buffetOrderDetailService.listByOrderNo(no);
         Price price = priceService.findOne();
         Float result = 0f;
-        for(BuffetOrderDetail d : list) {
-            if("88888".equals(d.getCommodityNo())) { //如果是午餐券
+        for (BuffetOrderDetail d : list) {
+            if ("88888".equals(d.getCommodityNo())) { //如果是午餐券
                 result += price.getFriendBreakfastPrice();
-            } else if("99999".equals(d.getCommodityNo())) { //如果是晚餐券
+            } else if ("99999".equals(d.getCommodityNo())) { //如果是晚餐券
                 result += price.getFriendDinnerPrice();
             } else {
                 result += d.getPrice();
@@ -548,16 +630,20 @@ public class NewOrdersController {
     }
 
     @PostMapping(value = "cancelOrders")
-    public @ResponseBody ResDto cancelOrders(String no, String reason, HttpServletRequest request) {
+    public
+    @ResponseBody
+    ResDto cancelOrders(String no, String reason, HttpServletRequest request) {
         Worker w = workerCookieTools.getWorker(request);
-        if(w==null) {return new ResDto("-10", "无权操作");}
+        if (w == null) {
+            return new ResDto("-10", "无权操作");
+        }
         BuffetOrder orders = buffetOrderService.findByNo(no);
-        if(orders==null) {
+        if (orders == null) {
             return new ResDto("-1", "订单不存在"); //订单不存在
         } else { //在就餐前都可取消
-            if(!"0".equalsIgnoreCase(orders.getStatus()) && !"6".equalsIgnoreCase(orders.getStatus())) {
+            if (!"0".equalsIgnoreCase(orders.getStatus()) && !"6".equalsIgnoreCase(orders.getStatus())) {
                 return new ResDto("-2", "当前状态不允许取消");
-            } else if(!"4".equalsIgnoreCase(orders.getType())) {
+            } else if (!"4".equalsIgnoreCase(orders.getType())) {
                 return new ResDto("-3", "此类型的订单不允许取消");
             } else {
                 orders.setStatus("-2");
@@ -577,21 +663,25 @@ public class NewOrdersController {
 
     @GetMapping(value = "receiveMoney")
     public String receiveMoney(Model model, String no, HttpServletRequest request) {
-        if(no!=null && !"".equalsIgnoreCase(no)) {
+        if (no != null && !"".equalsIgnoreCase(no)) {
             model.addAttribute("order", buffetOrderService.findByNo(no));
         }
         return "web/newOrders/receiveMoney";
     }
 
     @PostMapping(value = "receiveMoney")
-    public @ResponseBody ResDto receiveMoney(String no, String payType, HttpServletRequest request) {
+    public
+    @ResponseBody
+    ResDto receiveMoney(String no, String payType, HttpServletRequest request) {
         Worker w = workerCookieTools.getWorker(request);
-        if(w==null) {
+        if (w == null) {
             return new ResDto("-1", "未检测到收银员");
         }
         BuffetOrder orders = buffetOrderService.findByNo(no);
-        if(orders==null) {return new ResDto("-2", "订单不存在");}
-        if(!"1".equalsIgnoreCase(orders.getStatus())) { //只有在配送状态才可收款
+        if (orders == null) {
+            return new ResDto("-2", "订单不存在");
+        }
+        if (!"1".equalsIgnoreCase(orders.getStatus())) { //只有在配送状态才可收款
             return new ResDto("-3", "只有在就餐状态才可退压金");
         }
         orders.setStatus("2"); //已完成
@@ -607,7 +697,7 @@ public class NewOrdersController {
 
     @GetMapping(value = "returnBond")
     public String returnBond(Model model, String no, HttpServletRequest request) {
-        if(no!=null && !"".equalsIgnoreCase(no)) {
+        if (no != null && !"".equalsIgnoreCase(no)) {
             model.addAttribute("order", buffetOrderService.findByNo(no));
         }
         return "web/newOrders/returnBond";
@@ -615,28 +705,33 @@ public class NewOrdersController {
 
     /**
      * 提交退还压金
-     * @param no 订单编号
-     * @param money 扣除压金金额，一般为0
+     *
+     * @param no      订单编号
+     * @param money   扣除压金金额，一般为0
      * @param request
      * @return
      */
     @PostMapping(value = "returnBond")
-    public @ResponseBody ResDto returnBond(String no, Float money, HttpServletRequest request) {
+    public
+    @ResponseBody
+    ResDto returnBond(String no, Float money, HttpServletRequest request) {
         Worker w = workerCookieTools.getWorker(request);
-        if(w==null) {
+        if (w == null) {
             return new ResDto("-1", "未检测到收银员");
         }
         BuffetOrder orders = buffetOrderService.findByNo(no);
-        if(orders==null) {return new ResDto("-2", "订单不存在");}
-        if(!"2".equalsIgnoreCase(orders.getStatus()) && !"3".equalsIgnoreCase(orders.getStatus())) { //只有在就餐状态才可退压金
+        if (orders == null) {
+            return new ResDto("-2", "订单不存在");
+        }
+        if (!"2".equalsIgnoreCase(orders.getStatus()) && !"3".equalsIgnoreCase(orders.getStatus())) { //只有在就餐状态才可退压金
             return new ResDto("-3", "只有在就餐状态才可退压金");
         }
-        if(money>0) { //有扣压金
+        if (money > 0) { //有扣压金
             orders.setStatus("5");
         } else {
             orders.setStatus("4");
         }
-        orders.setBackBond(orders.getSurplusBond()-money); //已退还的押金
+        orders.setBackBond(orders.getSurplusBond() - money); //已退还的押金
         orders.setSurplusBond(money); //扣下来的压金
         orders.setEndLong(System.currentTimeMillis());
         orders.setEndTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
@@ -647,14 +742,18 @@ public class NewOrdersController {
         return new ResDto("0", "操作完成！");
     }
 
-    /** 修改支付方式 */
+    /**
+     * 修改支付方式
+     */
     @PostMapping(value = "updatePayType")
-    public @ResponseBody ResDto updatePayType(String orderNo, String field, String payType) {
+    public
+    @ResponseBody
+    ResDto updatePayType(String orderNo, String field, String payType) {
         BuffetOrder order = buffetOrderService.findByNo(orderNo);
-        if(order!=null && "2".equalsIgnoreCase(order.getStatus())) {
-            if("payType".equalsIgnoreCase(field)) {
+        if (order != null && "2".equalsIgnoreCase(order.getStatus())) {
+            if ("payType".equalsIgnoreCase(field)) {
                 order.setPayType(payType);
-            } else if("bondPayType".equalsIgnoreCase(field)) {
+            } else if ("bondPayType".equalsIgnoreCase(field)) {
                 order.setBondPayType(payType);
             }
             buffetOrderService.save(order);
@@ -672,7 +771,7 @@ public class NewOrdersController {
 
     public void sendBuffetOrderDetail2Server(String no) {
         List<BuffetOrderDetail> list = buffetOrderDetailService.listByOrderNo(no);
-        for(BuffetOrderDetail detail : list) {
+        for (BuffetOrderDetail detail : list) {
             String content = UploadJsonTools.buildDataJson(UploadJsonTools.buildBuffetOrderDetail(detail));
             uploadFileTools.setChangeContext(content, true);
         }

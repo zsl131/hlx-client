@@ -2,7 +2,9 @@ package com.zslin.test;
 
 import com.zslin.basic.tools.SecurityUtil;
 import com.zslin.model.BuffetOrder;
+import com.zslin.model.DiscountTime;
 import com.zslin.service.IBuffetOrderService;
+import com.zslin.service.IDiscountTimeService;
 import com.zslin.service.IMemberChargeService;
 import com.zslin.tools.OrderNoTools;
 import com.zslin.tools.WordTools;
@@ -22,6 +24,7 @@ import javax.swing.*;
 import java.awt.print.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +41,36 @@ public class NormalTest {
 
     @Autowired
     private IMemberChargeService memberChargeService;
+
+    @Autowired
+    private IDiscountTimeService discountTimeService;
+
+    @Test
+    public void test25() {
+        Float f = buffetOrderService.queryDiscountMoneyByTime("2017-08-28");
+        System.out.println("========"+f);
+    }
+
+    @Test
+    public void test24() {
+        DiscountTime dt = discountTimeService.findByTime(1720);
+        System.out.println("======"+dt);
+
+        DiscountTime dt1 = discountTimeService.findByTime(1700);
+        System.out.println("======"+dt1);
+
+        DiscountTime dt2 = discountTimeService.findByTime(1730);
+        System.out.println("======"+dt2);
+
+        DiscountTime dt3 = discountTimeService.findByTime(1731);
+        System.out.println("======"+dt3);
+
+        DiscountTime dt4 = discountTimeService.findByTime(1659);
+        System.out.println("======"+dt4);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+        System.out.println("time:"+sdf.format(new Date()));
+    }
 
     @Test
     public void test23() {

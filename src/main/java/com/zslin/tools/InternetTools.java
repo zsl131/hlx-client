@@ -82,9 +82,9 @@ public class InternetTools {
 			post.setEntity(new StringEntity(postParameter, Charset.forName("UTF-8")));
 			HttpResponse httpResponse = client.execute(post);
 
-			HttpEntity entity = httpResponse.getEntity();
+//			HttpEntity entity = httpResponse.getEntity();
 			System.out.println("status:" + httpResponse.getStatusLine());
-			System.out.println("response content:" + EntityUtils.toString(entity));
+//			System.out.println("response content:" + EntityUtils.toString(entity));
 			res = httpResponse.getStatusLine().getStatusCode();
 		} catch (UnsupportedEncodingException e1) {
 			//e1.printStackTrace();

@@ -8,7 +8,6 @@ import com.zslin.meituan.service.IMeituanConfigService;
 import com.zslin.meituan.service.IMeituanShopService;
 import com.zslin.model.*;
 import com.zslin.service.*;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,6 +47,9 @@ public class SimpleDataTools {
 
     @Autowired
     private IMemberChargeService memberChargeService;
+
+    @Autowired
+    private IDiscountTimeService discountTimeService;
 
     public void handlerPrice(JSONObject jsonObj) {
         Price price = priceService.findOne();
@@ -213,6 +215,18 @@ public class SimpleDataTools {
             }
         } else if("delete".equalsIgnoreCase(action)) {
             meituanShopService.deleteByPoiId(shop.getPoiId());
+        }
+    }
+
+    public void handlerDiscountTime(JSONObject jsonObj, Integer dataId) {
+        DiscountTime d = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), DiscountTime.class);
+        DiscountTime dt = discountTimeService.findByObjId(dataId);
+        if(dt==null) {
+            d.setObjId(dataId);
+            discountTimeService.save(d);
+        } else {
+            MyBeanUtils.copyProperties(d, dt, new String[]{"id", "objId"});
+            discountTimeService.save(dt);
         }
     }
 }

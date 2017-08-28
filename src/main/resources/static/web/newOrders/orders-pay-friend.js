@@ -1,5 +1,5 @@
 function buildFriendHtml(obj) {
-    var html = '<p class="type-name">'+$(obj).html() +'（'+$(obj).attr("title")+'）</small></p>'+
+    var html = '<p class="type-name">'+$(obj).html() +'<small>（'+$(obj).attr("title")+'）</small></p>'+
                     '<div class="special-content">'+
                         '<div class="form-group">'+
                             '<div class="input-group">'+
