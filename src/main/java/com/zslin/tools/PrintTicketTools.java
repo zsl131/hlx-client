@@ -155,7 +155,7 @@ public class PrintTicketTools {
 
         PrintTools.print(f.getAbsolutePath());
 
-//        f.delete();
+        f.delete();
     }
 
     //生成用餐时间时长
