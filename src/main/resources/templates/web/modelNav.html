@@ -18,6 +18,8 @@
                     <li><a href="/web/member/listCharges" ><i class="fa fa-list"></i> 会员充值记录</a></li>
                     <li><a href="/web/member/add" ><i class="fa fa-plus"></i> 新增会员</a></li>
                     <li role="separator" class="divider"></li>
+                    <li><a href="javascript:void(0)" onclick="printVoucher()"><i class="fa fa-ticket"></i> 打印消费单</a></li>
+                    <li role="separator" class="divider"></li>
                     <li><a href="/web/updatePwd" class=""><i class="fa fa-unlock-alt"></i> 修改密码</a></li>
                     <li><a href="/public/logout" class="logout-href"><i class="fa fa-close"></i> 退出登陆</a></li>
                 </ul>
@@ -26,6 +28,21 @@
             <ul class="opt-ul" th:if="${session.login_worker ne null}" style="float:right;">
                 <li><a href="/" class="btn" type="button"><img th:src="${session.login_worker.headimgurl}" style="width:24px;border-radius:20px;"/> 收银员：<span class="cashier" th:text="${session.login_worker.name}"></span></a></li>
             </ul>
+            <script type="text/javascript">
+                function printVoucher() {
+                    /**
+                    $.post("/public/printVoucher",{},function(res) {
+                        if(res=='1') {alert("生成成功，请等待打印消费单");}
+                    }, "json");**/
+                    var printHtml = '<h4>请输入顾客的人数：</h4>'+
+                                    '<input name="voucherCount" type="text" onKeyUp="value=value.replace(/[^\\d]/g,\'\')" class="form-control" placeholder="输入顾客人数" />';;
+                    var printOrdersDialog = confirmDialog(printHtml, "打印消费单", function() {
+                        $.post("/public/printVoucher",{count:$(printOrdersDialog).find("input[name='voucherCount']").val()},function(res) {
+                            if(res=='1') {alert("生成成功，请等待打印消费单");$(printOrdersDialog).remove();}
+                        }, "json");
+                    });
+                }
+            </script>
         </div>
     </body>
 </html>

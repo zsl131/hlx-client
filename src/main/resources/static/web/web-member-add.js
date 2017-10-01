@@ -6,6 +6,8 @@ $(function() {
         $(this).addClass("btn-danger");
         $("input[name='payType']").val($(this).attr("payType"));
     });
+
+
 });
 
 function checkData() {
@@ -28,7 +30,7 @@ function checkData() {
 }
 
 function isPhone(sMobile) {
-    if((/^1[3|4|5|8][0-9]\d{8}$/.test(sMobile))) {
+    if((/^1[3|4|5|7|8][0-9]\d{8}$/.test(sMobile))) {
         return true;
     } else {return false;}
 }

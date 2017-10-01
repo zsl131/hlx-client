@@ -46,6 +46,15 @@ public class NormalTest {
     private IDiscountTimeService discountTimeService;
 
     @Test
+    public void test26() {
+        Integer [] array = new Integer[]{3,3,3,3,4,4,4,5,5,6,7};
+//        Integer count = array[(int)(Math.random()*array.length)];
+        for(int i=0;i<100;i++) {
+            System.out.printf("========="+array[(int)(Math.random()*array.length)]);
+        }
+    }
+
+    @Test
     public void test25() {
         Float f = buffetOrderService.queryDiscountMoneyByTime("2017-08-28");
         System.out.println("========"+f);

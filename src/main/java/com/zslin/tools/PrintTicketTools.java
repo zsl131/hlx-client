@@ -1,10 +1,12 @@
 package com.zslin.tools;
 
+import com.zslin.basic.tools.NormalTools;
 import com.zslin.model.BuffetOrder;
 import com.zslin.model.BuffetOrderDetail;
 import com.zslin.model.Company;
 import com.zslin.service.IBuffetOrderDetailService;
 import com.zslin.service.ICompanyService;
+import com.zslin.web.dto.MyTimeDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +45,17 @@ public class PrintTicketTools {
                 List<BuffetOrderDetail> detailList = buffetOrderDetailService.listByOrderNo(order.getNo());
                 printTicket(order, detailList, com.getName(), com.getPhone(), com.getAddress());
                 printBond(order, com.getName(), com.getPhone(), com.getAddress(), com.getHaveTime());
+            }
+        }).start();
+    }
+
+    //打印消费单
+    public void printVoucher(Integer count) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Company com = companyService.loadOne();
+                printVoucher(com.getName(), com.getPhone(), com.getAddress(), count);
             }
         }).start();
     }
@@ -125,6 +138,24 @@ public class PrintTicketTools {
 
             f.delete();
         }
+    }
+
+    private void printVoucher(String shopName, String phone, String address, Integer count) {
+//        Integer [] array = new Integer[]{3,3,3,3,4,4,4,5,5,6,7,3,3};
+//        Integer count = array[(int)(Math.random()*array.length)];
+        if(count==null || count<=0) {
+            Integer [] array = new Integer[]{3,3,3,3,4,4,4,5,5,6,7,3,3};
+            count = array[(int)(Math.random()*array.length)];
+        }
+//        Integer count = (int)(Math.random()*10)+3;
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR, 15);
+        Float price = (new Date()).before(cal.getTime())?45f:55f;
+        File f = wordTemplateTools.buildVoucherFile(shopName, count, count*price, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), phone, address);
+
+        PrintTools.print(f.getAbsolutePath());
+
+//        f.delete();
     }
 
     //生成用餐时间时长

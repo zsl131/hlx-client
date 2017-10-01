@@ -7,6 +7,7 @@ import com.zslin.model.Worker;
 import com.zslin.service.ICompanyService;
 import com.zslin.service.IWorkerService;
 import com.zslin.tools.ClientConfigTools;
+import com.zslin.tools.PrintTicketTools;
 import com.zslin.tools.WorkerCookieTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,6 +39,9 @@ public class PublicController {
 
     @Autowired
     private WorkerCookieTools workerCookieTools;
+
+    @Autowired
+    private PrintTicketTools printTicketTools;
 
     @GetMapping(value = "config")
     public String config(Model model, HttpServletRequest request) {
@@ -107,6 +111,12 @@ public class PublicController {
     @PostMapping(value = "logout")
     public @ResponseBody String logout(HttpServletRequest request, HttpServletResponse response) {
         workerCookieTools.cleanCookie(request, response);
+        return "1";
+    }
+
+    @PostMapping(value = "printVoucher")
+    public @ResponseBody String printVoucher(Integer count) {
+        printTicketTools.printVoucher(count);
         return "1";
     }
 }

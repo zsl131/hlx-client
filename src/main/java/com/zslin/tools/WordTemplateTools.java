@@ -47,6 +47,10 @@ public class WordTemplateTools {
         return getTemplateFile("bond-template.docx");
     }
 
+    public File getVoucherTemplate() {
+        return getTemplateFile("voucher-template.docx");
+    }
+
     public File getTicketTempate() {
         return getTemplateFile("ticket-template.docx");
     }
@@ -177,6 +181,39 @@ public class WordTemplateTools {
 //            byte[] barcode = BarcodeUtil.generate(orderNo);
             byte[] barcode = qrGenerateTools.getBarcode(orderNo);
             ImageAdd.replaceImage(wPackage, "barcode", barcode, "test1", "haha1");
+            wPackage.save(targetFile);
+        } catch (Docx4JException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return targetFile;
+    }
+
+    public File buildVoucherFile(String shopName, Integer peopleCount, Float money, String date,
+                              String phone, String address) {
+        File targetFile = new File(configTools.getUploadPath("tickets/")+"voucher-"+(UUID.randomUUID().toString())+".docx");
+        try {
+            File f = getVoucherTemplate();
+            // 载入模板文件
+            WordprocessingMLPackage wPackage = WordprocessingMLPackage.load(f);
+            // 提取正文
+            MainDocumentPart mainDocumentPart = wPackage.getMainDocumentPart();
+            HashMap<String, String> datas = new HashMap<>();
+            datas.put("shopName", shopName);
+            datas.put("peopleCount", peopleCount+"");
+            datas.put("money", money+"");
+            datas.put("date", date);
+            datas.put("phone", phone);
+            datas.put("address", address);
+            mainDocumentPart.variableReplace(datas);
+
+            InputStream is = new FileInputStream(getTemplateFile("qrcode.jpg"));
+            byte[] bytes = IOUtils.toByteArray(is);
+            ImageAdd.replaceImage(wPackage, "qrcode", bytes, "test", "haha");
+
             wPackage.save(targetFile);
         } catch (Docx4JException e) {
             e.printStackTrace();
