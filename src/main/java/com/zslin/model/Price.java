@@ -33,6 +33,18 @@ public class Price {
     @Column(name = "bond_money")
     private Float bondMoney;
 
+    /** 特殊商品价格，不开火 */
+    @Column(name = "spe_money")
+    private Float speMoney;
+
+    public Float getSpeMoney() {
+        return speMoney;
+    }
+
+    public void setSpeMoney(Float speMoney) {
+        this.speMoney = speMoney;
+    }
+
     public Float getFriendBreakfastPrice() {
         return friendBreakfastPrice;
     }

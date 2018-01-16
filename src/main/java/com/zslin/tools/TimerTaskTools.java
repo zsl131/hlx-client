@@ -105,6 +105,8 @@ public class TimerTaskTools {
             simpleDataTools.handlerMeituanShop(action, dataObj);
         } else if("discountTime".equalsIgnoreCase(type)) { //时段折扣
             simpleDataTools.handlerDiscountTime(dataObj, dataId);
+        } else if("restday".equalsIgnoreCase(type)) { //工作日
+            simpleDataTools.handlerRestday(dataObj);
         }
     }
 

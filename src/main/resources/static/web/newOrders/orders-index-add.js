@@ -32,12 +32,22 @@ function submit2Pay() {
 
 function addCommodity2Order(obj) {
     var canBuy = $(obj).attr("canBuy");
+    var no = $(obj).find(".name").attr("no");
     if(canBuy==1) { //只有canBuy属性为true时可以下单
         var name = $(obj).find(".name").html();
         var price = $(obj).find(".price").html();
         var no = $(obj).find(".name").attr("no");
         //alert(no+"======="+name+"-------"+price);
         addCommodity(name,price,no);
+        $(".index-commodity-list").find("ul").find("li").each(function() {
+            var curNo = $(this).find(".name").attr("no");
+            if((no == '33333' || no =='22222') && (curNo != '33333' && curNo !='22222')) {
+                setComStyle(this, 0);
+
+            } else if((no != '33333' && no != '22222') && (curNo == "33333" || curNo == '22222')) {
+                setComStyle(this, 0);
+            }
+        })
     } else {
         var name = $(obj).find(".name").html();
         showDialog("该商品【"+name+"】不可在此时段下单购买！");

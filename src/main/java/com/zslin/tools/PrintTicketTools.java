@@ -44,7 +44,8 @@ public class PrintTicketTools {
                 Company com = companyService.loadOne();
                 List<BuffetOrderDetail> detailList = buffetOrderDetailService.listByOrderNo(order.getNo());
                 printTicket(order, detailList, com.getName(), com.getPhone(), com.getAddress());
-                printBond(order, com.getName(), com.getPhone(), com.getAddress(), com.getHaveTime());
+                String level = getLevel(detailList);
+                printBond(order, com.getName(), com.getPhone(), com.getAddress(), com.getHaveTime(), level);
             }
         }).start();
     }
@@ -127,12 +128,12 @@ public class PrintTicketTools {
         f.delete();
     }
 
-    private void printBond(BuffetOrder order, String shopName, String phone, String address, Integer haveTime) {
+    private void printBond(BuffetOrder order, String shopName, String phone, String address, Integer haveTime, String level) {
         if(order.getSurplusBond()>0) { //当压金金额大于0时才需要出单
 
             File f = wordTemplateTools.buildBondFile(shopName, order.getCommodityCount(), order.getSurplusBond(),
                     order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address, order.getPayType(),
-                    order.getBondPayType(), order.getType(), buildTime(haveTime));
+                    order.getBondPayType(), order.getType(), buildTime(haveTime), level);
 
             PrintTools.print(f.getAbsolutePath());
 
@@ -149,7 +150,7 @@ public class PrintTicketTools {
         }
 //        Integer count = (int)(Math.random()*10)+3;
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR, 15);
+        cal.set(Calendar.HOUR_OF_DAY, 15);
         Float price = (new Date()).before(cal.getTime())?45f:55f;
         File f = wordTemplateTools.buildVoucherFile(shopName, count, count*price, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), phone, address);
 
@@ -214,6 +215,9 @@ public class PrintTicketTools {
         for(BuffetOrderDetail detail : detailList) {
             if(detail.getPrice()>0 && ("99999".equals(detail.getCommodityNo()) || "77777".equals(detail.getCommodityNo()))) {
                 level = "晚餐";
+                break;
+            } else if(detail.getPrice()>0 && ("33333".equals(detail.getCommodityNo()))) {
+                level = "【简餐】";
                 break;
             }
         }

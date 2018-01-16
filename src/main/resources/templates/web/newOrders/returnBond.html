@@ -126,7 +126,7 @@
                         <span th:if="${order.status eq '2'}">（用时：<span th:text="${order.entryLong}" class="show-seconds-now"></span>）</span>
                     </td>
                 </tr>
-                <tr th:if="${order.endTime ne null}">
+                <tr th:if="${order.endTime ne null and order.entryLong ne null}">
                     <td class="field">离场时间：</td>
                     <td th:text="${order.endTime}"></td>
                     <td class="field">就餐用时：</td>

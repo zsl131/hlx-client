@@ -7,6 +7,7 @@ import com.zslin.service.IBuffetOrderService;
 import com.zslin.service.IDiscountTimeService;
 import com.zslin.service.IMemberChargeService;
 import com.zslin.tools.OrderNoTools;
+import com.zslin.tools.RestdayTools;
 import com.zslin.tools.WordTools;
 import com.zslin.web.dto.MyTimeDto;
 import org.junit.Test;
@@ -25,6 +26,7 @@ import java.awt.print.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +46,32 @@ public class NormalTest {
 
     @Autowired
     private IDiscountTimeService discountTimeService;
+
+    @Autowired
+    private RestdayTools restdayTools;
+
+    @Test
+    public void test29() {
+        System.out.println("========="+restdayTools.isWorkday());
+    }
+
+    @Test
+    public void test28() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        System.out.println("============"+sdf.format(cal.getTime()));
+    }
+
+    @Test
+    public void test27() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 15);
+        Float price = (new Date()).before(cal.getTime())?45f:55f;
+        System.out.println("======="+price);
+        System.out.println(sdf.format(cal.getTime())+"============="+sdf.format(new Date()));
+    }
+
 
     @Test
     public void test26() {

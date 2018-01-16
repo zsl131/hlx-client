@@ -109,3 +109,7 @@
 .submit-orders-div .btns button {
     width:40%; margin:0px 5%;
 }
+
+div.index-commodity-list ul li.com_22222, div.index-commodity-list ul li.com_33333 {
+    background:#1696b5;
+}

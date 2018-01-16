@@ -51,6 +51,9 @@ public class SimpleDataTools {
     @Autowired
     private IDiscountTimeService discountTimeService;
 
+    @Autowired
+    private IRestdayService restdayService;
+
     public void handlerPrice(JSONObject jsonObj) {
         Price price = priceService.findOne();
         if(price==null) {price = new Price();}
@@ -227,6 +230,17 @@ public class SimpleDataTools {
         } else {
             MyBeanUtils.copyProperties(d, dt, new String[]{"id", "objId"});
             discountTimeService.save(dt);
+        }
+    }
+
+    public void handlerRestday(JSONObject jsonObj) {
+        Restday restday = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), Restday.class);
+        Restday day = restdayService.findByYearMonth(restday.getYearMonth());
+        if(day==null) {
+            restdayService.save(restday);
+        } else {
+            day.setDays(restday.getDays());
+            restdayService.save(day);
         }
     }
 }

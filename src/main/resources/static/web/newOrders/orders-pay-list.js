@@ -13,7 +13,7 @@ function buildCom() {
         var comNo = $(this).attr("comNo");
         var price = $(this).attr("price");
         modifyCom(comNo, comName, price);
-        if(comNo=='88888' || comNo == '99999') {
+        if(comNo=='88888' || comNo == '99999' || comNo == '33333') {
             bondCount ++;
         }
         setBondCount(bondCount);

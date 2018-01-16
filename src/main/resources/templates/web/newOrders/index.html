@@ -30,7 +30,7 @@
                     </div>
                     <div class="index-commodity-list">
                         <ul>
-                            <li th:each="commodity : ${commodityList}" onclick="addCommodity2Order(this)" th:attr="comType = ${commodity.type}" canBuy="1" th:title="${commodity.remark}">
+                            <li th:each="commodity : ${commodityList}" onclick="addCommodity2Order(this)" th:attr="comType = ${commodity.type}" th:class="|com_${commodity.no}|" canBuy="1" th:title="${commodity.remark}">
                                 <p><span th:text="${commodity.name}" class="name" th:attr="no=${commodity.no}"></span></p>
                                 <p><b th:text="${commodity.price}" class="price"></b> 元/<span th:text="${commodity.type eq '3'?'份':'位'}"></span></p>
                             </li>

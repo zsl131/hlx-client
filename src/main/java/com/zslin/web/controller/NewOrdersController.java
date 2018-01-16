@@ -9,10 +9,7 @@ import com.zslin.meituan.dto.ReturnDto;
 import com.zslin.meituan.tools.MeituanHandlerTools;
 import com.zslin.model.*;
 import com.zslin.service.*;
-import com.zslin.tools.OrderNoTools;
-import com.zslin.tools.OrdersOperateTools;
-import com.zslin.tools.PrintTicketTools;
-import com.zslin.tools.WorkerCookieTools;
+import com.zslin.tools.*;
 import com.zslin.upload.tools.UploadFileTools;
 import com.zslin.upload.tools.UploadJsonTools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,16 +71,24 @@ public class NewOrdersController {
     @Autowired
     private IDiscountTimeService discountTimeService;
 
+    @Autowired
+    private RestdayTools restdayTools;
+
     @GetMapping(value = "index")
     public String index(Model model, String type, HttpServletRequest request) {
         type = type == null || "".equalsIgnoreCase(type) ? "1" : type;
         List<Commodity> commodityList;
         if ("1".equalsIgnoreCase(type)) {
-            commodityList = commodityService.listByTicket();
+            if(restdayTools.isWorkday()) {
+                commodityList = commodityService.listByTicket("");
+            } else {
+                commodityList = commodityService.listByTicket("33333","22222");
+            }
             model.addAttribute("rules", rulesService.loadOne());
         } else {
             commodityList = commodityService.listByType("3");
         }
+
         model.addAttribute("commodityList", commodityList);
         model.addAttribute("type", type);
         model.addAttribute("discountTime", discountTimeService.findByTime(Integer.parseInt((new SimpleDateFormat("HHmm").format(new Date())))));

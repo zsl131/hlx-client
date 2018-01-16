@@ -1,5 +1,6 @@
 $(function() {
-    $("input[name='orderNo']").focus();
+    var orderNo = $("input[name='orderNo']").val();
+    $("input[name='orderNo']").val("").focus().val(orderNo);
     $(".search-order-btn").click(function() {
         searchOrder();
     });

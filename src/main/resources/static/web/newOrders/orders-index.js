@@ -18,10 +18,16 @@ function setCommodityStyle() {
     })
 }
 
-function setComStyle(obj) {
-    $(obj).css({"background":"#f18f8d", "cursor":"not-allowed"});
-    $(obj).attr("canBuy", 0);
-    $(obj).attr("title", "此商品不可在此时段购买");
+function setComStyle(obj, canBuy) {
+    if(!canBuy) {
+        $(obj).css({"background":"#f18f8d", "cursor":"not-allowed"});
+        $(obj).attr("canBuy", 0);
+        $(obj).attr("title", "此商品不可在此时段购买");
+    } else {
+        $(obj).css({"background":"#c13b38", "cursor":"normal"});
+        $(obj).attr("canBuy", 1);
+        $(obj).removeAttr("title");
+    }
 }
 
 function setMaxHeight() {
