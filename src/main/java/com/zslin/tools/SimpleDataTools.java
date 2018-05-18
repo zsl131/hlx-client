@@ -243,4 +243,11 @@ public class SimpleDataTools {
             restdayService.save(day);
         }
     }
+
+    public void handlerUpdatePassword(JSONObject jsonObj) {
+        String phone = jsonObj.getString("key");
+        String password = jsonObj.getString("value");
+
+        memberService.updatePassword(password, phone); //修改密码
+    }
 }

@@ -3,6 +3,7 @@ package com.zslin.upload.tools;
 import com.alibaba.fastjson.JSON;
 import com.zslin.model.*;
 import com.zslin.upload.dto.JsonDto;
+import com.zslin.upload.dto.NormalDto;
 
 /**
  * Created by 钟述林 393156105@qq.com on 2017/3/10 11:29.
@@ -49,6 +50,11 @@ public class UploadJsonTools {
 
     public static String buildBuffetOrderDetail(BuffetOrderDetail detail) {
         JsonDto jd = new JsonDto("buffetOrderDetail", "update", detail.getId(), detail);
+        return JSON.toJSONString(jd);
+    }
+
+    public static String buildPassword(String phone, String password) {
+        JsonDto jd = new JsonDto("password", "update", 0, new NormalDto(phone, password));
         return JSON.toJSONString(jd);
     }
 }

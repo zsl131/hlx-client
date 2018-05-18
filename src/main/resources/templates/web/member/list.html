@@ -11,6 +11,7 @@
     <script src="/basic/js-lib/ui/jquery-ui.js"></script>
     <link type="text/css" rel="stylesheet" href="/web/web-orders.css"/>
     <script type="text/javascript" src="/web/web-show-time.js"></script>
+    <script type="text/javascript" src="/web/web-init-pwd.js"></script>
     <style>
         td {
             text-align:left;
@@ -56,6 +57,7 @@
                 <td th:text="${obj.createTime}"></td>
                 <td>
                     <a th:href="'/web/newOrders/list?filter_discountReason=like-'+${obj.phone}"><i class="fa fa-eye"></i> 消费明细</a>
+                    <a href="javascript:void(0)" class="init-pwd-href" th:attr="phone=${obj.phone},name=${obj.name}"><i class="fa fa-key"></i>初始化密码</a>
                 </td>
             </tr>
         </table>

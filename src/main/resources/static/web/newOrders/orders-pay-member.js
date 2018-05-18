@@ -10,14 +10,18 @@ function buildMemberHtml(obj) {
                         '</div>'+
                         '<div class="form-group">'+
                             '<div class="input-group">'+
-                                '<div class="input-group-addon">会员姓名：</div>'+
-                                '<input class="form-control" name="memberName" value="输入会员电话检索" readonly="readonly"/>'+
+                                '<div class="input-group-addon">支付密码：</div>'+
+                                '<input name="payPassword" type="text" maxlength="4" tabindex="2" onKeyUp="onMemberPassword(this)" class="form-control" placeholder="询问顾客支付密码，可在公众号“我”-“消费密码”处查看或修改" />'+
+                                '<span class="input-group-addon show-member-password">请输入</span>'+
                             '</div>'+
                         '</div>'+
                         '<div class="form-group">'+
                             '<div class="input-group">'+
                                 '<div class="input-group-addon">账户余额：</div>'+
                                 '<input class="form-control" name="memberSurplus" value="输入会员电话检索" readonly="readonly"/>'+
+
+                                '<div class="input-group-addon">会员姓名：</div>'+
+                                '<input class="form-control" name="memberName" value="输入会员电话检索" readonly="readonly"/>'+
                             '</div>'+
                         '</div>'+
 
@@ -35,19 +39,34 @@ function onMemberPhone(obj) {
     checkPhone();
 }
 
+function onMemberPassword(obj) {
+    var password = $("input[name='payPassword']").val();
+    if(password.length == 4) {
+        checkPhone();
+    } else {
+        $(".show-member-password").html("请认真输入");
+    }
+}
+
 function checkPhone() {
     var phoneObj = $("input[name='memberPhone']");
     var phone = $(phoneObj).val();
     if(isPhone(phone)) {
         $.post("/public/json/getMember", {phone:phone}, function(res) {
             if(res.id) {
-                var html = res.name;
-                $("input[name='memberName']").val(html);
-                $("input[name='memberSurplus']").val(res.surplus/100+" 元");
-                $(".show-member-name").html("检索成功");
-                buildMemberMoney(res.surplus/100);
-                //$("input[name='reserve']").val(res.phone);
-                setReserveInfo(res.phone, "可以提交");
+                var password = $("input[name='payPassword']").val();
+                if(password != res.password) {
+                    $(".show-member-password").html("密码输入错误");
+                    $(".show-member-password").css({'color':'#F00',"font-weight":'bold'});
+                } else {
+                    var html = res.name;
+                    $("input[name='memberName']").val(html);
+                    $("input[name='memberSurplus']").val(res.surplus/100+" 元");
+                    $(".show-member-name").html("检索成功");
+                    buildMemberMoney(res.surplus/100);
+                    //$("input[name='reserve']").val(res.phone);
+                    setReserveInfo(res.phone, "可以提交");
+                }
             } else {
                 //showDialog("<i class='fa fa-close'></i> 输入的手机号码【"+phone+"】查无会员信息！");
                 $(".show-member-name").html("此号码无会员");

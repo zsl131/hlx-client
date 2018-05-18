@@ -7,10 +7,7 @@ import com.zslin.basic.repository.SimpleSortBuilder;
 import com.zslin.basic.tools.NormalTools;
 import com.zslin.basic.tools.TokenTools;
 import com.zslin.basic.utils.ParamFilterUtil;
-import com.zslin.model.Member;
-import com.zslin.model.MemberCharge;
-import com.zslin.model.MemberLevel;
-import com.zslin.model.Worker;
+import com.zslin.model.*;
 import com.zslin.service.IMemberChargeService;
 import com.zslin.service.IMemberLevelService;
 import com.zslin.service.IMemberService;
@@ -24,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,6 +47,24 @@ public class MemberController {
 
     @Autowired
     private UploadFileTools uploadFileTools;
+
+    /**
+     * 初始化会员支付密码
+     * @param phone
+     * @return
+     */
+    @PostMapping(value = "initPwd")
+    public @ResponseBody String initPwd(String phone) {
+        String password = "0000";
+        memberService.updatePassword(password, phone);
+        sendPassword2Server(phone, password);
+        return "1";
+    }
+
+    public void sendPassword2Server(String phone, String password) {
+        String content = UploadJsonTools.buildDataJson(UploadJsonTools.buildPassword(phone, password));
+        uploadFileTools.setChangeContext(content, true);
+    }
 
     @GetMapping(value = "list")
     public String list(Model model, Integer page, HttpServletRequest request) {

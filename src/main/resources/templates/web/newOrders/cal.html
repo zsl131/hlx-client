@@ -156,29 +156,29 @@
                 </div>
 
                 <div class="col-md-4">
-                    <div class="panel panel-info">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">收银计算器</div>
                         <div class="panel-body">
-                            <p>应有现金：<b id="calTotalMoney" style="font-size:24px; color:#F00;">0</b></p>
-                            <div class="form-group">
+                            <p>应有现金：<b id="calTotalMoney" style="font-size:24px; color:#F00;">0</b><small>(不包含备用金)</small></p>
+                            <div class="form-group form-group-lg">
                                 <div class="input-group">
                                     <div class="input-group-addon">实收微信：</div>
                                     <input id="weixinMoney" class="form-control need-rebuild" onkeyup="value=value.replace(/[^\d\.]/g,'')" value="0" placeholder="请输入实收微信金额"/>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group form-group-lg">
                                 <div class="input-group">
                                     <div class="input-group-addon">实收支付宝：</div>
                                     <input id="alipayMoney" class="form-control need-rebuild" onkeyup="value=value.replace(/[^\d\.]/g,'')" value="0" placeholder="请输入实收支付宝金额"/>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group form-group-lg">
                                 <div class="input-group">
                                     <div class="input-group-addon">其他支出：</div>
                                     <input id="payMoney" class="form-control need-rebuild" onkeyup="value=value.replace(/[^\d\.]/g,'')" value="0" placeholder="请输入其他支出金额"/>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group form-group-lg">
                                 <div class="input-group">
                                     <div class="input-group-addon">其他收入：</div>
                                     <input id="inMoney" class="form-control need-rebuild" onkeyup="value=value.replace(/[^\d\.]/g,'')" value="0" placeholder="请输入其他收入金额"/>

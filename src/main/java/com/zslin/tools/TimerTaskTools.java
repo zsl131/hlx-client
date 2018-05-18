@@ -107,6 +107,8 @@ public class TimerTaskTools {
             simpleDataTools.handlerDiscountTime(dataObj, dataId);
         } else if("restday".equalsIgnoreCase(type)) { //工作日
             simpleDataTools.handlerRestday(dataObj);
+        } else if("password".equalsIgnoreCase(type)) { //修改会员密码
+            simpleDataTools.handlerUpdatePassword(dataObj);
         }
     }
 

@@ -18,4 +18,9 @@ public interface IMemberService extends BaseRepository<Member, Integer>, JpaSpec
     @Modifying
     @Transactional
     void plusMoneyByPhone(Integer money, String phone);
+
+    @Query("UPDATE Member m SET m.password=?1 WHERE m.phone=?2")
+    @Modifying
+    @Transactional
+    void updatePassword(String password, String phone);
 }
