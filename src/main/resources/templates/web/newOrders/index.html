@@ -26,7 +26,7 @@
                             <li th:class="${type eq '1'?'current':''}"><a href="/web/newOrders/index?type=1">自助餐入场券</a></li>
                             <li th:class="${type eq '3'?'current':''}"><a href="/web/newOrders/index?type=3">外卖单品</a></li>
                         </ul>
-                        <span th:if="${type eq '1' and rules ne null}" class="time-spe">早晚餐时间间隔：<b th:text="${rules.spe}"></b></span>
+                        <span th:if="${type eq '1' and rules ne null}" class="time-spe">午、晚餐时间间隔：<b th:text="${rules.spe}"></b></span>
                     </div>
                     <div class="index-commodity-list">
                         <ul>

@@ -12,6 +12,7 @@ import com.zslin.service.*;
 import com.zslin.tools.*;
 import com.zslin.upload.tools.UploadFileTools;
 import com.zslin.upload.tools.UploadJsonTools;
+import com.zslin.web.tools.ScoreTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -73,6 +74,9 @@ public class NewOrdersController {
 
     @Autowired
     private RestdayTools restdayTools;
+
+    @Autowired
+    private IWalletService walletService;
 
     @GetMapping(value = "index")
     public String index(Model model, String type, HttpServletRequest request) {
@@ -333,6 +337,9 @@ public class NewOrdersController {
     @Autowired
     private MeituanHandlerTools meituanHandlerTools;
 
+    @Autowired
+    private ScoreTools scoreTools;
+
     /**
      * 提交订单
      */
@@ -369,6 +376,40 @@ public class NewOrdersController {
             order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
             order.setStatus("2"); //就餐中……
             memberService.plusMoneyByPhone(0 - (int) (order.getDiscountMoney() * 100), reserve);
+            //TODO 服务器端需要自行对会员账户进行消费处理
+            //TODO 需要打印小票
+        } else if("11".equalsIgnoreCase(specialType)) { //如果是积分订单
+            Wallet wallet = walletService.findByPhone(reserve);
+            if (wallet == null) {
+                return new ResDto("-3", "未检测到账户信息");
+            }
+            order.setSurplusBond(totalBondMoney); //剩余压金金额
+            order.setType(specialType); //订单类型
+            order.setPayType(payType);
+            Rules rules = rulesService.loadOne();
+            Float totalMoney = order.getTotalMoney(); //订单总金额
+            Integer score = wallet.getScore(); //用户剩余积分
+            Integer scoreMoney = score / rules.getScoreMoney();
+            Integer discountMost = (int) (totalMoney * rules.getScoreDeductible() / 100);
+            Integer discountReal = discountMost>scoreMoney?scoreMoney:discountMost; //实际抵扣金额
+
+            order.setDiscountMoney(discountReal*1f);
+            order.setDiscountReason(reserve);
+            order.setTotalMoney(totalMoney - discountReal);
+            order.setDiscountType("1"); //积分抵扣
+
+            /*Float memberSurplus = m.getSurplus() * 1.0f / 100;
+            Float curSurplus = memberSurplus - order.getTotalMoney(); //消费后剩余
+            order.setDiscountMoney(curSurplus >= 0 ? order.getTotalMoney() : memberSurplus);
+            order.setDiscountReason(reserve);
+            order.setTotalMoney(order.getTotalMoney() - order.getDiscountMoney());
+            order.setDiscountType("5");*/
+            order.setEntryLong(System.currentTimeMillis());
+            order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
+            order.setStatus("2"); //就餐中……
+//            memberService.plusMoneyByPhone(0 - (int) (order.getDiscountMoney() * 100), reserve);
+
+            scoreTools.scoreConsume(wallet.getOpenid(), discountReal*rules.getScoreMoney()); //这里需要传openid，服务端需要使用openid
             //TODO 服务器端需要自行对会员账户进行消费处理
             //TODO 需要打印小票
         } else if ("1".equals(specialType)) { //普通订单

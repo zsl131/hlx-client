@@ -7,8 +7,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,12 +36,12 @@ public class TimerTaskTools {
 
     public void upload() {
         Company c = clientConfigTools.getCompany();
-        if(c!=null && c.getId()!=null && c.getId()>0) {
+        if (c != null && c.getId() != null && c.getId() > 0) {
 
             String json = uploadFileTools.getChangeContext();
-            if(json!=null && !"".equals(json.trim())) {
-                Integer resCode = InternetTools.post(buildUrl(c, true)+"?token="+c.getToken(), json);
-                if(resCode==200) { //如果提交成功则清空数据
+            if (json != null && !"".equals(json.trim())) {
+                Integer resCode = InternetTools.post(buildUrl(c, true) + "?token=" + c.getToken(), json);
+                if (resCode == 200) { //如果提交成功则清空数据
                     uploadFileTools.setChangeContext("", false);
                 }
             }
@@ -53,10 +51,10 @@ public class TimerTaskTools {
 
     public void download() {
         Company c = clientConfigTools.getCompany();
-        if(c!=null && c.getId()!=null && c.getId()>0) {
+        if (c != null && c.getId() != null && c.getId() > 0) {
             String json = InternetTools.doGet(buildUrl(c, false), buildBasePar(c));
             Integer status = (Integer) JsonTools.getJsonParam(json, "status");
-            if(status!=null && status==1) { //表示获取成功
+            if (status != null && status == 1) { //表示获取成功
                 String datas = JsonTools.getJsonParam(json, "data").toString();
                 processDatas(datas);
             }
@@ -66,7 +64,7 @@ public class TimerTaskTools {
 
     private void processDatas(String dataJson) {
         JSONArray array = new JSONArray(dataJson);
-        for(int i=0; i<array.length();i++) {
+        for (int i = 0; i < array.length(); i++) {
             JSONObject jsonObj = array.getJSONObject(i);
             processSingleData(jsonObj);
         }
@@ -77,43 +75,45 @@ public class TimerTaskTools {
         String type = jsonObj.getString("type"); //类型
         Integer dataId = jsonObj.getInt("dataId"); //对象Id
         JSONObject dataObj = jsonObj.getJSONObject("data"); //具体对象的Json数据
-        if("config".equalsIgnoreCase(type)) { //修改配置信息
+        if ("config".equalsIgnoreCase(type)) { //修改配置信息
             companyDataTools.handler(dataObj);
-        } else if("worker".equalsIgnoreCase(type)) { //处理员工信息
+        } else if ("worker".equalsIgnoreCase(type)) { //处理员工信息
             workerDataTools.handler(dataId, dataObj, action);
-        } else if("price".equalsIgnoreCase(type)) { //价格
+        } else if ("price".equalsIgnoreCase(type)) { //价格
             simpleDataTools.handlerPrice(dataObj);
-        } else if("rules".equalsIgnoreCase(type)) { //规则
+        } else if ("rules".equalsIgnoreCase(type)) { //规则
             simpleDataTools.handlerRules(dataObj);
-        } else if("adminPhone".equalsIgnoreCase(type)) { //管理员电话号码
+        } else if ("adminPhone".equalsIgnoreCase(type)) { //管理员电话号码
             simpleDataTools.handlerAdminPhone(action, dataId, dataObj);
-        } else if("memberLevel".equalsIgnoreCase(type)) { //会员等级
+        } else if ("memberLevel".equalsIgnoreCase(type)) { //会员等级
             simpleDataTools.handlerMemberLevel(action, dataId, dataObj);
-        } else if("commodity".equalsIgnoreCase(type)) { //如果是商品
+        } else if ("commodity".equalsIgnoreCase(type)) { //如果是商品
             simpleDataTools.handlerCommodity(action, dataId, dataObj);
-        } else if("orders".equalsIgnoreCase(type)) { //订单
+        } else if ("orders".equalsIgnoreCase(type)) { //订单
             simpleDataTools.handlerOrder(dataObj);
-        } else if("buffetOrder".equalsIgnoreCase(type)) { //订单
+        } else if ("buffetOrder".equalsIgnoreCase(type)) { //订单
             simpleDataTools.handlerBuffetOrder(dataObj);
-        } else if("prize".equalsIgnoreCase(type)) { //卡券、礼物
+        } else if ("prize".equalsIgnoreCase(type)) { //卡券、礼物
             simpleDataTools.handlerPrize(action, dataId, dataObj);
-        } else if("walletDetail".equalsIgnoreCase(type)) { //钱包明细
+        } else if ("walletDetail".equalsIgnoreCase(type)) { //钱包明细
             simpleDataTools.handlerWalletDetail(dataObj);
-        } else if("meituanConfig".equalsIgnoreCase(type)) { //美团配置
+        } else if ("meituanConfig".equalsIgnoreCase(type)) { //美团配置
             simpleDataTools.handlerMeituanConfig(dataObj);
-        } else if("meituanShop".equalsIgnoreCase(type)) { //美团门店
+        } else if ("meituanShop".equalsIgnoreCase(type)) { //美团门店
             simpleDataTools.handlerMeituanShop(action, dataObj);
-        } else if("discountTime".equalsIgnoreCase(type)) { //时段折扣
+        } else if ("discountTime".equalsIgnoreCase(type)) { //时段折扣
             simpleDataTools.handlerDiscountTime(dataObj, dataId);
-        } else if("restday".equalsIgnoreCase(type)) { //工作日
+        } else if ("restday".equalsIgnoreCase(type)) { //工作日
             simpleDataTools.handlerRestday(dataObj);
-        } else if("password".equalsIgnoreCase(type)) { //修改会员密码
+        } else if ("password".equalsIgnoreCase(type)) { //修改会员密码
             simpleDataTools.handlerUpdatePassword(dataObj);
+        } else if ("wallet".equalsIgnoreCase(type)) { //积分钱包
+            simpleDataTools.handlerWallet(dataObj);
         }
     }
 
     private String buildUrl(Company c, boolean isUpload) {
-        String res = (c.getBaseUrl()+":"+c.getBasePort())+(isUpload?c.getUploadUrl():c.getDownloadUrl());
+        String res = (c.getBaseUrl() + ":" + c.getBasePort()) + (isUpload ? c.getUploadUrl() : c.getDownloadUrl());
         return res;
     }
 

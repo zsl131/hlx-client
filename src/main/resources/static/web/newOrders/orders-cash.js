@@ -29,7 +29,7 @@ function rebuildMoney() {
     var alipayMoney = parseFloat($("#alipayMoney").val());
     alipayMoney = isNaN(alipayMoney)?0:alipayMoney;
 
-console.log(aliMoney+"===="+alipayMoney);
+//console.log(aliMoney+"===="+alipayMoney);
 
     var money = totalMoney + (wxMoney-weixinMoney) + (aliMoney-alipayMoney) + inMoney - payMoney;
     setResultMoney(money);

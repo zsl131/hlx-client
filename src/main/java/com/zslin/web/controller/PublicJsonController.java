@@ -33,6 +33,9 @@ public class PublicJsonController {
     @Autowired
     private IPrizeService prizeService;
 
+    @Autowired
+    private IWalletService walletService;
+
     @GetMapping(value = "getPrice")
     public Price getPirce() {
         Price p = SingleCaseTools.getInstance().getPrice();
@@ -65,6 +68,13 @@ public class PublicJsonController {
         Member m = memberService.findByPhone(phone);
         if(m==null) {m = new Member();}
         return m;
+    }
+
+    @PostMapping(value = "getWallet")
+    public Wallet getWallet(String phone) {
+        Wallet w = walletService.findByPhone(phone);
+        if(w==null) {w = new Wallet();}
+        return w;
     }
 
     @PostMapping(value = "getPrize")

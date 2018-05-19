@@ -57,4 +57,9 @@ public class UploadJsonTools {
         JsonDto jd = new JsonDto("password", "update", 0, new NormalDto(phone, password));
         return JSON.toJSONString(jd);
     }
+
+    public static String buildWalletScore(String openid, Integer score) {
+        JsonDto jd = new JsonDto("wallet", "update", 0, new NormalDto(openid, score+""));
+        return JSON.toJSONString(jd);
+    }
 }

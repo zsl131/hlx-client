@@ -54,6 +54,9 @@ public class SimpleDataTools {
     @Autowired
     private IRestdayService restdayService;
 
+    @Autowired
+    private IWalletService walletService;
+
     public void handlerPrice(JSONObject jsonObj) {
         Price price = priceService.findOne();
         if(price==null) {price = new Price();}
@@ -249,5 +252,16 @@ public class SimpleDataTools {
         String password = jsonObj.getString("value");
 
         memberService.updatePassword(password, phone); //修改密码
+    }
+
+    public void handlerWallet(JSONObject jsonObj) {
+        Wallet wallet = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), Wallet.class);
+        Wallet w = walletService.findByPhone(wallet.getPhone());
+        if(w==null) {
+            walletService.save(wallet);
+        } else {
+            MyBeanUtils.copyProperties(wallet, w, new String[]{"id"});
+            walletService.save(w);
+        }
     }
 }

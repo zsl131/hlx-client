@@ -18,10 +18,10 @@ function buildMemberHtml(obj) {
                         '<div class="form-group">'+
                             '<div class="input-group">'+
                                 '<div class="input-group-addon">账户余额：</div>'+
-                                '<input class="form-control" name="memberSurplus" value="输入会员电话检索" readonly="readonly"/>'+
+                                '<input class="form-control" name="memberSurplus" value="输入会员电话和密码检索" readonly="readonly"/>'+
 
                                 '<div class="input-group-addon">会员姓名：</div>'+
-                                '<input class="form-control" name="memberName" value="输入会员电话检索" readonly="readonly"/>'+
+                                '<input class="form-control" name="memberName" value="输入会员电话和密码检索" readonly="readonly"/>'+
                             '</div>'+
                         '</div>'+
 
@@ -63,6 +63,7 @@ function checkPhone() {
                     $("input[name='memberName']").val(html);
                     $("input[name='memberSurplus']").val(res.surplus/100+" 元");
                     $(".show-member-name").html("检索成功");
+                     $(".show-member-password").html("密码正确");
                     buildMemberMoney(res.surplus/100);
                     //$("input[name='reserve']").val(res.phone);
                     setReserveInfo(res.phone, "可以提交");

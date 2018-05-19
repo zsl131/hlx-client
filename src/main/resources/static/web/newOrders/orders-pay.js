@@ -73,7 +73,11 @@ function onOrderType(obj) {
     $("input[name='specialType']").val(orderType);
     if(orderType =='5') { //会员订单
         buildMemberHtml(obj);
-        remindTitle = "请先输入会员手机号码进行验证";
+        remindTitle = "请先输入会员手机号码和密码进行验证";
+        initValue = "";
+    } else if(orderType == '11') { //积分抵扣订单
+        buildScoreHtml(obj);
+        remindTitle = "请先输入用户手机号码和密码进行验证";
         initValue = "";
     } else if(orderType == '1') { //普通订单
         buildNormalHtml(obj); initValue = "1"; //普通订单时可以直接提交

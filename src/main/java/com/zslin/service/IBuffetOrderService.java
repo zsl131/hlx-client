@@ -80,6 +80,10 @@ public interface IBuffetOrderService extends BaseRepository<BuffetOrder, Integer
     @Query("SELECT SUM(discountMoney) FROM BuffetOrder WHERE type='5' AND STATUS IN ('2', '3', '4', '5') AND createTime BETWEEN ?1 AND ?2")
     Float queryMemberDiscount(String startTime, String endTime);
 
+    //获取使用积分抵扣的金额
+    @Query("SELECT SUM(discountMoney) FROM BuffetOrder WHERE type='11' AND STATUS IN ('2', '3', '4', '5') AND createTime BETWEEN ?1 AND ?2")
+    Float queryScoreDiscount(String startTime, String endTime);
+
     //获取会员订单中所补金额
     @Query("SELECT SUM(totalMoney) FROM BuffetOrder WHERE type='5' AND payType=?3 AND STATUS IN ('2', '3', '4', '5') AND createTime BETWEEN ?1 AND ?2")
     Float queryMemberRepair(String startTime, String endTime, String payType);

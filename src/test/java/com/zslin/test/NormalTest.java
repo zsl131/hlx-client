@@ -51,6 +51,14 @@ public class NormalTest {
     private RestdayTools restdayTools;
 
     @Test
+    public void test30() {
+        Integer a = 258;
+        Integer b = 10;
+        Integer c = a / b;
+        System.out.println("==============="+c);
+    }
+
+    @Test
     public void test29() {
         System.out.println("========="+restdayTools.isWorkday());
     }
