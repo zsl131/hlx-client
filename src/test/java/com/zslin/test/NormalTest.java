@@ -8,6 +8,7 @@ import com.zslin.service.IDiscountTimeService;
 import com.zslin.service.IMemberChargeService;
 import com.zslin.tools.OrderNoTools;
 import com.zslin.tools.RestdayTools;
+import com.zslin.tools.VersionTools;
 import com.zslin.tools.WordTools;
 import com.zslin.web.dto.MyTimeDto;
 import org.junit.Test;
@@ -49,6 +50,16 @@ public class NormalTest {
 
     @Autowired
     private RestdayTools restdayTools;
+
+    @Autowired
+    private VersionTools versionTools;
+
+    @Test
+    public void test31() throws Exception {
+        String url = "D:\\temp\\project\\upgrade1.bat";
+        Runtime.getRuntime().exec("cmd /c start "+url);
+        versionTools.run_cmd(url, true);
+    }
 
     @Test
     public void test30() {

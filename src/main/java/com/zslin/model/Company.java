@@ -65,6 +65,41 @@ public class Company {
     @Column(name = "have_time")
     private Integer haveTime;
 
+    @Column(name = "client_version")
+    private String clientVersion;
+
+    /** 当前版本，用于与clientVersion对比并判断是否进行更新操作的 */
+    @Column(name = "cur_version")
+    private String curVersion;
+
+    /** 新版本下载地址 */
+    @Column(name = "version_url")
+    private String versionUrl;
+
+    public String getVersionUrl() {
+        return versionUrl;
+    }
+
+    public void setVersionUrl(String versionUrl) {
+        this.versionUrl = versionUrl;
+    }
+
+    public String getCurVersion() {
+        return curVersion;
+    }
+
+    public void setCurVersion(String curVersion) {
+        this.curVersion = curVersion;
+    }
+
+    public String getClientVersion() {
+        return clientVersion;
+    }
+
+    public void setClientVersion(String clientVersion) {
+        this.clientVersion = clientVersion;
+    }
+
     public Integer getHaveTime() {
         return haveTime;
     }
