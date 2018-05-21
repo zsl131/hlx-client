@@ -54,7 +54,6 @@ public class VersionTools {
         copyJarFile(); //备份
         downloadNewVersion(versionUrl); //下载
         setVersion(version); //更新数据库防止重复更新
-//        runJavaFile();
         run_cmd(generateCmd(), false);
     }
 
@@ -155,9 +154,10 @@ public class VersionTools {
             sb.append("del /F ").append(getBaseJarDirectory()).append("hlx-client-1.0-SNAPSHOT.jar").append("\n");
             sb.append("ping -n 3 127.0.0.1").append("\n");
             sb.append("rename ").append(getBaseJarDirectory()).append("hlx-client-1.0-SNAPSHOT-new.jar").append(" hlx-client-1.0-SNAPSHOT.jar").append("\n");
-//            sb.append("del ").append(getBaseJarDirectory()+"upgrade.bat").append("\n");
+            sb.append("java -jar ").append(getBaseJarDirectory()).append("hlx-client-1.0-SNAPSHOT.jar").append("\n");
+            sb.append("del ").append(getBaseJarDirectory()+"upgrade.bat").append("\n");
 
-            System.out.println(sb.toString());
+//            System.out.println(sb.toString());
             run_cmd(generateCmd(sb.toString()), true);
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -219,34 +219,5 @@ public class VersionTools {
         }
         bos.close();
         return bos.toByteArray();
-    }
-
-    private void createJavaFile() {
-        try {
-            StringBuffer sb = new StringBuffer();
-            sb.append("public class Upgrade {\n" +
-                    "\t\n" +
-                    "\tpublic static void main(String [] args) {\n" +
-                    "\t\tSystem.out.println(\"============\");\n" +
-                    "\t}\n" +
-                    "}");
-
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getBaseJarDirectory()+"Upgrade.java")));
-            bw.write(sb.toString());
-            bw.flush();
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void runJavaFile() {
-        createJavaFile();
-        StringBuffer sb = new StringBuffer();
-        sb.append("ping -n 10 127.0.0.1").append("\n");
-        sb.append("javac Upgrade.java").append("\n");
-        sb.append("ping -n 3 127.0.0.1").append("\n");
-        sb.append("java Upgrade").append("\n");
-        run_cmd(generateCmd(sb.toString()), true);
     }
 }
