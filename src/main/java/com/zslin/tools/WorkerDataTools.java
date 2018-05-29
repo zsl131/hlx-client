@@ -18,7 +18,9 @@ public class WorkerDataTools {
     private IWorkerService workerService;
 
     public void handler(Integer dataId, JSONObject jsonObj, String action) {
-        Worker w = workerService.findByObjId(dataId);
+        String phone = jsonObj.getString("phone");
+        Worker w = workerService.findByPhone(phone);
+//        Worker w = workerService.findByObjId(dataId);
         if("delete".equals(action)) {
             workerService.delete(w);
         } else if("update".equals(action)) {
@@ -33,7 +35,7 @@ public class WorkerDataTools {
             w.setObjId(dataId);
             w.setOpenid(jsonObj.getString("openid"));
             w.setPassword(jsonObj.getString("password"));
-            w.setPhone(jsonObj.getString("phone"));
+            w.setPhone(phone);
             workerService.save(w);
         }
     }
