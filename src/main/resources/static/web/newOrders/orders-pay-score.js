@@ -60,7 +60,7 @@ function checkWalletPhone() {
                     $("input[name='scoreSurplus']").val(res.score+" 分，相当于人民币："+(parseInt(res.score/parseInt($('input[name="scoreMoney"]').val())))+" 元");
                     $(".show-wallet-name").html("检索成功");
                     $(".show-wallet-password").html("密码正确");
-                    buildMemberMoney(res.score);
+                    buildScoreMoney(res.score);
                     //$("input[name='reserve']").val(res.phone);
                     setReserveInfo(res.phone, "可以提交");
                 }
@@ -76,7 +76,7 @@ function checkWalletPhone() {
     }
 }
 
-function buildMemberMoney(memberSurplus) {
+function buildScoreMoney(memberSurplus) {
     var orderMoney = $("input[name='orderTotalMoney']").val();
     var discountMost = parseInt(parseInt(orderMoney) * parseInt($('input[name="scoreDeductible"]').val()) /100);
     var scoreMoney = parseInt(memberSurplus/parseInt($('input[name="scoreMoney"]').val())); //账户可抵
