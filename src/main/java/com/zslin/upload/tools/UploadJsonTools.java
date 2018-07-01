@@ -62,4 +62,9 @@ public class UploadJsonTools {
         JsonDto jd = new JsonDto("wallet", "update", 0, new NormalDto(openid, score+""));
         return JSON.toJSONString(jd);
     }
+
+    public static String buildIncome(Income income) {
+        JsonDto jd = new JsonDto("income", "update", income.getId(), income);
+        return JSON.toJSONString(jd);
+    }
 }

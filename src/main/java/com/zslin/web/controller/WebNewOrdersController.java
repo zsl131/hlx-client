@@ -3,8 +3,11 @@ package com.zslin.web.controller;
 import com.zslin.basic.annotations.AdminAuth;
 import com.zslin.basic.tools.NormalTools;
 import com.zslin.model.BuffetOrder;
+import com.zslin.model.Income;
 import com.zslin.model.Prize;
 import com.zslin.service.*;
+import com.zslin.upload.tools.UploadFileTools;
+import com.zslin.upload.tools.UploadJsonTools;
 import com.zslin.web.dto.MyTicketDto;
 import com.zslin.web.dto.MyTimeDto;
 import com.zslin.web.tools.MyTicketTools;
@@ -12,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -43,6 +48,12 @@ public class WebNewOrdersController {
 
     @Autowired
     private IMemberChargeService memberChargeService;
+
+    @Autowired
+    private IIncomeService incomeService;
+
+    @Autowired
+    private UploadFileTools uploadFileTools;
 
     //会员充值统计
     private void calMemberCharge(Model model, String day) {
@@ -124,7 +135,27 @@ public class WebNewOrdersController {
         calScoreMoney(mtd, model);
         buildBond(mtd, model);
         buildBondMoney(mtd, model);
+        model.addAttribute("income", incomeService.findByComeDay(day.replaceAll("-", "")));
         return "web/newOrders/cal";
+    }
+
+    @PostMapping(value = "addIncome")
+    public @ResponseBody String addIncome(String day, Float money) {
+        day = day.replaceAll("-", "");
+        Income income = incomeService.findByComeDay(day);
+        if(income==null) {
+            income = new Income();
+            income.setComeDay(day);
+        }
+        income.setMoney(money);
+        incomeService.save(income);
+        sendIncome2Server(income);
+        return "1";
+    }
+
+    private void sendIncome2Server(Income income) {
+        String content = UploadJsonTools.buildDataJson(UploadJsonTools.buildIncome(income));
+        uploadFileTools.setChangeContext(content, true);
     }
 
     private void buildBondMoney(MyTimeDto mtd, Model model) {

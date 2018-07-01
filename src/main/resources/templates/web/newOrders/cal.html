@@ -11,6 +11,7 @@
     <link type="text/css" rel="stylesheet" href="/js/jedate/skin/jedate.css"/>
     <script src="/admin/bus/my-date.js"></script>
     <script src="/web/newOrders/orders-cash.js"></script>
+    <script src="/web/newOrders/add-income.js"></script>
     <script>
         $(function() {
             $(".order-day").jeDate({
@@ -231,32 +232,52 @@
                         <p>应有现金：<b id="calTotalMoney" style="font-size:24px; color:#F00;">0</b>
                             <small>(不包含备用金)</small>
                         </p>
-                        <div class="form-group form-group-lg">
+                        <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">实收微信：</div>
                                 <input id="weixinMoney" class="form-control need-rebuild"
                                        onkeyup="value=value.replace(/[^\d\.]/g,'')" value="0" placeholder="请输入实收微信金额"/>
                             </div>
                         </div>
-                        <div class="form-group form-group-lg">
+                        <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">实收支付宝：</div>
                                 <input id="alipayMoney" class="form-control need-rebuild"
                                        onkeyup="value=value.replace(/[^\d\.]/g,'')" value="0" placeholder="请输入实收支付宝金额"/>
                             </div>
                         </div>
-                        <div class="form-group form-group-lg">
+                        <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">其他支出：</div>
                                 <input id="payMoney" class="form-control need-rebuild"
                                        onkeyup="value=value.replace(/[^\d\.]/g,'')" value="0" placeholder="请输入其他支出金额"/>
                             </div>
                         </div>
-                        <div class="form-group form-group-lg">
+                        <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">其他收入：</div>
                                 <input id="inMoney" class="form-control need-rebuild"
                                        onkeyup="value=value.replace(/[^\d\.]/g,'')" value="0" placeholder="请输入其他收入金额"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-success">
+                    <div class="panel-heading">营收入账</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="input-group input-group-lg">
+                                <div class="input-group-addon">营收总额：</div>
+                                <input id="todayTotalMoney" class="form-control"
+                                       onkeyup="value=value.replace(/[^\d\.]/g,'')" value="0" placeholder="请输入当天营收总额"
+                                 th:value="${income eq null? (totalAM+totalPM+mCash+mWeixin+mAlipay-discountMoney-memberMoneyPM-memberMoneyAM-meituanMoneyPM-meituanMoneyAM-ffanMoneyPM-ffanMoneyAM-marketMoneyPM-marketMoneyAM-ticketMoneyPM-ticketMoneyAM-ticketMoneyPM-ticketMoneyAM+bondMoneyPM+bondMoneyAM) : income.money}"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group input-group-lg">
+                                <button class="btn btn-lg btn-success" onclick="submitAddIncome()"><b class="fa fa-check"></b> 确认提交</button>
                             </div>
                         </div>
                     </div>
