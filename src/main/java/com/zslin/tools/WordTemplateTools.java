@@ -151,7 +151,7 @@ public class WordTemplateTools {
         return res;
     }
 
-    public File buildBondFile(String shopName, Integer peopleCount, Float bondMoney, String date, String orderNo,
+    public File buildBondFile(String shopName, String peopleCount, Float bondMoney, String date, String orderNo,
                               String phone, String address, String payType, String bondPayType, String type, String endTime, String level) {
         File targetFile = new File(configTools.getUploadPath("tickets/")+"bond-"+(UUID.randomUUID().toString())+".docx");
         try {
@@ -162,7 +162,7 @@ public class WordTemplateTools {
             MainDocumentPart mainDocumentPart = wPackage.getMainDocumentPart();
             HashMap<String, String> datas = new HashMap<>();
             datas.put("shopName", shopName);
-            datas.put("peopleCount", peopleCount+"");
+            datas.put("peopleCount", peopleCount);
             datas.put("bondMoney", bondMoney+"");
             datas.put("code", orderNo);
             datas.put("date", date);

@@ -128,7 +128,7 @@ public class WebNewOrdersController {
         Float cardMoneyPM = buffetOrderService.queryTotalMoneyByPayType(mtd.getStartTimePM(), mtd.getEndTimePM(), "2");
         model.addAttribute("cardMoneyPM", cardMoneyPM==null?0:cardMoneyPM); //刷卡
 
-        calTicket(mtd, model);
+//        calTicket(mtd, model);
         calMeituan(mtd, model);
         calFfan(mtd, model);
         buildMemberMoney(mtd, model);

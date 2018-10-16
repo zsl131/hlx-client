@@ -1,6 +1,10 @@
 package com.zslin.upload.tools;
 
 import com.alibaba.fastjson.JSON;
+import com.zslin.card.model.Card;
+import com.zslin.card.model.CardApply;
+import com.zslin.card.model.CardCheck;
+import com.zslin.card.model.GrantCard;
 import com.zslin.model.*;
 import com.zslin.upload.dto.JsonDto;
 import com.zslin.upload.dto.NormalDto;
@@ -67,4 +71,26 @@ public class UploadJsonTools {
         JsonDto jd = new JsonDto("income", "update", income.getId(), income);
         return JSON.toJSONString(jd);
     }
+
+    /** 以下是卡券相关 */
+    public static String buildGrantCard(GrantCard gc) {
+        JsonDto jd = new JsonDto("cardGrantCard", "update", gc.getId(), gc);
+        return JSON.toJSONString(jd);
+    }
+
+    public static String buildCard(Card card) {
+        JsonDto jd = new JsonDto("card", "update", card.getId(), card);
+        return JSON.toJSONString(jd);
+    }
+
+    public static String buildCardApply(CardApply ca) {
+        JsonDto jd = new JsonDto("cardApply", "update", ca.getId(), ca);
+        return JSON.toJSONString(jd);
+    }
+
+    public static String buildCardCheck(CardCheck obj) {
+        JsonDto jd = new JsonDto("cardCheck", "update", obj.getId(), obj);
+        return JSON.toJSONString(jd);
+    }
+    /** 以上是卡券相关 */
 }

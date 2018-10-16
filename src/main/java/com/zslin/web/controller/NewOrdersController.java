@@ -4,6 +4,9 @@ import com.zslin.basic.repository.SimplePageBuilder;
 import com.zslin.basic.repository.SimpleSortBuilder;
 import com.zslin.basic.tools.NormalTools;
 import com.zslin.basic.utils.ParamFilterUtil;
+import com.zslin.card.model.Card;
+import com.zslin.card.service.ICardService;
+import com.zslin.card.tools.CardWriteOffTools;
 import com.zslin.dto.ResDto;
 import com.zslin.meituan.dto.ReturnDto;
 import com.zslin.meituan.tools.MeituanHandlerTools;
@@ -77,6 +80,12 @@ public class NewOrdersController {
 
     @Autowired
     private IWalletService walletService;
+
+    @Autowired
+    private CardWriteOffTools cardWriteOffTools;
+
+    @Autowired
+    private ICardService cardService;
 
     @GetMapping(value = "index")
     public String index(Model model, String type, HttpServletRequest request) {
@@ -436,7 +445,8 @@ public class NewOrdersController {
             order.setStatus("2"); //就餐中……
             //TODO 需要打印小票
         } else if ("6".equals(specialType)) { //如果是卡券订单
-            Float discountMoney = buildDiscountMoney(no, reserve);
+//            Float discountMoney = buildDiscountMoney(no, reserve);
+            Float discountMoney = buildCardDiscountMoney(no, reserve);
             order.setDiscountMoney(discountMoney);
             order.setTotalMoney(order.getTotalMoney() - discountMoney);
             order.setType(specialType); //订单类型
@@ -587,6 +597,28 @@ public class NewOrdersController {
                 } else if ("2".equals(prizeType)) {
                     res += ((1.0f * prize.getWorth() * amount) / 100);
                 }
+            }
+        }
+        return res;
+    }
+
+    /** 生成卡券抵价金额 */
+    private Float buildCardDiscountMoney(String orderNo, String reserve) {
+        Float res = 0f;
+        String isDinner = reserve.split("-")[0]; //1-晚餐；0-午餐
+        String[] array = reserve.split("-")[1].split("_");
+        for (String single : array) {
+            Integer cardNo = Integer.parseInt(single);
+            Card card = cardService.findByNo(cardNo);
+            if(card!=null && "0".equals(card.getStatus())) {
+                if("1".equals(card.getType())) {res += 10;}
+                else if("2".equals(card.getType())) {res += 45;}
+                else if("3".equals(card.getType())) {
+                    if("1".equals(isDinner)) {res += 55;}
+                    else {res += 45;}
+                }
+
+                cardWriteOffTools.writeOff(card, orderNo);
             }
         }
         return res;

@@ -20,7 +20,8 @@
     <script type="text/javascript" src="/web/newOrders/orders-pay-member.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-score.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-friend.js"></script>
-    <script type="text/javascript" src="/web/newOrders/orders-pay-ticket.js"></script>
+    <!--<script type="text/javascript" src="/web/newOrders/orders-pay-ticket.js"></script>-->
+    <script type="text/javascript" src="/web/newOrders/orders-pay-ticket-new.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-meituan.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-meituan-old.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-ffan.js"></script>
@@ -59,14 +60,14 @@
                             <span>订单性质：</span>
                             <div class="btn-group" role="group" aria-label="...">
                                 <button type="button" orderType="1" th:class="'btn btn-default '+${(order.type eq null or order.type eq '' or order.type eq '1')?'btn-info':''}" ><i class="fa fa-gavel"></i> 正常</button>
-                                <button type="button" orderType="3" net="1" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" title="输入美团编号，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-tumblr"></i> 美团</button>
+                                <button type="button" orderType="3" net="0" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" title="输入美团编号，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-tumblr"></i> 美团（断网）</button>
                                 <button type="button" orderType="5" th:class="'btn btn-default '+${order.type eq '5'?'btn-info':''}" title="输入会员手机和密码，验证通过后从会员账户上扣款"><i class="fa fa-user-secret"></i> 会员</button>
                                 <button th:if="${order.isSelf eq '1'}" type="button" orderType="6" th:class="'btn btn-default '+${order.type eq '6'?'btn-info':''}" title="卡券总数不能超过全票总数"><i class="fa fa-ticket"></i> 卡券</button>
                                 <button th:if="${order.isSelf eq '1'}" type="button" orderType="11" th:class="'btn btn-default '+${order.type eq '11'?'btn-info':''}" th:title="|积分抵扣金额不能超过订单金额的${rules.scoreDeductible}%|"><i class="fa fa-cubes"></i> 积分</button>
                                 <button type="button" orderType="9" th:class="'btn btn-default '+${order.type eq '9'?'btn-info':''}"  title="输入飞凡提货码或券码，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-facebook"></i> 飞凡</button>
                                 <button th:if="${order.isSelf eq '1'}" type="button" orderType="4" th:class="'btn btn-default '+${order.type eq '4'?'btn-info':''}" title="输入折扣手机号码，待审核通过后方可收款入场"><i class="fa fa-group"></i> 亲情</button>
                                 <!--<button type="button" orderType="2" th:class="'btn btn-default '+${order.type eq '2'?'btn-info':''}" ><i class="fa fa-weixin"></i> 微信订单</button>-->
-                                <button type="button" orderType="3" net="0" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" title="输入美团编号，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-tumblr"></i> 美团（断网）</button>
+                                <button type="button" orderType="3" net="1" th:class="'btn btn-default '+${order.type eq '3'?'btn-info':''}" title="输入美团编号，输完一个按回车，用扫码枪不用按回车"><i class="fa fa-tumblr"></i> 美团</button>
                                 <!--<button th:if="${order.isSelf eq '1'}" type="button" orderType="8" th:class="'btn btn-default '+${order.type eq '8'?'btn-info':''}" title="卡券总数不能超过全票总数"><i class="fa fa-university"></i> 商场订单</button>-->
                             </div>
                         </div>

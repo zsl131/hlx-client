@@ -1,5 +1,6 @@
 package com.zslin.tools;
 
+import com.zslin.card.tools.CardHandlerTools;
 import com.zslin.model.Company;
 import com.zslin.upload.tools.UploadFileTools;
 import org.json.JSONArray;
@@ -30,6 +31,9 @@ public class TimerTaskTools {
 
     @Autowired
     private SimpleDataTools simpleDataTools;
+
+    @Autowired
+    private CardHandlerTools cardHandlerTools;
 
     @Autowired
     private UploadFileTools uploadFileTools;
@@ -109,6 +113,18 @@ public class TimerTaskTools {
             simpleDataTools.handlerUpdatePassword(dataObj);
         } else if ("wallet".equalsIgnoreCase(type)) { //积分钱包
             simpleDataTools.handlerWallet(dataObj);
+        } else if("cardApplyReason".equalsIgnoreCase(type)) { //卡券申请原因
+            cardHandlerTools.handlerApplyReason(action, dataId, dataObj);
+        } else if("cardGrantCard".equalsIgnoreCase(type)) { //卡券
+            cardHandlerTools.handlerGrantCard(dataObj);
+        } else if("card".equalsIgnoreCase(type)) { //卡券
+            cardHandlerTools.handlerCard(dataObj);
+        } else if("cardGrantCardStatus".equalsIgnoreCase(type)) { //卡券
+            cardHandlerTools.handlerGrantCardStatus(action, dataObj);
+        } else if("cardApply".equalsIgnoreCase(type)) {
+            cardHandlerTools.handlerCardApply(dataObj);
+        } else if("cardUnder".equalsIgnoreCase(type)) {
+            cardHandlerTools.handlerCardUnder(dataObj);
         }
     }
 

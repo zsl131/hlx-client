@@ -42,7 +42,7 @@ function showDialog(msg, title) {
 }
 
 /** bootstrap 提示框 */
-function confirmDialog(msg, title, okfn) {
+function confirmDialog(msg, title, okfn, backdrop) {
 	var idStr = "myConfirmDialog_"+parseInt(Math.random()*100000000);
 	if($.trim(title)=='') {title = "系统提示";}
 	var html = '';
@@ -60,7 +60,8 @@ function confirmDialog(msg, title, okfn) {
 		  	'</div></div></div></div>';
 	
 	$(html).appendTo("body");
-	$(("#"+idStr)).modal({keyboard:true, show:true});
+	if(typeof(backdrop) == "undefined") {backdrop = true;}
+	$(("#"+idStr)).modal({keyboard:false, show:true, backdrop:backdrop});
 	$(("#"+idStr)).find(".dialog-ok-btn").click(okfn);
 	$(("#"+idStr)).on('hidden.bs.modal', function (e) {
         $(("#"+idStr)).remove();

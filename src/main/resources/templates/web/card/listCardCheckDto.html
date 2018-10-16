@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="fragments/webModel">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="${session.company ne null?session.company.name:'收银台'}">收银台</title>
+    <link type="text/css" rel="stylesheet" href="/basic/js-lib/themes/base/jquery-ui.css"/>
+    <script src="/basic/js-lib/ui/jquery-ui.js"></script>
+    <link type="text/css" rel="stylesheet" href="/web/web-orders.css"/>
+    <script type="text/javascript" src="/web/web-show-time.js"></script>
+    <script type="text/javascript" src="/web/web-init-pwd.js"></script>
+    <script src="/admin/bus/my-date.js"></script>
+    <script src="/js/jedate/jquery.jedate.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/js/jedate/skin/jedate.css"/>
+    <style>
+        td {
+            text-align:left;
+        }
+    </style>
+    <script>
+        $(function() {
+            $(".check-day").jeDate({
+                <!--isinitVal:true, //初始化日期-->
+                festival: true, //显示农历
+                isClear:true,
+                <!--maxDate: curDate(),-->
+        //        skinCell:'jedatered',
+                format: 'YYYYMMDD'
+            });
+
+            $(".check-month").jeDate({
+                <!--isinitVal:true, //初始化日期-->
+                festival: true, //显示农历
+                isClear:true,
+                <!--maxDate: curDate(),-->
+        //        skinCell:'jedatered',
+                format: 'YYYYMM'
+            });
+        });
+    </script>
+</head>
+<body>
+<div th:fragment="content" th:remove="tag">
+
+    <div th:replace="web/card/title-opts :: content" th:remove="tag"></div>
+
+    <div class="table-responsive" style="background:#FFF; padding:10px;">
+        <div id="sys_filter" class="form-inline" style="padding-bottom:10px; float:left;">
+            <div class="input-group">
+                <span class="input-group-addon">日期</span>
+                <input type='text' style="width:140px;" th:value="${day}" class='filter_element form-control check-day' opt="eq" name='day'/>
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-addon">月分</span>
+                <input type='text' style="width:140px;" th:value="${month}" class='filter_element form-control check-month' opt="eq" name='month'/>
+            </div>
+
+            <span><button type="button" class="btn btn-primary btn-sm" id="beginFilter">查询</button></span>
+        </div>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>日期</th>
+                <th>姓名</th>
+                <th>数量</th>
+            </tr>
+            </thead>
+
+            <tr th:each="obj : ${list}">
+                <td th:text="${obj.day}"></td>
+                <td th:text="${obj.name}"></td>
+                <td th:text="${obj.count}"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>

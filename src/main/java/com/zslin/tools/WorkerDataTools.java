@@ -33,7 +33,10 @@ public class WorkerDataTools {
             }
             w.setName(jsonObj.getString("name"));
             w.setObjId(dataId);
-            w.setOpenid(jsonObj.getString("openid"));
+            try {
+                w.setOpenid(jsonObj.getString("openid"));
+            } catch (JSONException e) {
+            }
             w.setPassword(jsonObj.getString("password"));
             w.setPhone(phone);
             workerService.save(w);

@@ -54,7 +54,7 @@ public class WordTest {
 
     @Test
     public void testExport() {
-        File f = wordTemplateTools.buildBondFile("汉丽轩·昭通店", 5, 30f, "2017-04-11 20:02:33", "20170412100005", "0870", "地址", "1", "3", "4", "", "【简餐】");
+        File f = wordTemplateTools.buildBondFile("汉丽轩·昭通店", "5", 30f, "2017-04-11 20:02:33", "20170412100005", "0870", "地址", "1", "3", "4", "", "【简餐】");
         System.out.println(f.getAbsoluteFile());
         File f2 = wordTemplateTools.buildTicketFile("汉丽轩·昭通店", "午餐", "2017-04-12 12:30:22", "20170412100006", "0870", "地址", "3");
         System.out.println(f2);

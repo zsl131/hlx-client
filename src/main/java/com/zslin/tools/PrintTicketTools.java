@@ -6,6 +6,7 @@ import com.zslin.model.BuffetOrderDetail;
 import com.zslin.model.Company;
 import com.zslin.service.IBuffetOrderDetailService;
 import com.zslin.service.ICompanyService;
+import com.zslin.web.dto.DetailDto;
 import com.zslin.web.dto.MyTimeDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,9 +46,20 @@ public class PrintTicketTools {
                 List<BuffetOrderDetail> detailList = buffetOrderDetailService.listByOrderNo(order.getNo());
                 printTicket(order, detailList, com.getName(), com.getPhone(), com.getAddress());
                 String level = getLevel(detailList);
-                printBond(order, com.getName(), com.getPhone(), com.getAddress(), com.getHaveTime(), level);
+                printBond(order, buildDetailDto(detailList), com.getName(), com.getPhone(), com.getAddress(), com.getHaveTime(), level);
             }
         }).start();
+    }
+
+    private DetailDto buildDetailDto(List<BuffetOrderDetail> list) {
+        Integer fullCount = 0, halfCount = 0, totalCount = 0;
+        for(BuffetOrderDetail bod : list) {
+            String no = bod.getCommodityNo();
+            if("99999".equals(no) || "88888".equals(no)) {fullCount ++;}
+            else if("66666".equals(no) || "77777".equals(no)) {halfCount++;}
+            totalCount++;
+        }
+        return new DetailDto(halfCount, fullCount, totalCount);
     }
 
     //打印消费单
@@ -128,10 +140,12 @@ public class PrintTicketTools {
         f.delete();
     }
 
-    private void printBond(BuffetOrder order, String shopName, String phone, String address, Integer haveTime, String level) {
+    //打印押金单
+    private void printBond(BuffetOrder order, DetailDto dto, String shopName, String phone, String address, Integer haveTime, String level) {
         if(order.getSurplusBond()>0) { //当压金金额大于0时才需要出单
-
-            File f = wordTemplateTools.buildBondFile(shopName, order.getCommodityCount(), order.getSurplusBond(),
+            StringBuffer sb = new StringBuffer();
+            sb.append(dto.getFullCount()).append("+").append(dto.getHalfCount()).append("=").append(dto.getTotalCount()); //生成人数
+            File f = wordTemplateTools.buildBondFile(shopName, sb.toString(), order.getSurplusBond(),
                     order.getEntryTime() == null ? order.getCreateTime() : order.getEntryTime(), order.getNo(), phone, address, order.getPayType(),
                     order.getBondPayType(), order.getType(), buildTime(haveTime), level);
 

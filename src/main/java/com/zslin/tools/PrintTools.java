@@ -13,7 +13,11 @@ import java.io.IOException;
 public class PrintTools {
 
     public static void print(String path) {
-        new PrintTools().printWord(path);
+        try {
+            new PrintTools().printWord(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void printWord(String path) {

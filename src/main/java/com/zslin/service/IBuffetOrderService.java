@@ -3,7 +3,9 @@ package com.zslin.service;
 import com.zslin.basic.repository.BaseRepository;
 import com.zslin.model.BuffetOrder;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -98,4 +100,12 @@ public interface IBuffetOrderService extends BaseRepository<BuffetOrder, Integer
 
     @Query("SELECT SUM(surplusBond) FROM BuffetOrder WHERE status=?3 AND createTime BETWEEN ?1 AND ?2")
     Float queryBondByStatus(String startTime, String endTime, String status);
+
+    //计算某天收益
+    @Query("SELECT SUM(totalMoney+discountMoney) FROM BuffetOrder WHERE STATUS IN ('2', '3', '4', '5') AND createDay=?1")
+    Float queryTotalMoneyByDay(String createDay);
+
+    //为了锐局检查临时功能，需要删除
+    @Query("FROM BuffetOrder WHERE createDay=?1")
+    List<BuffetOrder> listByDate(String date);
 }
