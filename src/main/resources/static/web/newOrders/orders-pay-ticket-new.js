@@ -1,5 +1,6 @@
 var moneyBefore = 0, cardOrderCount = 0, oldCardNo = '', isDinnerCard; //可用卡券抵价的商品数量、检索过的CardNo、是否是晚餐
 function buildTicketHtml(obj) {
+    if($(".commodity-list-hidden").find("span[comNo='88888']").length>0 || $(".commodity-list-hidden").find("span[comNo='66666']").length>0) {isDinnerCard = false;} else {isDinnerCard = true} //初始晚餐或午餐
     $(".commodity-list-hidden").find("span").each(function() {
         var comNo = $(this).attr("comNo");
         if(comNo=='88888' || comNo == '99999') {
@@ -26,6 +27,7 @@ function buildTicketHtml(obj) {
 function rebuildCardWorth() {
     var cardCount10=0, cardCount45=0, cardCount55=0, cardCount=0; //全票订单数、10元券数量、45元券数量、55元券数量、卡券总数
     var datas = isDinnerCard?"1-":"0-";
+    //console.log(isDinnerCard,datas)
     $(".card-add-list").find("button").each(function() {
         var cardNo = $(this).html();
         if(cardNo.startsWith("1")) {cardCount10 ++;}
@@ -49,7 +51,7 @@ function setSingleCard(obj, cardNo) {
     var target = $(obj).parents(".card-main-div").find(".card-add-list");
     var checkExistsCardNo = $(target).find("button[cardNo='"+cardNo+"']").attr("cardNo");
     if(typeof(checkExistsCardNo) == "undefined") {
-        console.log($(target).find("button[cardNo='"+cardNo+"']").attr("cardNo"));
+        //console.log($(target).find("button[cardNo='"+cardNo+"']").attr("cardNo"));
         var html = '<button class="btn" onClick="removeSingleCard(this)" style="margin:5px;" cardNo="'+cardNo+'">'+cardNo+'</button>';
         $(target).html(html + $(target).html());
         rebuildCardWorth();
@@ -102,7 +104,7 @@ function onInputCount(obj) {
 function recalMoney(cardCount10, cardCount45, cardCount55) {
     //alert(breakCount+"==="+dinnerCount+"=="+ticketWorth);
     var needMinusMoney = 0; //是否为晚餐、所抵扣金额
-    if($(".commodity-list-hidden").find("span[comNo='88888']").length>0 || $(".commodity-list-hidden").find("span[comNo='66666']").length>0) {isDinnerCard = false;} else {isDinnerCard = true}
+    //console.log("---", isDinnerCard)
 //    console.log("isDinner", isDinnerCard);
     var cardListObj = $(".card-add-list");
     var worthObj = $(".worth-money");
