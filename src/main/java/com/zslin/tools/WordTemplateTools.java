@@ -130,21 +130,21 @@ public class WordTemplateTools {
     private String buildOrderType(String type) {
         String res = "";
         if("1".equals(type)) {
-            res = "店内订单";
+            res = "店内";
         } else if("2".equals(type)) {
-            res = "微信订单";
+            res = "微信";
         } else if("3".equals(type)) {
-            res = "美团订单";
+            res = "美团";
         } else if("4".equals(type)) {
-            res = "亲情订单";
+            res = "亲情";
         } else if("5".equals(type)) {
-            res = "会员订单";
+            res = "会员";
         } else if("6".equals(type)) {
-            res = "卡券订单";
+            res = "卡券";
         } else if("8".equals(type)) {
-            res = "商场订单";
+            res = "商场";
         } else if("9".equals(type)) {
-            res = "飞凡订单";
+            res = "飞凡";
         } else if("7".equals(type)) {
             res = "货到付款";
         }
@@ -167,7 +167,7 @@ public class WordTemplateTools {
             datas.put("code", orderNo);
             datas.put("date", date);
             datas.put("phone", phone);
-            datas.put("address", address);
+//            datas.put("address", address);
             datas.put("payType", buildPayType(payType));
             datas.put("bondPayType", buildPayType(bondPayType));
             datas.put("type", buildOrderType(type));
