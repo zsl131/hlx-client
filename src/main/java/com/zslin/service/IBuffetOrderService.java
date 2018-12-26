@@ -108,4 +108,12 @@ public interface IBuffetOrderService extends BaseRepository<BuffetOrder, Integer
     //为了锐局检查临时功能，需要删除
     @Query("FROM BuffetOrder WHERE createDay=?1")
     List<BuffetOrder> listByDate(String date);
+
+    @Query("UPDATE BuffetOrder SET finishFlag=?1 WHERE no=?2")
+    @Modifying
+    @Transactional
+    void updateFinishFlag(String flag, String no);
+
+    @Query("FROM BuffetOrder WHERE finishFlag='0'")
+    List<BuffetOrder> findNoFinishedOrder();
 }

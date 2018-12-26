@@ -125,6 +125,8 @@ public class TimerTaskTools {
             cardHandlerTools.handlerCardApply(dataObj);
         } else if("cardUnder".equalsIgnoreCase(type)) {
             cardHandlerTools.handlerCardUnder(dataObj);
+        } else if("orderResult".equalsIgnoreCase(type)) {
+            simpleDataTools.handlerUpdateOrderResult(dataObj);
         }
     }
 

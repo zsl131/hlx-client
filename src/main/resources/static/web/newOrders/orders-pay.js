@@ -188,7 +188,10 @@ function buildTotalMoney() {
     var remindObj = $(tarObj).find("small");
 
 //    var needBondMoney = (count>=2)?price:0;//押金
-    var needBondMoney = (count<2)?0:(count<5?price:50);//押金
+//    var needBondMoney = (count<2)?0:(count<5?price:50);//押金
+    var needBondMoney = (count<1)?0:(count==1?10:(count<5?price:50)); //押金
+
+//    console.log(needBondMoney);
 
     $(moneyObj).html(parseFloat($("#totalMoney").html()) + needBondMoney);
     $(remindObj).html("（包含"+(needBondMoney)+" 元押金）");

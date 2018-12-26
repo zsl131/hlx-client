@@ -254,6 +254,13 @@ public class SimpleDataTools {
         memberService.updatePassword(password, phone); //修改密码
     }
 
+    public void handlerUpdateOrderResult(JSONObject jsonObj) {
+        String no = jsonObj.getString("key");
+        String flag = jsonObj.getString("value");
+
+        buffetOrderService.updateFinishFlag(flag, no); //修改订单完成标识
+    }
+
     public void handlerWallet(JSONObject jsonObj) {
         Wallet wallet = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), Wallet.class);
         Wallet w = walletService.findByPhone(wallet.getPhone());

@@ -3,6 +3,7 @@ package com.zslin.web.controller;
 import com.zslin.basic.repository.SimplePageBuilder;
 import com.zslin.basic.repository.SimpleSortBuilder;
 import com.zslin.basic.tools.NormalTools;
+import com.zslin.basic.tools.SecurityUtil;
 import com.zslin.basic.utils.ParamFilterUtil;
 import com.zslin.card.model.Card;
 import com.zslin.card.service.ICardService;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -365,7 +367,7 @@ public class NewOrdersController {
         if (order == null) {
             return new ResDto("-2", "未检查到订单信息");
         }
-        Float totalBondMoney = (bondCount >= 2) ? bondMoney : 0f;
+        Float totalBondMoney = (bondCount >= 1) ? bondMoney : 0f;
         if ("5".equalsIgnoreCase(specialType)) { //如果是会员订单
             Member m = memberService.findByPhone(reserve);
             if (m == null) {

@@ -145,6 +145,18 @@ public class BuffetOrder {
     @Column(name = "mt_status")
     private String mtStatus;
 
+    /** 是否已经完成上传 */
+    @Column(name = "finish_flag")
+    private String finishFlag = "0";
+
+    public String getFinishFlag() {
+        return finishFlag;
+    }
+
+    public void setFinishFlag(String finishFlag) {
+        this.finishFlag = finishFlag;
+    }
+
     public String getMtStatus() {
         return mtStatus;
     }
