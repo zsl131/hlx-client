@@ -1,5 +1,6 @@
 package com.zslin.tools;
 
+import com.zslin.model.DiscountConfig;
 import com.zslin.model.Price;
 import com.zslin.model.Rules;
 
@@ -20,6 +21,16 @@ public class SingleCaseTools {
     private static Price price;
 
     private static Rules rules;
+
+    private static DiscountConfig discountConfig;
+
+    public void setDiscountConfig(DiscountConfig _config) {
+        discountConfig = _config;
+    }
+
+    public DiscountConfig getDiscountConfig() {
+        return discountConfig;
+    }
 
     public void setPrice(Price _price) {
         price = _price;

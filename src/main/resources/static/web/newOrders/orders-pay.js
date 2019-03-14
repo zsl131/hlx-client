@@ -21,6 +21,7 @@ $(function() {
             onBondPayType($(this));
     });
     buildNormalHtml();
+    buildDiscountHtml();
     onFriendOrder();
 });
 
@@ -80,7 +81,9 @@ function onOrderType(obj) {
         remindTitle = "请先输入用户手机号码和密码进行验证";
         initValue = "";
     } else if(orderType == '1') { //普通订单
-        buildNormalHtml(obj); initValue = "1"; //普通订单时可以直接提交
+        buildNormalHtml(obj);
+        buildDiscountHtml(obj);
+        initValue = "1"; //普通订单时可以直接提交
     } else if(orderType == '4') { //友情折扣订单
         buildFriendHtml(obj);
         remindTitle = "请先输入折扣手机号码进行验证，待审核通过后方可提交";

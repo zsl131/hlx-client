@@ -109,10 +109,10 @@ function recalMoney(cardCount10, cardCount45, cardCount55) {
     var cardListObj = $(".card-add-list");
     var worthObj = $(".worth-money");
     needMinusMoney += cardCount10 * 10; //
-    needMinusMoney += cardCount45 * 45; //
+    needMinusMoney += cardCount45 * 48; //
     if(isDinnerCard) {
-        needMinusMoney += (cardCount55*55)
-    } else {needMinusMoney += (cardCount55 *45);} //如果是上午，55元券也只能抵45
+        needMinusMoney += (cardCount55*58)
+    } else {needMinusMoney += (cardCount55 *48);} //如果是上午，55元券也只能抵45
 
     $(worthObj).html("已抵扣：<b>"+needMinusMoney+"</b> 元");
     var moneyObj = $(".show-money").find(".money-amount").find(".money");

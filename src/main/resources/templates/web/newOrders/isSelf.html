@@ -9,7 +9,7 @@
                     <td class="field">订单类型：</td>
                     <td>
                         <span th:switch="${order.type}" th:remove="tag">
-                            <span th:case="1">店内订单<span th:if="${order.discountType='10'}">（时段折扣：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span></span>
+                            <span th:case="1">店内订单<span th:if="${order.discountType=='10'}">（时段折扣：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span><span th:if="${order.discountType=='12'}">（折扣日：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span></span>
                             <span th:case="2">微信订单</span>
                             <span th:case="3">美团订单（抵价：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>
                             <span th:case="4">亲情折扣（优惠：<span th:text="${order.discountMoney}+ ' 元'" style="color:#F60;"></span>）</span>

@@ -21,7 +21,7 @@ public class MyTimeDto {
         this.endTimeAM = day + " 16:00";
 
         this.startTimePM = day + " 16:00";
-        this.endTimePM = day + " 23:00";
+        this.endTimePM = day + " 23:59";
     }
 
     public String getDay() {

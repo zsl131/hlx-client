@@ -55,6 +55,12 @@ public class SimpleDataTools {
     private IRestdayService restdayService;
 
     @Autowired
+    private IDiscountDayService discountDayService;
+
+    @Autowired
+    private IDiscountConfigService discountConfigService;
+
+    @Autowired
     private IWalletService walletService;
 
     public void handlerPrice(JSONObject jsonObj) {
@@ -245,6 +251,27 @@ public class SimpleDataTools {
             day.setDays(restday.getDays());
             restdayService.save(day);
         }
+    }
+
+    public void handlerDiscountDay(JSONObject jsonObj) {
+        DiscountDay restday = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), DiscountDay.class);
+        DiscountDay day = discountDayService.findByYearMonth(restday.getYearMonth());
+        if(day==null) {
+            discountDayService.save(restday);
+        } else {
+            day.setDays(restday.getDays());
+            discountDayService.save(day);
+        }
+    }
+
+    public void handlerDiscountConfig(JSONObject jsonObj) {
+        DiscountConfig config = discountConfigService.loadOne();
+        if(config==null) {config = new DiscountConfig();}
+        DiscountConfig c = JSON.toJavaObject(JSON.parseObject(jsonObj.toString()), DiscountConfig.class);
+        MyBeanUtils.copyProperties(c, config);
+        discountConfigService.save(config);
+
+        SingleCaseTools.getInstance().setDiscountConfig(config); //存折扣配置
     }
 
     public void handlerUpdatePassword(JSONObject jsonObj) {

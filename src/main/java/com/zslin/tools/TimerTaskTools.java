@@ -109,6 +109,10 @@ public class TimerTaskTools {
             simpleDataTools.handlerDiscountTime(dataObj, dataId);
         } else if ("restday".equalsIgnoreCase(type)) { //工作日
             simpleDataTools.handlerRestday(dataObj);
+        } else if("discountDay".equalsIgnoreCase(type)) { //折扣日
+            simpleDataTools.handlerDiscountDay(dataObj);
+        } else if("discountConfig".equalsIgnoreCase(type)) { //折扣配置
+            simpleDataTools.handlerDiscountConfig(dataObj);
         } else if ("password".equalsIgnoreCase(type)) { //修改会员密码
             simpleDataTools.handlerUpdatePassword(dataObj);
         } else if ("wallet".equalsIgnoreCase(type)) { //积分钱包

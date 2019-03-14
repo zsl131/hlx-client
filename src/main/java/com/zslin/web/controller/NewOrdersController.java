@@ -89,6 +89,12 @@ public class NewOrdersController {
     @Autowired
     private ICardService cardService;
 
+    @Autowired
+    private IDiscountConfigService discountConfigService;
+
+    @Autowired
+    private DiscountDayTools discountDayTools;
+
     @GetMapping(value = "index")
     public String index(Model model, String type, HttpServletRequest request) {
         type = type == null || "".equalsIgnoreCase(type) ? "1" : type;
@@ -158,6 +164,12 @@ public class NewOrdersController {
                     order.setDiscountReason("时段折扣");
                 }
             }
+            Float discountDayMoney = buildDiscountDayMoney(detailList);
+            if(discountDayTools.isDiscountDay() && discountDayMoney>0) { //如果是折扣日
+                order.setDiscountType("12");
+                order.setDiscountReason("折扣日");
+                order.setDiscountMoney(discountDayMoney);
+            }
             buffetOrderService.save(order);
 
             addOrderDetail(detailList, order); //保存订单商品信息
@@ -165,6 +177,25 @@ public class NewOrdersController {
         } catch (Exception e) {
             return new ResDto("-3", "订单错误");
         }
+    }
+
+    private Float buildDiscountDayMoney(List<BuffetOrderDetail> detailList) {
+        Float res = 0f;
+        DiscountConfig config = discountConfigService.loadOne();
+        if(config!=null && "1".equals(config.getStatus())) {
+            for (BuffetOrderDetail bod : detailList) {
+                if ("88888".equalsIgnoreCase(bod.getCommodityNo())) {
+                    res += config.getDiscountAM();
+                } else if("99999".equalsIgnoreCase(bod.getCommodityNo())) {
+                    res += config.getDiscountPM();
+                } else if("66666".equals(bod.getCommodityNo())) {
+                    res += config.getDiscountHalfAM();
+                } else if("77777".equals(bod.getCommodityNo())) {
+                    res += config.getDiscountHalfPM();
+                }
+            }
+        }
+        return res;
     }
 
     //计算时段折扣应折扣的金额
@@ -236,6 +267,8 @@ public class NewOrdersController {
         model.addAttribute("commodityList", buffetOrderDetailService.listByOrderNo(orderNo));
         model.addAttribute("price", priceService.findOne());
         model.addAttribute("rules", rulesService.loadOne());
+        model.addAttribute("discountConfig", discountConfigService.loadOne());
+        model.addAttribute("isDiscountDay", discountDayTools.isDiscountDay()); //今天是否为折扣日
         return "web/newOrders/payBuffetOrder";
     }
 
@@ -432,6 +465,8 @@ public class NewOrdersController {
             order.setEntryLong(System.currentTimeMillis());
             if("10".equalsIgnoreCase(order.getDiscountType())) { //如果是时段折扣
                 order.setTotalMoney(order.getTotalMoney()-order.getDiscountMoney());
+            } else if("12".equals(order.getDiscountType())) { //折扣日
+                order.setTotalMoney(order.getTotalMoney()-order.getDiscountMoney());
             }
             order.setEntryTime(NormalTools.curDate("yyyy-MM-dd HH:mm:ss"));
             order.setStatus("2"); //就餐中……
@@ -614,10 +649,10 @@ public class NewOrdersController {
             Card card = cardService.findByNo(cardNo);
             if(card!=null && "0".equals(card.getStatus())) {
                 if("1".equals(card.getType())) {res += 10;}
-                else if("2".equals(card.getType())) {res += 45;}
+                else if("2".equals(card.getType())) {res += 48;}
                 else if("3".equals(card.getType())) {
-                    if("1".equals(isDinner)) {res += 55;}
-                    else {res += 45;}
+                    if("1".equals(isDinner)) {res += 58;}
+                    else {res += 48;}
                 }
 
                 cardWriteOffTools.writeOff(card, orderNo);

@@ -25,6 +25,7 @@
     <script type="text/javascript" src="/web/newOrders/orders-pay-meituan.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-meituan-old.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-ffan.js"></script>
+    <script type="text/javascript" src="/web/newOrders/orders-pay-discount.js"></script>
     <script type="text/javascript" src="/web/newOrders/orders-pay-normal.js"></script>
 </head>
 <body>
@@ -109,6 +110,8 @@
                             <input name="orderNo" type="hidden" th:value="${order.no}"/>
                             <input name="orderStatus" type="hidden" th:value="${order.status}"/>
                             <input name="discountMoney" th:value="${order.discountMoney}" type="hidden"/>
+                            <input name="isDiscountDay" th:value="${isDiscountDay?'1':'0'}" type="hidden"/>
+                            <input name="discountConfig" type="hidden" th:value="${discountConfig}" th:attr="am=${discountConfig.discountAM},pm=${discountConfig.discountPM}, amh=${discountConfig.discountHalfAM}, pmh=${discountConfig.discountHalfPM}"/>
 
                             <input name="scoreMoney" th:value="${rules.scoreMoney}" title="积分兑换率" type="hidden"/>
                             <input name="scoreDeductible" th:value="${rules.scoreDeductible}" title="积分抵扣率" type="hidden"/>
