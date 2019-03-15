@@ -165,7 +165,7 @@ public class PrintTicketTools {
 //        Integer count = (int)(Math.random()*10)+3;
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 15);
-        Float price = (new Date()).before(cal.getTime())?45f:55f;
+        Float price = (new Date()).before(cal.getTime())?48f:58f;
         File f = wordTemplateTools.buildVoucherFile(shopName, count, count*price, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), phone, address);
 
         PrintTools.print(f.getAbsolutePath());
