@@ -40,7 +40,7 @@ public class PrintTools {
         }finally{
             try {
                 if(doc!=null){
-                    Dispatch.call(doc, "Close",new Variant(0));
+                    //Dispatch.call(doc, "Close",new Variant(0));
                 }
                 doc = null;
 //                killWordTask();

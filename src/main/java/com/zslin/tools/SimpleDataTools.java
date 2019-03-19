@@ -162,7 +162,7 @@ public class SimpleDataTools {
         MemberCharge mc = new MemberCharge();
         Integer amount = jsonObj.getInt("amount");
         String phone = jsonObj.getString("phone");
-        mc.setChargeMoney(amount*1f);
+        mc.setChargeMoney(amount*1f/100);
         try {
             mc.setName(jsonObj.getString("accountName"));
         } catch (Exception e) {
@@ -182,7 +182,7 @@ public class SimpleDataTools {
         Member m = memberService.findByPhone(phone);
         if(m!=null) {
             memberService.plusMoneyByPhone(amount, phone);
-            mc.setBalance(m.getSurplus()+amount);
+            mc.setBalance((m.getSurplus()+amount)/100);
         } else {
             m = new Member();
             m.setCreateTime(mc.getCreateTime());
