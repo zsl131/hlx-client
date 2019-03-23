@@ -149,6 +149,18 @@ public class BuffetOrder {
     @Column(name = "finish_flag")
     private String finishFlag = "0";
 
+    /** 打印消费单标记 */
+    @Column(name = "print_voucher_flag")
+    private String printVoucherFlag = "0";
+
+    public String getPrintVoucherFlag() {
+        return printVoucherFlag;
+    }
+
+    public void setPrintVoucherFlag(String printVoucherFlag) {
+        this.printVoucherFlag = printVoucherFlag;
+    }
+
     public String getFinishFlag() {
         return finishFlag;
     }

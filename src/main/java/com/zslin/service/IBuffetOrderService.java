@@ -119,4 +119,12 @@ public interface IBuffetOrderService extends BaseRepository<BuffetOrder, Integer
 
     @Query("FROM BuffetOrder WHERE finishFlag='0'")
     List<BuffetOrder> findNoFinishedOrder();
+
+    @Query(" FROM BuffetOrder WHERE STATUS IN ('2', '3', '4', '5') AND printVoucherFlag!='1' AND createTime BETWEEN ?1 AND ?2")
+    List<BuffetOrder> findCanPrintVoucher(String startTime, String endTime);
+
+    @Query("UPDATE BuffetOrder SET printVoucherFlag=?1 WHERE no=?2")
+    @Modifying
+    @Transactional
+    void updatePrintVoucherFlag(String flag, String no);
 }

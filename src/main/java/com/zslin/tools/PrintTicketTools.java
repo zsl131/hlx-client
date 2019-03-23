@@ -6,6 +6,7 @@ import com.zslin.model.BuffetOrderDetail;
 import com.zslin.model.Company;
 import com.zslin.service.IBuffetOrderDetailService;
 import com.zslin.service.ICompanyService;
+import com.zslin.service.IOrderNoService;
 import com.zslin.web.dto.DetailDto;
 import com.zslin.web.dto.MyTimeDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class PrintTicketTools {
 
     @Autowired
     private ICompanyService companyService;
+
+    @Autowired
+    private IOrderNoService orderNoService;
 
     /**
      * 打印自助券票据
@@ -63,12 +67,24 @@ public class PrintTicketTools {
     }
 
     //打印消费单
-    public void printVoucher(Integer count) {
+    public void printVoucher(Integer count, String name) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Company com = companyService.loadOne();
-                printVoucher(com.getName(), com.getPhone(), com.getAddress(), count);
+                printVoucher(com.getName(), com.getPhone(), com.getAddress(), count, name);
+            }
+        }).start();
+    }
+
+    //打印消费单
+    public void printVoucher(BuffetOrder order) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Company com = companyService.loadOne();
+//                printVoucher(com.getName(), com.getPhone(), com.getAddress(), count, name);
+                printVoucherNew(com.getName(), com.getPhone(), com.getAddress(), order);
             }
         }).start();
     }
@@ -155,7 +171,7 @@ public class PrintTicketTools {
         }
     }
 
-    private void printVoucher(String shopName, String phone, String address, Integer count) {
+    private void printVoucher(String shopName, String phone, String address, Integer count, String name) {
 //        Integer [] array = new Integer[]{3,3,3,3,4,4,4,5,5,6,7,3,3};
 //        Integer count = array[(int)(Math.random()*array.length)];
         if(count==null || count<=0) {
@@ -165,12 +181,29 @@ public class PrintTicketTools {
 //        Integer count = (int)(Math.random()*10)+3;
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 15);
+        String curDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        //Integer curNo = orderNoService.findOrderNo(curDate, "1");
+        //curNo = curNo==null?150:curNo;
+        Integer curNo = (int)(150*Math.random());
+
+        String code = curDate+"10"+curNo;
         Float price = (new Date()).before(cal.getTime())?48f:58f;
-        File f = wordTemplateTools.buildVoucherFile(shopName, count, count*price, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), phone, address);
+        File f = wordTemplateTools.buildVoucherFile(shopName, count, count*price, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), phone, address, code, name);
 
         PrintTools.print(f.getAbsolutePath());
 
-        f.delete();
+//        f.delete();
+    }
+
+    private void printVoucherNew(String shopName, String phone, String address, BuffetOrder order) {
+//        Integer [] array = new Integer[]{3,3,3,3,4,4,4,5,5,6,7,3,3};
+//        Integer count = array[(int)(Math.random()*array.length)];
+//        Integer count = (int)(Math.random()*10)+3;
+        File f = wordTemplateTools.buildVoucherFile(shopName, order.getCommodityCount(), order.getTotalMoney(), order.getCreateTime(), phone, address, order.getNo(), order.getCashierName());
+
+        PrintTools.print(f.getAbsolutePath());
+
+//        f.delete();
     }
 
     //生成用餐时间时长

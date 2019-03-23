@@ -1,14 +1,18 @@
 package com.zslin.web.controller;
 
 import com.zslin.basic.tools.MyBeanUtils;
+import com.zslin.basic.tools.NormalTools;
 import com.zslin.basic.tools.SecurityUtil;
+import com.zslin.model.BuffetOrder;
 import com.zslin.model.Company;
 import com.zslin.model.Worker;
+import com.zslin.service.IBuffetOrderService;
 import com.zslin.service.ICompanyService;
 import com.zslin.service.IWorkerService;
 import com.zslin.tools.ClientConfigTools;
 import com.zslin.tools.PrintTicketTools;
 import com.zslin.tools.WorkerCookieTools;
+import com.zslin.web.dto.MyTimeDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 钟述林 393156105@qq.com on 2017/3/12 9:49.
@@ -42,6 +49,9 @@ public class PublicController {
 
     @Autowired
     private PrintTicketTools printTicketTools;
+
+    @Autowired
+    private IBuffetOrderService buffetOrderService;
 
     @GetMapping(value = "config")
     public String config(Model model, HttpServletRequest request) {
@@ -115,8 +125,38 @@ public class PublicController {
     }
 
     @PostMapping(value = "printVoucher")
-    public @ResponseBody String printVoucher(Integer count) {
-        printTicketTools.printVoucher(count);
+    public @ResponseBody String printVoucher(Integer count, HttpServletRequest request) {
+        BuffetOrder order = buildOrder();
+        if(order!=null) {
+            printTicketTools.printVoucher(order);
+            buffetOrderService.updatePrintVoucherFlag("1", order.getNo());
+        } else {
+            Worker worker = (Worker) request.getSession().getAttribute("login_worker");
+            String name = worker==null?"管理员":worker.getName();
+            printTicketTools.printVoucher(count, name);
+        }
         return "1";
+    }
+
+    private BuffetOrder buildOrder() {
+        try {
+            String day = NormalTools.curDate("yyyy-MM-dd"); //默认为当天
+            MyTimeDto mtd = new MyTimeDto(day);
+
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.HOUR_OF_DAY, 16);
+
+            List<BuffetOrder> list ;
+            if((new Date()).before(cal.getTime())) { //上午
+                list = buffetOrderService.findCanPrintVoucher(mtd.getStartTimeAM(), mtd.getEndTimeAM());
+            } else {
+                list = buffetOrderService.findCanPrintVoucher(mtd.getStartTimePM(), mtd.getEndTimePM());
+            }
+
+            int index = (int)(Math.random()*list.size());
+            return list.get(index);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

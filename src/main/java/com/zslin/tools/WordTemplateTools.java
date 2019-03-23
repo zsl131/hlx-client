@@ -194,7 +194,7 @@ public class WordTemplateTools {
     }
 
     public File buildVoucherFile(String shopName, Integer peopleCount, Float money, String date,
-                              String phone, String address) {
+                              String phone, String address, String code, String saler) {
         File targetFile = new File(configTools.getUploadPath("tickets/")+"voucher-"+(UUID.randomUUID().toString())+".docx");
         try {
             File f = getVoucherTemplate();
@@ -207,13 +207,15 @@ public class WordTemplateTools {
             datas.put("peopleCount", peopleCount+"");
             datas.put("money", money+"");
             datas.put("date", date);
+            datas.put("code", code);
+            datas.put("saler", saler);
             datas.put("phone", phone);
             datas.put("address", address);
             mainDocumentPart.variableReplace(datas);
 
-            InputStream is = new FileInputStream(getTemplateFile("qrcode.jpg"));
+            /*InputStream is = new FileInputStream(getTemplateFile("qrcode.jpg"));
             byte[] bytes = IOUtils.toByteArray(is);
-            ImageAdd.replaceImage(wPackage, "qrcode", bytes, "test", "haha");
+            ImageAdd.replaceImage(wPackage, "qrcode", bytes, "test", "haha");*/
 
             wPackage.save(targetFile);
         } catch (Docx4JException e) {
